@@ -231,7 +231,7 @@ class SweetDialog extends AlertDialog {
             color: Colors.transparent,
           ),
           child: Lottie.asset(
-            'assets/animations/loading3.json',
+            'assets/animations/loading2.json',
             width: 150,
             height: 150,
             repeat: true,
