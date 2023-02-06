@@ -1,5 +1,5 @@
 class ApiConfig {
-  static const String baseUrl = 'https://';
-  static const String key = '!@bgtk-smd2020';
-  static const String keyName = 'security_code';
+  static const String baseUrl = 'https://wo.sadigit.co.id';
+  static const String username = 'fweb';
+  static const String password = 'w1D4\$@s550EqGhz';
 }

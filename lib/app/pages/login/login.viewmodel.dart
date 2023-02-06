@@ -132,13 +132,30 @@ class LoginViewModel extends ViewModel {
     );
   }
 
+  void checkUser() async {
+    await apiProvider.checkWhatsApp(phone: phoneNumber).then(
+      (value) {
+        loading.dismiss();
+        userName = value;
+        Get.toNamed('/register', arguments: {
+          'userName': userName,
+          'phoneNumber': phoneNumber,
+        });
+      },
+      onError: (message) {
+        checkPhoneNumber();
+      },
+    );
+  }
+
   void validatePhone() {
     if (phoneNumber.isNotEmpty) {
       if (validatePhoneNumber(phoneNumber)) {
         loading.show();
-        Future.delayed(const Duration(seconds: 3), () {
-          loading.dismiss();
-          checkPhoneNumber();
+        Future.delayed(const Duration(seconds: 1), () {
+          //   loading.dismiss();
+          //   checkPhoneNumber();
+          checkUser();
         });
       } else {
         SweetDialog(

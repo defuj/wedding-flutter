@@ -130,9 +130,12 @@ class RegisterViewModel extends ViewModel {
 
   void updateMemberName(String value, int index) {
     members[index].memberName = value;
+
+    log('updateMemberName: ${members[index].memberName}');
   }
 
   void addNewMember() {
+    // members = members;
     members.add(MemberModel(
       memberID: '${members.length + 1}',
     ));

@@ -147,6 +147,8 @@ class _View extends StatelessView<RegisterViewModel> {
                 itemCount: viewModel.members.length,
                 itemBuilder: (context, index) {
                   final member = viewModel.members[index];
+                  final controller =
+                      TextEditingController(text: member.memberName);
                   return Container(
                     key: UniqueKey(),
                     margin: const EdgeInsets.only(top: 8),
@@ -164,6 +166,7 @@ class _View extends StatelessView<RegisterViewModel> {
                         ),
                         const SizedBox(height: 4),
                         InputText(
+                          controller: controller,
                           suffixAction: () => viewModel.removeMember(index),
                           suffixIcon: Container(
                             padding: const EdgeInsets.symmetric(
@@ -190,7 +193,6 @@ class _View extends StatelessView<RegisterViewModel> {
                           onChanged: (value) =>
                               viewModel.updateMemberName(value, index),
                           hintText: 'Masukkan nama lengkap',
-                          initialValue: member.memberName,
                           prefixIcon: Container(
                             color: IColors.pink50,
                             padding: const EdgeInsets.symmetric(
