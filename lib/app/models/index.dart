@@ -1,0 +1,1 @@
+export 'member.model.dart';

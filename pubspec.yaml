@@ -1,0 +1,60 @@
+name: wedding
+description: Enter invited guest data 
+
+publish_to: 'none' # Remove this line if you wish to publish to pub.dev
+
+version: 1.0.0+1
+
+environment:
+  sdk: '>=2.18.6 <3.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  # cupertino_icons: ^1.0.2
+  flutter_svg: ^1.1.6
+  lottie: ^2.1.0
+  # For Model
+  # freezed_annotation: ^2.2.0
+  json_annotation: ^4.7.0
+  # For Architecture MVVM
+  pmvvm: ^4.0.1
+  # State Management, Route Management, Dependency Management
+  get: ^4.6.5
+  get_storage: ^2.0.3
+  # For Image Caching
+  cached_network_image: ^3.2.3
+  # Staggered Grid View
+  flutter_staggered_grid_view: ^0.6.2
+  # video player
+  flutter_launcher_icons: ^0.11.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^2.0.0
+   # For Model
+  json_serializable: ^6.5.4
+
+flutter:
+  uses-material-design: true
+  assets:
+        - assets/images/
+        - assets/icons/
+        - assets/icons/svg/
+        - assets/animations/
+        - assets/fonts/
+
+  fonts:
+        - family: SourceSansPro
+          fonts:
+              - asset: assets/fonts/SourceSansPro-Regular.ttf
+              - asset: assets/fonts/SourceSansPro-SemiBold.ttf
+              - asset: assets/fonts/SourceSansPro-Bold.ttf
+
+        - family: PlayfairDisplay
+          fonts:
+              - asset: assets/fonts/PlayfairDisplay-Regular.ttf
+              - asset: assets/fonts/PlayfairDisplay-SemiBold.ttf
+              - asset: assets/fonts/PlayfairDisplay-Medium.ttf
