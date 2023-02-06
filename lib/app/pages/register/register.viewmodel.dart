@@ -89,6 +89,9 @@ class RegisterViewModel extends ViewModel {
                 itemCount: sessions.length,
                 itemBuilder: (context, index) {
                   return InkWell(
+                    splashColor: Colors.transparent,
+                    highlightColor: Colors.transparent,
+                    splashFactory: NoSplash.splashFactory,
                     onTap: () {
                       selectedSession = sessions[index];
                       Navigator.pop(context);
@@ -100,7 +103,9 @@ class RegisterViewModel extends ViewModel {
                         vertical: 8,
                       ),
                       decoration: BoxDecoration(
-                        color: IColors.gray50,
+                        color: selectedSession == sessions[index]
+                            ? IColors.gray50
+                            : Colors.white,
                         borderRadius: BorderRadius.circular(8),
                       ),
                       child: Text(
