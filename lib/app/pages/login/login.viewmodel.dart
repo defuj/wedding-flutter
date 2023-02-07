@@ -141,13 +141,31 @@ class LoginViewModel extends ViewModel {
 
     await apiProvider.checkPhoneNumber(phone: phoneNumber).then(
       (value) {
-        log('result: $value');
+        // log('result: $value');
         loading.dismiss();
-        userName = value;
-        Get.toNamed('/register', arguments: {
-          'userName': userName,
-          'phoneNumber': phoneNumber,
-        });
+        userName = value['userName'];
+        final reservasionID = value['reservasionID'];
+        final sessionID = value['sessionID'];
+
+        if (reservasionID != null && sessionID != null) {
+          if (reservasionID != 0 && sessionID != 0) {
+            Get.toNamed('/foods', arguments: {
+              'userName': value,
+              'reservasionID': reservasionID,
+              'sessionID': sessionID,
+            });
+          } else {
+            Get.toNamed('/register', arguments: {
+              'userName': value,
+              'phoneNumber': phoneNumber,
+            });
+          }
+        } else {
+          Get.toNamed('/register', arguments: {
+            'userName': value,
+            'phoneNumber': phoneNumber,
+          });
+        }
       },
       onError: (message) {
         log('result: $message');
@@ -187,7 +205,7 @@ class LoginViewModel extends ViewModel {
   @override
   void init() {
     apiProvider = getApiProvider;
-    log('result: ${apiProvider.hashCode}');
+    // log('result: ${apiProvider.hashCode}');
     loading = SweetDialog(
       context: context,
       dialogType: SweetDialogType.loading,

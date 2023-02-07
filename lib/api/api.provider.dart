@@ -12,8 +12,16 @@ class ApiProvider extends GetConnect {
     httpClient.addRequestModifier<dynamic>((request) {
       request.headers['Accept'] = '*/*';
       // request.headers['Authorization'] = 'Basic ZndlYjp3MUQ0JEBzNTUwRXFHaHo=';
-      request.headers['Authorization'] =
+      final token =
           'Basic ${base64.encode(utf8.encode('${ApiConfig.username}:${ApiConfig.password}'))}';
+      request.headers['Authorization'] = token;
+      request.headers['Access-Control-Allow-Origin'] = '*';
+      request.headers['Access-Control-Allow-Methods'] =
+          'GET, POST, PUT, DELETE, OPTIONS';
+      request.headers['Access-Control-Allow-Headers'] =
+          'Content-Type, Authorization';
+
+      log('result: ${request.headers['Authorization']}');
       return request;
     });
 
@@ -24,18 +32,18 @@ class ApiProvider extends GetConnect {
     //   return response;
     // });
 
-    httpClient.addAuthenticator<dynamic>((request) async {
-      log('result: Authenticating');
-      //   request.headers['Authorization'] = 'Basic ZndlYjp3MUQ0JEBzNTUwRXFHaHo=';
-      request.headers['Authorization'] =
-          'Basic ${base64.encode(utf8.encode('${ApiConfig.username}:${ApiConfig.password}'))}';
-      return request;
-    });
+    // httpClient.addAuthenticator<dynamic>((request) async {
+    //   log('result: Authenticating');
+    //   //   request.headers['Authorization'] = 'Basic ZndlYjp3MUQ0JEBzNTUwRXFHaHo=';
+    //   request.headers['Authorization'] =
+    //       'Basic ${base64.encode(utf8.encode('${ApiConfig.username}:${ApiConfig.password}'))}';
+    //   return request;
+    // });
 
     httpClient.maxAuthRetries = 3;
   }
 
-  Future<String> checkPhoneNumber({required String phone}) async {
+  Future<Map<String, dynamic>> checkPhoneNumber({required String phone}) async {
     if (phone.substring(0, 1) == '0') {
       phone = phone.replaceFirst('0', '62');
     } else if (phone.substring(0, 1) == '+') {
@@ -50,94 +58,104 @@ class ApiProvider extends GetConnect {
         ApiEndPoints.checkWhatsApp,
         data,
       );
+      log('result: ${response.body}');
       if (response.status.hasError) {
         return Future.error(response.statusText ??
             'Terjadi kesalahan saat memeriksa nomor telepon');
       } else {
-        return Future.value(response.body['nama'] ?? '');
+        if (response.body['status'] == false) {
+          return Future.error(response.body['message']);
+        } else {
+          var result = {
+            'userName': response.body['nama'] ?? '',
+            'reservasionID': response.body['id_reservasi'] ?? 0,
+            'sessionID': response.body['id_sesi'] ?? 0,
+          };
+          return Future.value(result);
+        }
       }
     } catch (e) {
       return Future.error('Error: $e');
     }
   }
 
-//   Future<dynamic> checkWhatsApp({required String phone}) async {
-//     if (phone.substring(0, 1) == '0') {
-//       phone = phone.replaceFirst('0', '62');
-//     } else if (phone.substring(0, 1) == '+') {
-//       phone = phone.replaceFirst('+', '');
-//     } else {
-//       phone = '62$phone';
-//     }
+  Future<List<SessionModel>> getSessions() async {
+    try {
+      final response = await get(ApiEndPoints.getSessions);
+      log('result: ${response.body}');
+      if (response.status.hasError) {
+        return Future.error(response.statusText ??
+            'Terjadi kesalahan saat mengambil data sesi');
+      } else {
+        if (response.body['status'] == false) {
+          return Future.error(
+              response.body['message'] ?? 'Tidak ada data sesi');
+        } else {
+          final sessions = response.body['data'] as List;
+          return sessions.map((e) => SessionModel.fromJson(e)).toList();
+        }
+      }
+    } catch (e) {
+      return Future.error('Error: $e');
+    }
+  }
 
-//     try {
-//       // Basic ZndlYjp3MUQ0JEBzNTUwRXFHaHo=
-//       final token =
-//           'Basic ${base64.encode(utf8.encode('${ApiConfig.username}:${ApiConfig.password}'))}';
-//       const targetUrl = '${ApiConfig.baseUrl}${ApiEndPoints.checkWhatsApp}';
-//       final response = await http.post(
-//         Uri.parse(targetUrl),
-//         body: {'nomor_wa': phone},
-//         headers: {
-//           'Authorization': token,
-//         },
-//       );
-//       if (response.statusCode == 200) {
-//         final data = json.decode(response.body);
-//         if (data['status'] == false) {
-//           return Future.error(data['message'] ??
-//               'Terjadi kesalahan saat memeriksa nomor telepon');
-//         } else {
-//           return Future.value(data['nama'] ?? '');
-//         }
-//       } else {
-//         return Future.error('Terjadi kesalahan, silahkan coba lagi');
-//       }
-//       //   var dio = Dio();
-//       //   const url = '${ApiConfig.baseUrl}${ApiEndPoints.checkWhatsApp}';
-//       //   log('result: $url');
-//       //   final response = await dio.post(
-//       //     url,
-//       //     data: form,
-//       //     options: Options(
-//       //       headers: {
-//       //         // 'Accept': '*/*',
-//       //         'content-type': Headers.formUrlEncodedContentType,
-//       //         'Authorization': token,
-//       //       },
-//       //     ),
-//       //   );
+  Future<int> createReservasion(
+      {required String name, required String phone}) async {
+    final data = FormData({
+      'nama': name,
+      'nomor_wa': phone,
+      'force': 0,
+    });
 
-//       //   if (response.statusCode == 200) {
-//       //     if (response.data['status'] == false) {
-//       //       return Future.error(response.data['message'] ??
-//       //           'Terjadi kesalahan saat memeriksa nomor telepon');
-//       //     } else {
-//       //       return Future.value(response.data['nama'] ?? '');
-//       //     }
-//       //   } else {
-//       //     return Future.error('Terjadi kesalahan, silahkan coba lagi');
-//       //   }
+    try {
+      final response = await post(ApiEndPoints.submitReservasion, data);
+      log('result: ${response.body}');
+      if (response.status.hasError) {
+        return Future.error(response.statusText ??
+            'Terjadi kesalahan saat mengambil data sesi');
+      } else {
+        if (response.body['status'] == false) {
+          return Future.error(
+              response.body['message'] ?? 'Gagal membuat reservasi');
+        } else {
+          return Future.value(response.body['id_reservasi'] ?? 0);
+        }
+      }
+    } catch (e) {
+      return Future.error('Error: $e');
+    }
+  }
 
-//     } catch (e) {
-//       return Future.error('Error: $e');
-//     }
+  Future<String> addMember(
+      {required int reservasionID,
+      required String sessionID,
+      required List<String> members}) async {
+    httpClient.defaultContentType = 'multipart/form-data';
+    final data = FormData({
+      'id_reservasi': reservasionID,
+      'id_sesi': sessionID,
+    });
+    for (var i = 0; i < members.length; i++) {
+      data.fields.add(MapEntry('anggota[$i]', members[i]));
+    }
 
-//     // try {
-//     //   final response = await dio().request(ApiEndPoints.checkWhatsApp,
-//     //       data: form, options: Options(method: 'POST'));
-//     //   if (response.statusCode == 200) {
-//     //     if (response.data['status'] == false) {
-//     //       return Future.error(response.data['message'] ??
-//     //           'Terjadi kesalahan saat memeriksa nomor telepon');
-//     //     } else {
-//     //       return Future.value(response.data['nama'] ?? '');
-//     //     }
-//     //   } else {
-//     //     return Future.error('Terjadi kesalahan, silahkan coba lagi');
-//     //   }
-//     // } catch (e) {
-//     //   return Future.error('Error: $e');
-//     // }
-//   }
+    try {
+      final response = await post(ApiEndPoints.addMember, data);
+      log('result: $response');
+      if (response.status.hasError) {
+        return Future.error(
+            response.statusText ?? 'Terjadi kesalahan saat menambahkan member');
+      } else {
+        if (response.body['status'] == false) {
+          return Future.error(
+              response.body['message'] ?? 'Gagal menambahkan member');
+        } else {
+          return Future.value(response.body['message'] ?? '');
+        }
+      }
+    } catch (e) {
+      return Future.error('Error: $e');
+    }
+  }
 }

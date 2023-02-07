@@ -3,18 +3,36 @@ import 'dart:developer';
 import 'package:wedding/repositories.dart';
 
 class RegisterViewModel extends ViewModel {
-  String _userName = 'John Doe';
+  late SweetDialog loading;
+  late ApiProvider apiProvider;
+
+  bool _isReservasion = false;
+  bool get isReservasion => _isReservasion;
+  set isReservasion(bool value) {
+    _isReservasion = value;
+    notifyListeners();
+  }
+
+  List<SessionModel> _sessions = List<SessionModel>.empty(growable: true);
+  List<SessionModel> get sessions => _sessions;
+  set sessions(List<SessionModel> value) {
+    _sessions = value;
+    notifyListeners();
+  }
+
+  int _reservasionID = 0;
+  int get reservasionID => _reservasionID;
+  set reservasionID(int value) {
+    _reservasionID = value;
+    notifyListeners();
+  }
+
+  String _userName = '';
   String get userName => _userName;
   set userName(String value) {
     _userName = value;
     notifyListeners();
   }
-
-  List<String> sessions = [
-    'Sesi 1 (11:00 s.d 13:00) 120 kuota tersisa',
-    'Sesi 2 (13:00 s.d 15:00) 120 kuota tersisa',
-    'Sesi 3 (15:00 s.d 17:00) 120 kuota tersisa',
-  ];
 
   String _selectedSession = '';
   String get selectedSession => _selectedSession;
@@ -23,7 +41,14 @@ class RegisterViewModel extends ViewModel {
     notifyListeners();
   }
 
-  String _phoneNumber = '082240645000';
+  String _selectedSessionName = '';
+  String get selectedSessionName => _selectedSessionName;
+  set selectedSessionName(String value) {
+    _selectedSessionName = value;
+    notifyListeners();
+  }
+
+  String _phoneNumber = '';
   String get phoneNumber => _phoneNumber;
   set phoneNumber(String value) {
     _phoneNumber = value;
@@ -93,7 +118,9 @@ class RegisterViewModel extends ViewModel {
                     highlightColor: Colors.transparent,
                     splashFactory: NoSplash.splashFactory,
                     onTap: () {
-                      selectedSession = sessions[index];
+                      selectedSession = sessions[index].sessionID!;
+                      selectedSessionName =
+                          'Sesi ${sessions[index].sessionName} (${sessions[index].sessionStart} sd ${sessions[index].sessionEnd}) ${sessions[index].sessionQuota} kuota tersisa';
                       Navigator.pop(context);
                     },
                     child: Container(
@@ -103,13 +130,13 @@ class RegisterViewModel extends ViewModel {
                         vertical: 8,
                       ),
                       decoration: BoxDecoration(
-                        color: selectedSession == sessions[index]
+                        color: selectedSession == sessions[index].sessionID
                             ? IColors.gray50
                             : Colors.white,
                         borderRadius: BorderRadius.circular(8),
                       ),
                       child: Text(
-                        sessions[index],
+                        'Sesi ${sessions[index].sessionName} (${sessions[index].sessionStart} sd ${sessions[index].sessionEnd}) ${sessions[index].sessionQuota} kuota tersisa',
                         style: Theme.of(context).textTheme.bodyText2!.copyWith(
                               color: IColors.black80,
                               fontWeight: FontWeight.w400,
@@ -153,6 +180,80 @@ class RegisterViewModel extends ViewModel {
     // members = members;
   }
 
+  void successCreateReservasion() {
+    SweetDialog(
+      context: context,
+      title: 'Berhasil membuat reservasi',
+      content:
+          'Reservasi berhasil dibuat, silahkan lanjutkan untuk memesan makanan',
+      dialogType: SweetDialogType.success,
+      barrierDismissible: false,
+      confirmText: 'Lanjutkan',
+      onConfirm: () {
+        Get.toNamed('/foods', arguments: {
+          'userName': userName,
+          'reservasionID': reservasionID,
+          'sessionID': selectedSession,
+        });
+      },
+    ).show();
+  }
+
+  void addMember(List<MemberModel> members, int reservasionID) async {
+    List<String> memberNames = List.from(members.map((e) => e.memberName!));
+    await apiProvider
+        .addMember(
+            reservasionID: reservasionID,
+            sessionID: selectedSession,
+            members: memberNames)
+        .then(
+      (value) {
+        loading.dismiss();
+        successCreateReservasion();
+      },
+      onError: (e) {
+        loading.dismiss();
+        SweetDialog(
+          context: context,
+          title: 'Gagal menambahkan member',
+          content: e.toString(),
+          dialogType: SweetDialogType.error,
+        ).show();
+      },
+    );
+  }
+
+  void createReservasion() async {
+    loading.show();
+    if (isReservasion) {
+      addMember(members, reservasionID);
+    } else {
+      await apiProvider
+          .createReservasion(name: userName, phone: phoneNumber)
+          .then(
+        (value) {
+          isReservasion = true;
+          reservasionID = value;
+          if (members.isNotEmpty) {
+            addMember(members, value);
+          } else {
+            loading.dismiss();
+            successCreateReservasion();
+          }
+        },
+        onError: (e) {
+          loading.dismiss();
+          SweetDialog(
+            context: context,
+            title: 'Gagal membuat reservasi',
+            content: e.toString(),
+            dialogType: SweetDialogType.error,
+          ).show();
+        },
+      );
+    }
+  }
+
   void chooseFoods() {
     if (selectedSession.isEmpty) {
       SweetDialog(
@@ -164,26 +265,54 @@ class RegisterViewModel extends ViewModel {
       return;
     }
 
-    Get.toNamed(
-      '/foods',
-      arguments: {
-        'userName': userName,
-        'phoneNumber': phoneNumber,
-        'members': members,
-      },
-    );
+    createReservasion();
+  }
+
+  void getDataSession() async {
+    loading.show();
+    await apiProvider.getSessions().then((value) {
+      sessions = value;
+      loading.dismiss();
+    }, onError: (e) {
+      loading.dismiss();
+      SweetDialog(
+        context: context,
+        title: 'Terjadi kesalahan',
+        content: 'Tidak dapat mengambil data sesi',
+        dialogType: SweetDialogType.error,
+        barrierDismissible: false,
+        onConfirm: () => Get.back(),
+      ).show();
+    });
   }
 
   @override
   void init() {
+    apiProvider = getApiProvider;
+    loading = SweetDialog(
+      context: context,
+      dialogType: SweetDialogType.loading,
+      barrierDismissible: false,
+    );
     try {
       final args = Get.arguments;
       if (args != null) {
         userName = args['userName'];
         phoneNumber = args['phoneNumber'];
       }
+      Future.delayed(Duration.zero, () {
+        getDataSession();
+      });
     } catch (e) {
       log(e.toString());
+      //   SweetDialog(
+      //     context: context,
+      //     title: 'Terjadi kesalahan',
+      //     content: 'Tidak mendapatkan data pengguna',
+      //     dialogType: SweetDialogType.error,
+      //     barrierDismissible: false,
+      //     onConfirm: () => Get.back(),
+      //   ).show();
     }
   }
 

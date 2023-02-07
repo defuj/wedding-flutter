@@ -5,6 +5,6 @@ class ApiEndPoints {
   String loadMember({required int idReservasion}) =>
       'reservasi/load_anggota/$idReservasion';
   static const String addMember = '/reservasi/submit_anggota';
-  static const String loadSession = '/reservasi/load_sesi';
+  static const String getSessions = '/reservasi/load_sesi';
   static const String submitMenus = '/menu/submit';
 }

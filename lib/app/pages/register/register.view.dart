@@ -293,7 +293,7 @@ class _View extends StatelessView<RegisterViewModel> {
                             child: Text(
                               viewModel.selectedSession.isEmpty
                                   ? 'Pilih waktu kedatangan'
-                                  : viewModel.selectedSession,
+                                  : viewModel.selectedSessionName,
                               style: Theme.of(context)
                                   .textTheme
                                   .bodyText2!

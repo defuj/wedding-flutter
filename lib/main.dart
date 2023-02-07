@@ -20,6 +20,7 @@ Future<void> main() async {
     textTheme: textTheme,
   );
   await GetStorage.init();
+//   Get.put<ApiProvider>(ApiProvider());
   runApp(
     FlutterWebFrame(
       builder: (context) => GetMaterialApp(

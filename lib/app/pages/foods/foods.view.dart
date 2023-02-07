@@ -17,6 +17,14 @@ class _View extends StatelessView<FoodsViewModel> {
 
   @override
   Widget render(context, viewModel) {
-    return const Scaffold();
+    return Scaffold(
+      backgroundColor: Colors.white,
+      body: SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: const [],
+        ),
+      ),
+    );
   }
 }
