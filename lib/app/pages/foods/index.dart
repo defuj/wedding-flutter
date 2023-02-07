@@ -1,2 +1,2 @@
-export 'foods.view.dart';
-export 'foods.viewmodel.dart';
+export 'menus.view.dart';
+export 'menus.viewmodel.dart';

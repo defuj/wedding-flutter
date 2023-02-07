@@ -190,7 +190,7 @@ class RegisterViewModel extends ViewModel {
       barrierDismissible: false,
       confirmText: 'Lanjutkan',
       onConfirm: () {
-        Get.toNamed('/foods', arguments: {
+        Get.toNamed('/menus', arguments: {
           'userName': userName,
           'reservasionID': reservasionID,
           'sessionID': selectedSession,
@@ -294,25 +294,28 @@ class RegisterViewModel extends ViewModel {
       dialogType: SweetDialogType.loading,
       barrierDismissible: false,
     );
-    try {
-      final args = Get.arguments;
-      if (args != null) {
+
+    final args = Get.arguments;
+    if (args != null) {
+      try {
         userName = args['userName'];
         phoneNumber = args['phoneNumber'];
+        Future.delayed(Duration.zero, () {
+          getDataSession();
+        });
+      } catch (e) {
+        SweetDialog(
+          context: context,
+          title: 'Oops!',
+          content: 'Tidak dapat menemukan data user',
+          dialogType: SweetDialogType.error,
+          barrierDismissible: false,
+          confirmText: 'Kembali',
+          onConfirm: () => Get.offAllNamed('/login'),
+        ).show();
       }
-      Future.delayed(Duration.zero, () {
-        getDataSession();
-      });
-    } catch (e) {
-      log(e.toString());
-      //   SweetDialog(
-      //     context: context,
-      //     title: 'Terjadi kesalahan',
-      //     content: 'Tidak mendapatkan data pengguna',
-      //     dialogType: SweetDialogType.error,
-      //     barrierDismissible: false,
-      //     onConfirm: () => Get.back(),
-      //   ).show();
+    } else {
+      Get.offAllNamed('/login');
     }
   }
 

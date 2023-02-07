@@ -2,32 +2,37 @@ import 'package:json_annotation/json_annotation.dart';
 
 @JsonSerializable()
 class MemberModel {
-  @JsonKey(name: 'memberID')
+  @JsonKey(name: 'id')
   final String? memberID;
-  @JsonKey(name: 'memberName')
+  @JsonKey(name: 'nama')
   String? memberName;
-  @JsonKey(name: 'memberPhoneNumer')
-  String? memberPhoneNumber;
+  @JsonKey(name: 'id_reservasi')
+  final int? reservasionID;
+  @JsonKey(name: 'isConfirm')
+  final int? isConfirm;
 
   MemberModel({
     this.memberID,
     this.memberName,
-    this.memberPhoneNumber,
+    this.reservasionID,
+    this.isConfirm,
   });
 
   factory MemberModel.fromJson(Map<String, dynamic> json) {
     return MemberModel(
-      memberID: json['memberID'] as String?,
-      memberName: json['memberName'] as String?,
-      memberPhoneNumber: json['memberPhoneNumer'] as String?,
+      memberID: json['id'] as String?,
+      memberName: json['nama'] as String?,
+      reservasionID: int.parse(json['id_reservasi'] ?? '0'),
+      isConfirm: int.parse(json['isConfirm'] ?? '0'),
     );
   }
 
   Map<String, dynamic> toJson() {
     return {
-      'memberID': memberID,
-      'memberName': memberName,
-      'memberPhoneNumer': memberPhoneNumber,
+      'id': memberID,
+      'nama': memberName,
+      'id_reservasi': reservasionID,
+      'isConfirm': isConfirm,
     };
   }
 }

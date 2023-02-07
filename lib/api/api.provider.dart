@@ -20,8 +20,6 @@ class ApiProvider extends GetConnect {
           'GET, POST, PUT, DELETE, OPTIONS';
       request.headers['Access-Control-Allow-Headers'] =
           'Content-Type, Authorization';
-
-      log('result: ${request.headers['Authorization']}');
       return request;
     });
 

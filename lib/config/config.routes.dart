@@ -12,8 +12,8 @@ var getRoutes = [
     transition: Transition.cupertino,
   ),
   GetPage(
-    name: '/foods',
-    page: () => const Foods(),
+    name: '/menus',
+    page: () => const Menus(),
     transition: Transition.cupertino,
   ),
 ];

@@ -1,18 +1,18 @@
 import 'package:wedding/repositories.dart';
 
-class Foods extends StatelessWidget {
-  const Foods({super.key});
+class Menus extends StatelessWidget {
+  const Menus({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return MVVM<FoodsViewModel>(
+    return MVVM<MenusViewModel>(
       view: () => const _View(),
-      viewModel: FoodsViewModel(),
+      viewModel: MenusViewModel(),
     );
   }
 }
 
-class _View extends StatelessView<FoodsViewModel> {
+class _View extends StatelessView<MenusViewModel> {
   const _View({key}) : super(key: key, reactive: true);
 
   @override
