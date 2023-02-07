@@ -150,13 +150,13 @@ class LoginViewModel extends ViewModel {
         if (reservasionID != null && sessionID != null) {
           if (reservasionID != 0 && sessionID != 0) {
             Get.toNamed('/menus', arguments: {
-              'userName': value,
+              'userName': value['userName'],
               'reservasionID': reservasionID,
               'sessionID': sessionID,
             });
           } else {
             Get.toNamed('/register', arguments: {
-              'userName': value,
+              'userName': value['userName'],
               'phoneNumber': phoneNumber,
             });
           }

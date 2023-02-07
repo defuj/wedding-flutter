@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:wedding/repositories.dart';
 
 class MenusViewModel extends ViewModel {
@@ -5,9 +7,36 @@ class MenusViewModel extends ViewModel {
   late ApiProvider apiProvider;
   final box = GetStorage();
 
-  String userName = '';
-  int reservasionID = 0;
-  int sessionID = 0;
+  String _userName = '';
+  String get userName => _userName;
+  set userName(String value) {
+    _userName = value;
+    notifyListeners();
+  }
+
+  int _reservasionID = 0;
+  int get reservasionID => _reservasionID;
+  set reservasionID(int value) {
+    _reservasionID = value;
+    notifyListeners();
+  }
+
+  int _sessionID = 0;
+  int get sessionID => _sessionID;
+  set sessionID(int value) {
+    _sessionID = value;
+    notifyListeners();
+  }
+
+  CategoryModel _categorySelected = CategoryModel(
+    categoryID: '1',
+    categoryName: 'Appetizer',
+  );
+  CategoryModel get categorySelected => _categorySelected;
+  set categorySelected(CategoryModel value) {
+    _categorySelected = value;
+    notifyListeners();
+  }
 
   List<CategoryModel> categories = [
     CategoryModel(categoryID: '1', categoryName: 'Appetizer'),
@@ -23,6 +52,25 @@ class MenusViewModel extends ViewModel {
     notifyListeners();
   }
 
+  void getMenus() async {
+    loading.show();
+    apiProvider.getMenus(categoryID: categorySelected.categoryID!).then(
+      (value) {
+        loading.dismiss();
+        menus = value;
+      },
+      onError: (e) {
+        loading.dismiss();
+        SweetDialog(
+          context: context,
+          title: 'Oops!',
+          content: e.toString(),
+          dialogType: SweetDialogType.error,
+        ).show();
+      },
+    );
+  }
+
   @override
   void init() {
     apiProvider = getApiProvider;
@@ -35,13 +83,19 @@ class MenusViewModel extends ViewModel {
     final args = Get.arguments;
     if (args != null) {
       try {
-        userName = args['userName'];
-        reservasionID = args['reservasionID'];
-        sessionID = args['sessionID'];
+        userName = args['userName'].toString();
+        reservasionID = int.parse(args['reservasionID'].toString());
+        sessionID = int.parse(args['sessionID'].toString());
+
+        box.write('userName', userName);
+        box.write('reservasionID', reservasionID);
+        box.write('sessionID', sessionID);
+
         Future.delayed(Duration.zero, () {
-          //
+          getMenus();
         });
       } catch (e) {
+        log('Error: $e');
         SweetDialog(
           context: context,
           dialogType: SweetDialogType.error,
@@ -49,11 +103,27 @@ class MenusViewModel extends ViewModel {
           content: 'Tidak menemukan data reservasi',
           barrierDismissible: false,
           confirmText: 'Kembali',
-          onConfirm: () => Get.offAllNamed('/login'),
+          onConfirm: () => Get.toNamed('/login'),
         ).show();
       }
     } else {
-      Get.offAllNamed('/login');
+      if (box.read('userName') != null &&
+          box.read('reservasionID') != null &&
+          box.read('sessionID') != null) {
+        userName = box.read('userName');
+        reservasionID = box.read('reservasionID');
+        sessionID = box.read('sessionID');
+
+        Future.delayed(Duration.zero, () {
+          getMenus();
+        });
+      } else {
+        try {
+          Get.toNamed('/login');
+        } catch (e) {
+          log('Error: $e');
+        }
+      }
     }
   }
 

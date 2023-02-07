@@ -156,4 +156,49 @@ class ApiProvider extends GetConnect {
       return Future.error('Error: $e');
     }
   }
+
+  Future<List<MenuModel>> getMenus({required String categoryID}) async {
+    try {
+      final response =
+          await get(ApiEndPoints().getMenus(idCategory: categoryID));
+      if (response.status.hasError) {
+        return Future.error(response.statusText ??
+            'Terjadi kesalahan saat mengambil data menu');
+      } else {
+        if (response.body['status'] == false) {
+          return Future.error(
+              response.body['message'] ?? 'Tidak ada menu tersedia');
+        } else {
+          final baseUrl = response.body['base_img_url'].toString();
+          final menus = response.body['data'] as List;
+          List<MenuModel> menus2 =
+              menus.map((e) => MenuModel.fromJson(e)).toList();
+          List<MenuModel> menus3 = List<MenuModel>.empty(growable: true);
+          for (var element in menus2) {
+            menus3.add(MenuModel(
+              menuID: element.menuID,
+              categoryID: element.categoryID,
+              menuName: element.menuName,
+              menuDesc: element.menuDesc,
+              menuCoverPicture: element.menuCoverPicture!.isNotEmpty
+                  ? '$baseUrl${element.menuCoverPicture!}'
+                  : '',
+              menuPicture1: element.menuPicture1!.isNotEmpty
+                  ? '$baseUrl${element.menuPicture1!}'
+                  : '',
+              menuPicture2: element.menuPicture2!.isNotEmpty
+                  ? '$baseUrl${element.menuPicture2!}'
+                  : '',
+              menuStock: element.menuStock,
+            ));
+          }
+          // add baseUrl to menuCoverPicture, menuPicture1, menuPicture2
+          // return menus.map((e) => MenuModel.fromJson(e)).toList();
+          return menus3;
+        }
+      }
+    } catch (e) {
+      return Future.error('Error: $e');
+    }
+  }
 }
