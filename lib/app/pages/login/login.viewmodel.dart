@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:wedding/repositories.dart';
 
 class LoginViewModel extends ViewModel {
@@ -133,8 +135,13 @@ class LoginViewModel extends ViewModel {
   }
 
   void checkUser() async {
-    await apiProvider.checkWhatsApp(phone: phoneNumber).then(
+    // check the first character of the phone number
+    // if the first character is 0, replace with 62
+    // because the phone number format is 62xxxxxxxxxx
+
+    await apiProvider.checkPhoneNumber(phone: phoneNumber).then(
       (value) {
+        log('result: $value');
         loading.dismiss();
         userName = value;
         Get.toNamed('/register', arguments: {
@@ -143,6 +150,8 @@ class LoginViewModel extends ViewModel {
         });
       },
       onError: (message) {
+        log('result: $message');
+        loading.dismiss();
         checkPhoneNumber();
       },
     );
@@ -153,8 +162,6 @@ class LoginViewModel extends ViewModel {
       if (validatePhoneNumber(phoneNumber)) {
         loading.show();
         Future.delayed(const Duration(seconds: 1), () {
-          //   loading.dismiss();
-          //   checkPhoneNumber();
           checkUser();
         });
       } else {
@@ -180,6 +187,7 @@ class LoginViewModel extends ViewModel {
   @override
   void init() {
     apiProvider = getApiProvider;
+    log('result: ${apiProvider.hashCode}');
     loading = SweetDialog(
       context: context,
       dialogType: SweetDialogType.loading,

@@ -19,19 +19,12 @@ Future<void> main() async {
     colorScheme: lightColorScheme,
     textTheme: textTheme,
   );
-
-  //   var darkTheme = ThemeData(
-  //     useMaterial3: true,
-  //     colorScheme: darkColorScheme,
-  //     textTheme: textTheme,
-  //   );
   await GetStorage.init();
   runApp(
     FlutterWebFrame(
       builder: (context) => GetMaterialApp(
         title: 'Enter invited guest data ',
         theme: lightTheme,
-        //   darkTheme: darkTheme,
         initialRoute: '/login',
         getPages: getRoutes,
         initialBinding: MainBinding(),
