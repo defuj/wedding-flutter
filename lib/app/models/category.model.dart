@@ -1,8 +1,3 @@
-// <option value="1">Appetizer</option>
-// <option value="2">Main Course</option>
-// <option value="3">Dessert</option>
-// <option value="4">Drink</option>
-
 import 'package:json_annotation/json_annotation.dart';
 
 @JsonSerializable()

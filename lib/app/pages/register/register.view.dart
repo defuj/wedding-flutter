@@ -215,6 +215,10 @@ class _View extends StatelessView<RegisterViewModel> {
               const SizedBox(height: 16),
               Center(
                 child: InkWell(
+                  splashColor: Colors.transparent,
+                  highlightColor: Colors.transparent,
+                  splashFactory: NoSplash.splashFactory,
+                  hoverColor: Colors.transparent,
                   onTap: viewModel.addNewMember,
                   child: Container(
                     width: 180,
@@ -261,6 +265,10 @@ class _View extends StatelessView<RegisterViewModel> {
               ),
               const SizedBox(height: 4),
               InkWell(
+                splashColor: Colors.transparent,
+                highlightColor: Colors.transparent,
+                splashFactory: NoSplash.splashFactory,
+                hoverColor: Colors.transparent,
                 onTap: viewModel.showSessionList,
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(8),

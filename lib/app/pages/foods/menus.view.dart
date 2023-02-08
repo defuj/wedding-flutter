@@ -50,6 +50,10 @@ class _View extends StatelessView<MenusViewModel> {
                       ),
                     ),
                     InkWell(
+                      splashColor: Colors.transparent,
+                      highlightColor: Colors.transparent,
+                      splashFactory: NoSplash.splashFactory,
+                      hoverColor: Colors.transparent,
                       onTap: () {},
                       child: const Icon(
                         Icons.shopping_cart_outlined,
@@ -88,6 +92,7 @@ class _View extends StatelessView<MenusViewModel> {
                       splashColor: Colors.transparent,
                       highlightColor: Colors.transparent,
                       splashFactory: NoSplash.splashFactory,
+                      hoverColor: Colors.transparent,
                       onTap: () {
                         viewModel.categorySelected = category;
                         viewModel.getMenus();
@@ -151,71 +156,79 @@ class _View extends StatelessView<MenusViewModel> {
                     crossAxisSpacing: 10,
                     children: [
                       for (var i = 0; i < viewModel.menus.length; i++)
-                        Container(
-                          padding: const EdgeInsets.all(13),
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(12),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.grey.withOpacity(0.1),
-                                spreadRadius: 3,
-                                blurRadius: 3,
-                                offset: const Offset(0, 1),
-                              ),
-                            ],
-                          ),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              AspectRatio(
-                                aspectRatio: 1 / 0.9,
-                                child: ClipRRect(
-                                  borderRadius: const BorderRadius.all(
-                                    Radius.circular(8),
-                                  ),
-                                  child: Image.network(
-                                    viewModel.menus[i].menuCoverPicture!,
-                                    fit: BoxFit.cover,
-                                    errorBuilder:
-                                        (context, error, stackTrace) =>
-                                            Container(
-                                      color: IColors.black10,
+                        InkWell(
+                          splashColor: Colors.transparent,
+                          highlightColor: Colors.transparent,
+                          splashFactory: NoSplash.splashFactory,
+                          hoverColor: Colors.transparent,
+                          onTap: () =>
+                              viewModel.loadMenuDetail(viewModel.menus[i]),
+                          child: Container(
+                            padding: const EdgeInsets.all(13),
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(12),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.grey.withOpacity(0.1),
+                                  spreadRadius: 3,
+                                  blurRadius: 3,
+                                  offset: const Offset(0, 1),
+                                ),
+                              ],
+                            ),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                AspectRatio(
+                                  aspectRatio: 1 / 0.9,
+                                  child: ClipRRect(
+                                    borderRadius: const BorderRadius.all(
+                                      Radius.circular(8),
+                                    ),
+                                    child: Image.network(
+                                      viewModel.menus[i].menuCoverPicture!,
+                                      fit: BoxFit.cover,
+                                      errorBuilder:
+                                          (context, error, stackTrace) =>
+                                              Container(
+                                        color: IColors.black10,
+                                      ),
                                     ),
                                   ),
                                 ),
-                              ),
-                              const SizedBox(height: 6.2),
-                              Text(
-                                viewModel.menus[i].menuName!,
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .bodyText1!
-                                    .copyWith(
-                                        color: IColors.green800,
-                                        fontWeight: FontWeight.w600),
-                              ),
-                              const SizedBox(height: 8.2),
-                              Row(
-                                children: [
-                                  Text(
-                                    'Selengkapnya',
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .bodyText2!
-                                        .copyWith(
-                                            color: IColors.pink50,
-                                            fontWeight: FontWeight.w400),
-                                  ),
-                                  const SizedBox(width: 6),
-                                  const Icon(
-                                    Icons.arrow_forward_rounded,
-                                    color: IColors.pink50,
-                                    size: 14,
-                                  ),
-                                ],
-                              )
-                            ],
+                                const SizedBox(height: 6.2),
+                                Text(
+                                  viewModel.menus[i].menuName!,
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .bodyText1!
+                                      .copyWith(
+                                          color: IColors.green800,
+                                          fontWeight: FontWeight.w600),
+                                ),
+                                const SizedBox(height: 8.2),
+                                Row(
+                                  children: [
+                                    Text(
+                                      'Selengkapnya',
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .bodyText2!
+                                          .copyWith(
+                                              color: IColors.pink50,
+                                              fontWeight: FontWeight.w400),
+                                    ),
+                                    const SizedBox(width: 6),
+                                    const Icon(
+                                      Icons.arrow_forward_rounded,
+                                      color: IColors.pink50,
+                                      size: 14,
+                                    ),
+                                  ],
+                                )
+                              ],
+                            ),
                           ),
                         ),
                     ],

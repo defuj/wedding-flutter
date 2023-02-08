@@ -45,14 +45,14 @@ class MenuModel {
 
   Map<String, dynamic> toJson() {
     return {
-      'id': menuID,
-      'id_kategori': categoryID,
+      'id': menuID.toString(),
+      'id_kategori': categoryID.toString(),
       'nama_menu': menuName,
       'deskripsi': menuDesc,
       'img_cover': menuCoverPicture,
       'img_second': menuPicture1,
       'img_third': menuPicture2,
-      'stok': menuStock,
+      'stok': menuStock.toString(),
     };
   }
 }

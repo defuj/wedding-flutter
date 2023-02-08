@@ -31,8 +31,8 @@ class MemberModel {
     return {
       'id': memberID,
       'nama': memberName,
-      'id_reservasi': reservasionID,
-      'isConfirm': isConfirm,
+      'id_reservasi': reservasionID.toString(),
+      'isConfirm': isConfirm.toString(),
     };
   }
 }

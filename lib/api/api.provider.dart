@@ -201,4 +201,24 @@ class ApiProvider extends GetConnect {
       return Future.error('Error: $e');
     }
   }
+
+  Future<List<MemberModel>> getMember({required String reservasionID}) async {
+    try {
+      final response =
+          await get(ApiEndPoints().getMember(reservasionID: reservasionID));
+      if (response.status.hasError) {
+        return Future.error(response.statusText ??
+            'Terjadi kesalahan saat mengambil data menu');
+      } else {
+        if (response.body['status'] == false) {
+          return Future.error(response.body['message'] ?? 'Tidak ada member');
+        } else {
+          final members = response.body['data'] as List;
+          return members.map((e) => MemberModel.fromJson(e)).toList();
+        }
+      }
+    } catch (e) {
+      return Future.error('Error: $e');
+    }
+  }
 }

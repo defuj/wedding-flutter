@@ -7,6 +7,13 @@ class MenusViewModel extends ViewModel {
   late ApiProvider apiProvider;
   final box = GetStorage();
 
+  List<MemberModel> _members = List<MemberModel>.empty(growable: true);
+  List<MemberModel> get members => _members;
+  set members(List<MemberModel> value) {
+    _members = value;
+    notifyListeners();
+  }
+
   bool _isLoading = false;
   bool get isLoading => _isLoading;
   set isLoading(bool value) {
@@ -80,14 +87,39 @@ class MenusViewModel extends ViewModel {
         menus = value;
       },
       onError: (e) {
+        log('Error: $e', name: 'getMenus');
         isLoading = false;
         menus = List<MenuModel>.empty(growable: true);
-        SweetDialog(
-          context: context,
-          title: 'Oops!',
-          content: e.toString(),
-          dialogType: SweetDialogType.error,
-        ).show();
+        // SweetDialog(
+        //   context: context,
+        //   title: 'Oops!',
+        //   content: e.toString(),
+        //   dialogType: SweetDialogType.error,
+        // ).show();
+      },
+    );
+  }
+
+  void getMember({required int reservasionID}) async {
+    await apiProvider.getMember(reservasionID: reservasionID.toString()).then(
+      (value) {
+        members = value;
+      },
+      onError: (e) {
+        log('Error: $e', name: 'getMember');
+        members = List<MemberModel>.empty(growable: true);
+      },
+    );
+  }
+
+  void loadMenuDetail(MenuModel menu) {
+    Get.toNamed(
+      '/menus/detail',
+      arguments: {
+        'reservasionID': reservasionID,
+        'sessionID': sessionID,
+        'menu': menu.toJson(),
+        'members': members,
       },
     );
   }
@@ -114,6 +146,7 @@ class MenusViewModel extends ViewModel {
 
         Future.delayed(Duration.zero, () {
           getMenus();
+          getMember(reservasionID: int.parse(args['reservasionID'].toString()));
         });
       } catch (e) {
         log('Error: $e');
@@ -137,6 +170,7 @@ class MenusViewModel extends ViewModel {
 
         Future.delayed(Duration.zero, () {
           getMenus();
+          getMember(reservasionID: box.read('reservasionID'));
         });
       } else {
         try {

@@ -117,6 +117,7 @@ class RegisterViewModel extends ViewModel {
                     splashColor: Colors.transparent,
                     highlightColor: Colors.transparent,
                     splashFactory: NoSplash.splashFactory,
+                    hoverColor: Colors.transparent,
                     onTap: () {
                       selectedSession = sessions[index].sessionID!;
                       selectedSessionName =
