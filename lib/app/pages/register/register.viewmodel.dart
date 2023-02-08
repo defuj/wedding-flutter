@@ -311,11 +311,11 @@ class RegisterViewModel extends ViewModel {
           dialogType: SweetDialogType.error,
           barrierDismissible: false,
           confirmText: 'Kembali',
-          onConfirm: () => Get.toNamed('/login'),
+          onConfirm: () => Get.toNamed('/enter'),
         ).show();
       }
     } else {
-      Get.toNamed('/login');
+      Get.toNamed('/enter');
     }
   }
 

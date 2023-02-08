@@ -25,7 +25,7 @@ class LoginViewModel extends ViewModel {
       loading.show();
       Future.delayed(const Duration(seconds: 2), () {
         loading.dismiss();
-        Get.toNamed('/register', arguments: {
+        Get.toNamed('/reservation', arguments: {
           'userName': userName,
           'phoneNumber': phoneNumber,
         });
@@ -155,13 +155,13 @@ class LoginViewModel extends ViewModel {
               'sessionID': sessionID,
             });
           } else {
-            Get.toNamed('/register', arguments: {
+            Get.toNamed('/reservation', arguments: {
               'userName': value['userName'],
               'phoneNumber': phoneNumber,
             });
           }
         } else {
-          Get.toNamed('/register', arguments: {
+          Get.toNamed('/reservation', arguments: {
             'userName': value,
             'phoneNumber': phoneNumber,
           });

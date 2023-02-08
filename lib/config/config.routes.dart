@@ -2,18 +2,23 @@ import 'package:wedding/repositories.dart';
 
 var getRoutes = [
   GetPage(
-    name: '/login',
+    name: '/enter',
     page: () => const Login(),
     transition: Transition.cupertino,
   ),
   GetPage(
-    name: '/register',
+    name: '/reservation',
     page: () => const Register(),
     transition: Transition.cupertino,
   ),
   GetPage(
     name: '/menus',
     page: () => const Menus(),
+    transition: Transition.cupertino,
+  ),
+  GetPage(
+    name: '/menus/detail',
+    page: () => const MenuDetail(),
     transition: Transition.cupertino,
   ),
 ];
