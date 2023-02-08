@@ -7,6 +7,13 @@ class MenusViewModel extends ViewModel {
   late ApiProvider apiProvider;
   final box = GetStorage();
 
+  bool _isLoading = false;
+  bool get isLoading => _isLoading;
+  set isLoading(bool value) {
+    _isLoading = value;
+    notifyListeners();
+  }
+
   String _userName = '';
   String get userName => _userName;
   set userName(String value) {
@@ -31,6 +38,7 @@ class MenusViewModel extends ViewModel {
   CategoryModel _categorySelected = CategoryModel(
     categoryID: '1',
     categoryName: 'Appetizer',
+    categoryIcon: 'assets/icons/svg/appetizer.svg',
   );
   CategoryModel get categorySelected => _categorySelected;
   set categorySelected(CategoryModel value) {
@@ -39,10 +47,22 @@ class MenusViewModel extends ViewModel {
   }
 
   List<CategoryModel> categories = [
-    CategoryModel(categoryID: '1', categoryName: 'Appetizer'),
-    CategoryModel(categoryID: '2', categoryName: 'Main Course'),
-    CategoryModel(categoryID: '3', categoryName: 'Dessert'),
-    CategoryModel(categoryID: '4', categoryName: 'Drink'),
+    CategoryModel(
+        categoryID: '1',
+        categoryName: 'Appetizer',
+        categoryIcon: 'assets/icons/svg/appetizer.svg'),
+    CategoryModel(
+        categoryID: '2',
+        categoryName: 'Main Course',
+        categoryIcon: 'assets/icons/svg/main.svg'),
+    CategoryModel(
+        categoryID: '3',
+        categoryName: 'Dessert',
+        categoryIcon: 'assets/icons/svg/dessert.svg'),
+    CategoryModel(
+        categoryID: '4',
+        categoryName: 'Drink',
+        categoryIcon: 'assets/icons/svg/drink.svg'),
   ];
 
   List<MenuModel> _menus = List<MenuModel>.empty(growable: true);
@@ -53,14 +73,15 @@ class MenusViewModel extends ViewModel {
   }
 
   void getMenus() async {
-    loading.show();
+    isLoading = true;
     apiProvider.getMenus(categoryID: categorySelected.categoryID!).then(
       (value) {
-        loading.dismiss();
+        isLoading = false;
         menus = value;
       },
       onError: (e) {
-        loading.dismiss();
+        isLoading = false;
+        menus = List<MenuModel>.empty(growable: true);
         SweetDialog(
           context: context,
           title: 'Oops!',

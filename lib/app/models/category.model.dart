@@ -11,16 +11,20 @@ class CategoryModel {
   final String? categoryID;
   @JsonKey(name: 'categoryName')
   final String? categoryName;
+  @JsonKey(name: 'categoryIcon')
+  final String? categoryIcon;
 
   CategoryModel({
     this.categoryID,
     this.categoryName,
+    this.categoryIcon,
   });
 
   factory CategoryModel.fromJson(Map<String, dynamic> json) {
     return CategoryModel(
       categoryID: json['categoryID'] as String?,
       categoryName: json['categoryName'] as String?,
+      categoryIcon: json['categoryIcon'] as String?,
     );
   }
 
@@ -28,6 +32,7 @@ class CategoryModel {
     return {
       'categoryID': categoryID,
       'categoryName': categoryName,
+      'categoryIcon': categoryIcon,
     };
   }
 }
