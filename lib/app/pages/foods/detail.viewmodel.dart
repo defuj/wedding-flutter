@@ -211,7 +211,7 @@ class MenuDetailViewModel extends ViewModel {
     if (menuAvailable) {
       // if menu already in cart, update menu
       var menuIndex = currentCart
-          .indexWhere((element) => element.menu!.menuID == menu.menuID);
+          .indexWhere((element) => element.menu!.categoryID == menu.categoryID);
       currentCart[menuIndex].members = memberSelected;
       currentCart[menuIndex].menu = menu;
       currentCart[menuIndex].note = note;
@@ -222,7 +222,7 @@ class MenuDetailViewModel extends ViewModel {
         context: context,
         dialogType: SweetDialogType.success,
         title: 'Berhasil',
-        content: 'Keranjang berhasil diperbarui',
+        content: 'Menu berhasil diperbarui',
       ).show();
     } else {
       // if menu not in cart, add menu
