@@ -25,7 +25,7 @@ class LoginViewModel extends ViewModel {
       loading.show();
       Future.delayed(const Duration(seconds: 2), () {
         loading.dismiss();
-        Get.toNamed('/reservation', arguments: {
+        Get.offAllNamed('/reservation', arguments: {
           'userName': userName,
           'phoneNumber': phoneNumber,
         });
@@ -149,19 +149,19 @@ class LoginViewModel extends ViewModel {
 
         if (reservasionID != null && sessionID != null) {
           if (reservasionID != 0 && sessionID != 0) {
-            Get.toNamed('/menus', arguments: {
+            Get.offAllNamed('/menus', arguments: {
               'userName': value['userName'],
               'reservasionID': reservasionID,
               'sessionID': sessionID,
             });
           } else {
-            Get.toNamed('/reservation', arguments: {
+            Get.offAllNamed('/reservation', arguments: {
               'userName': value['userName'],
               'phoneNumber': phoneNumber,
             });
           }
         } else {
-          Get.toNamed('/reservation', arguments: {
+          Get.offAllNamed('/reservation', arguments: {
             'userName': value,
             'phoneNumber': phoneNumber,
           });

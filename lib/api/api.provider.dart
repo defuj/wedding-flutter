@@ -125,18 +125,24 @@ class ApiProvider extends GetConnect {
     }
   }
 
-  Future<String> addMember(
-      {required int reservasionID,
-      required String sessionID,
-      required List<String> members}) async {
-    httpClient.defaultContentType = 'multipart/form-data';
+  Future<String> addMember({
+    required int reservasionID,
+    required String sessionID,
+    required List<MemberModel> members,
+  }) async {
+    List<Map<String, String>> anggotas = [
+      for (var i = 0; i < members.length; i++)
+        {
+          'nama': members[i].memberName!,
+          'panggilan': members[i].nickname!,
+        }
+    ];
+    httpClient.defaultContentType = 'application/json';
     final data = FormData({
       'id_reservasi': reservasionID,
       'id_sesi': sessionID,
+      'anggota': anggotas,
     });
-    for (var i = 0; i < members.length; i++) {
-      data.fields.add(MapEntry('anggota[$i]', members[i]));
-    }
 
     try {
       final response = await post(ApiEndPoints.addMember, data);

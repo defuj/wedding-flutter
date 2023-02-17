@@ -22,6 +22,7 @@ class _View extends StatelessView<RegisterViewModel> {
       appBar: appBar(
         title: 'Silahkan lanjutkan registrasi',
         context: context,
+        onBack: () => Get.back(),
       ),
       body: SingleChildScrollView(
         child: Padding(
@@ -80,75 +81,15 @@ class _View extends StatelessView<RegisterViewModel> {
                 style: Theme.of(context).textTheme.bodyText1!.copyWith(
                     fontWeight: FontWeight.w600, color: IColors.gray800),
               ),
-              //   for (var index = 0; index < viewModel.members.length; index++)
-              //     Container(
-              //       margin: const EdgeInsets.only(top: 8),
-              //       width: double.infinity,
-              //       child: Column(
-              //         crossAxisAlignment: CrossAxisAlignment.start,
-              //         children: [
-              //           Text(
-              //             'Nama Lengkap',
-              //             textAlign: TextAlign.start,
-              //             style: Theme.of(context)
-              //                 .textTheme
-              //                 .bodyText2!
-              //                 .copyWith(color: Colors.black),
-              //           ),
-              //           const SizedBox(height: 4),
-              //           InputText(
-              //             suffixAction: () => viewModel.removeMember(index),
-              //             suffixIcon: Container(
-              //               padding: const EdgeInsets.symmetric(
-              //                 horizontal: 2,
-              //                 vertical: 2,
-              //               ),
-              //               decoration: BoxDecoration(
-              //                 color: IColors.black100,
-              //                 borderRadius: BorderRadius.circular(16),
-              //               ),
-              //               child: const Icon(
-              //                 Icons.close_rounded,
-              //                 color: Colors.white,
-              //                 size: 14,
-              //               ),
-              //             ),
-              //             height: 44,
-              //             padding: const EdgeInsets.only(
-              //               left: 0,
-              //               right: 0,
-              //             ),
-              //             keyboardType: TextInputType.name,
-              //             textInputAction: TextInputAction.done,
-              //             onChanged: (value) =>
-              //                 viewModel.updateMemberName(value, index),
-              //             hintText: 'Masukkan nama lengkap',
-              //             initialValue: viewModel.members[index].memberName,
-              //             prefixIcon: Container(
-              //               color: IColors.pink50,
-              //               padding: const EdgeInsets.symmetric(
-              //                 horizontal: 12,
-              //                 vertical: 13,
-              //               ),
-              //               margin: const EdgeInsets.only(right: 8),
-              //               child: const Icon(
-              //                 Icons.person_outline_rounded,
-              //                 color: Colors.white,
-              //                 size: 18,
-              //               ),
-              //             ),
-              //           ),
-              //         ],
-              //       ),
-              //     ),
               ListView.builder(
                 shrinkWrap: true,
                 physics: const NeverScrollableScrollPhysics(),
                 itemCount: viewModel.members.length,
                 itemBuilder: (context, index) {
                   final member = viewModel.members[index];
-                  final controller =
-                      TextEditingController(text: member.memberName);
+                  final controller = TextEditingController(
+                    text: member.memberName,
+                  );
                   return Container(
                     key: UniqueKey(),
                     margin: const EdgeInsets.only(top: 8),
@@ -156,6 +97,56 @@ class _View extends StatelessView<RegisterViewModel> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
+                        const SizedBox(height: 16),
+                        Text(
+                          'Panggilan',
+                          textAlign: TextAlign.start,
+                          style: Theme.of(context)
+                              .textTheme
+                              .bodyText2!
+                              .copyWith(color: Colors.black),
+                        ),
+                        InkWell(
+                          onTap: () => viewModel.showNicknameDialog(index),
+                          splashColor: Colors.transparent,
+                          highlightColor: Colors.transparent,
+                          splashFactory: NoSplash.splashFactory,
+                          hoverColor: Colors.transparent,
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(8),
+                            child: Container(
+                              color: IColors.gray50,
+                              child: Row(
+                                children: [
+                                  Container(
+                                    color: IColors.pink50,
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 12,
+                                      vertical: 13,
+                                    ),
+                                    margin: const EdgeInsets.only(right: 8),
+                                    child: const Icon(
+                                      Icons.person_outline_rounded,
+                                      color: Colors.white,
+                                      size: 18,
+                                    ),
+                                  ),
+                                  Expanded(
+                                    child: Text(
+                                        viewModel.members[index].nickname ??
+                                            'Pilih panggilan'),
+                                  ),
+                                  const Icon(
+                                    Icons.keyboard_arrow_down_rounded,
+                                    color: IColors.gray800,
+                                    size: 24,
+                                  ),
+                                  const SizedBox(width: 12),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
                         Text(
                           'Nama Lengkap',
                           textAlign: TextAlign.start,

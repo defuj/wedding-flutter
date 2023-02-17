@@ -10,12 +10,15 @@ class MemberModel {
   final int? reservasionID;
   @JsonKey(name: 'isConfirm')
   final int? isConfirm;
+  @JsonKey(name: 'panggilan')
+  String? nickname;
 
   MemberModel({
     this.memberID,
     this.memberName,
     this.reservasionID,
     this.isConfirm,
+    this.nickname,
   });
 
   factory MemberModel.fromJson(Map<String, dynamic> json) {
@@ -24,6 +27,7 @@ class MemberModel {
       memberName: json['nama'] as String?,
       reservasionID: int.parse(json['id_reservasi'] ?? '0'),
       isConfirm: int.parse(json['isConfirm'] ?? '0'),
+      nickname: json['panggilan'] as String?,
     );
   }
 
@@ -33,6 +37,7 @@ class MemberModel {
       'nama': memberName,
       'id_reservasi': reservasionID.toString(),
       'isConfirm': isConfirm.toString(),
+      'panggilan': nickname,
     };
   }
 }

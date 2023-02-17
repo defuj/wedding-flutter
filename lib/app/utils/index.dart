@@ -13,3 +13,45 @@ ApiProvider getApiProvider = Get.isRegistered<ApiProvider>()
 String capitalize(String s) => s.split(' ').map((str) {
       return str[0].toUpperCase() + str.substring(1);
     }).join(' ');
+
+double edgeByWidth({
+  required BuildContext context,
+  required double xs,
+  required double sm,
+  required double md,
+  required double lg,
+  required double xl,
+}) {
+  if (MediaQuery.of(context).size.width >= 1920) {
+    return xl;
+  } else if (MediaQuery.of(context).size.width >= 1280) {
+    return lg;
+  } else if (MediaQuery.of(context).size.width >= 960) {
+    return md;
+  } else if (MediaQuery.of(context).size.width >= 600) {
+    return sm;
+  } else {
+    return xs;
+  }
+}
+
+bool visibilityByWidth({
+  required BuildContext context,
+  required bool xs,
+  required bool sm,
+  required bool md,
+  required bool lg,
+  required bool xl,
+}) {
+  if (MediaQuery.of(context).size.width >= 1920) {
+    return xl;
+  } else if (MediaQuery.of(context).size.width >= 1280) {
+    return lg;
+  } else if (MediaQuery.of(context).size.width >= 960) {
+    return md;
+  } else if (MediaQuery.of(context).size.width >= 600) {
+    return sm;
+  } else {
+    return xs;
+  }
+}

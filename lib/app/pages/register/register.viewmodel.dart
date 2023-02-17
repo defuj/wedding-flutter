@@ -62,6 +62,106 @@ class RegisterViewModel extends ViewModel {
     notifyListeners();
   }
 
+  List<String> nickname = [
+    'Bpk',
+    'Ibu',
+    'Tuan/Mr',
+    'Nona',
+    'Ananda (0-6tahun)',
+  ];
+
+  void showNicknameDialog(int indexMember) {
+    showModalBottomSheet(
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(
+          top: Radius.circular(16),
+        ),
+      ),
+      isScrollControlled: true,
+      backgroundColor: Colors.white,
+      context: context,
+      builder: ((context) {
+        return Padding(
+          padding: EdgeInsets.only(
+            left: 16,
+            right: 16,
+            bottom: MediaQuery.of(context).viewInsets.bottom + 16,
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Center(
+                child: Container(
+                  margin: const EdgeInsets.only(
+                    bottom: 24,
+                    top: 16,
+                  ),
+                  height: 4,
+                  width: 80,
+                  decoration: const BoxDecoration(
+                    color: IColors.neutral20,
+                    borderRadius: BorderRadius.all(
+                      Radius.circular(12.0),
+                    ),
+                  ),
+                ),
+              ),
+              Text(
+                'Silahkan pilih nama panggilan',
+                style: Theme.of(context).textTheme.bodyText1!.copyWith(
+                      color: IColors.gray800,
+                      fontWeight: FontWeight.w400,
+                      fontFamily: 'open-sans',
+                    ),
+              ),
+              const SizedBox(height: 16),
+              ListView.builder(
+                key: UniqueKey(),
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                itemCount: nickname.length,
+                itemBuilder: (context, index) {
+                  return InkWell(
+                    splashColor: Colors.transparent,
+                    highlightColor: Colors.transparent,
+                    splashFactory: NoSplash.splashFactory,
+                    hoverColor: Colors.transparent,
+                    onTap: () {
+                      members[indexMember].nickname = nickname[index];
+                      members = members;
+                      Navigator.pop(context);
+                    },
+                    child: Container(
+                      margin: const EdgeInsets.only(bottom: 6),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 8,
+                      ),
+                      decoration: BoxDecoration(
+                        color: IColors.gray50,
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Text(
+                        nickname[index],
+                        style: Theme.of(context).textTheme.bodyText2!.copyWith(
+                              color: IColors.black80,
+                              fontWeight: FontWeight.w400,
+                              fontFamily: 'open-sans',
+                            ),
+                      ),
+                    ),
+                  );
+                },
+              ),
+              const SizedBox(height: 8),
+            ],
+          ),
+        );
+      }),
+    );
+  }
+
   void showSessionList() {
     showModalBottomSheet(
       shape: const RoundedRectangleBorder(
@@ -109,6 +209,7 @@ class RegisterViewModel extends ViewModel {
               ),
               const SizedBox(height: 16),
               ListView.builder(
+                key: UniqueKey(),
                 shrinkWrap: true,
                 physics: const NeverScrollableScrollPhysics(),
                 itemCount: sessions.length,
@@ -201,12 +302,12 @@ class RegisterViewModel extends ViewModel {
   }
 
   void addMember(List<MemberModel> members, int reservasionID) async {
-    List<String> memberNames = List.from(members.map((e) => e.memberName!));
+    // List<String> memberNames = List.from(members.map((e) => e.memberName!));
     await apiProvider
         .addMember(
             reservasionID: reservasionID,
             sessionID: selectedSession,
-            members: memberNames)
+            members: members)
         .then(
       (value) {
         loading.dismiss();
@@ -287,6 +388,18 @@ class RegisterViewModel extends ViewModel {
     });
   }
 
+  void userNotFound() {
+    SweetDialog(
+      context: context,
+      title: 'Oops!',
+      content: 'Tidak dapat menemukan data tamu',
+      dialogType: SweetDialogType.error,
+      barrierDismissible: false,
+      confirmText: 'Kembali',
+      onConfirm: () => Get.toNamed('/enter'),
+    ).show();
+  }
+
   @override
   void init() {
     apiProvider = getApiProvider;
@@ -296,27 +409,23 @@ class RegisterViewModel extends ViewModel {
       barrierDismissible: false,
     );
 
-    final args = Get.arguments;
-    if (args != null) {
-      try {
+    try {
+      final args = Get.arguments;
+      if (args != null) {
         userName = args['userName'];
         phoneNumber = args['phoneNumber'];
         Future.delayed(Duration.zero, () {
           getDataSession();
         });
-      } catch (e) {
-        SweetDialog(
-          context: context,
-          title: 'Oops!',
-          content: 'Tidak dapat menemukan data user',
-          dialogType: SweetDialogType.error,
-          barrierDismissible: false,
-          confirmText: 'Kembali',
-          onConfirm: () => Get.toNamed('/enter'),
-        ).show();
+      } else {
+        Future.delayed(Duration.zero, () {
+          userNotFound();
+        });
       }
-    } else {
-      Get.toNamed('/enter');
+    } catch (e) {
+      Future.delayed(Duration.zero, () {
+        userNotFound();
+      });
     }
   }
 

@@ -21,4 +21,17 @@ var getRoutes = [
     page: () => const MenuDetail(),
     transition: Transition.cupertino,
   ),
+  GetPage(
+    name: '/menus/detail',
+    page: () => const MenuDetail(),
+    transition: Transition.cupertino,
+  ),
+  GetPage(
+    name: '/invitation',
+    page: () => const Invitation(),
+    parameters: const {
+      'name': 'Bpk.DedeFujiAbdul',
+    },
+    transition: Transition.cupertino,
+  ),
 ];

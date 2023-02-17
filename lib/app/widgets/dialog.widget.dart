@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'dart:ui';
 import 'package:wedding/repositories.dart';
 
@@ -117,8 +118,12 @@ class SweetDialog extends AlertDialog {
                           splashFactory: NoSplash.splashFactory,
                         ),
                         onPressed: () {
-                          Navigator.pop(context);
-                          onConfirm != null ? onConfirm() : () {};
+                          Get.back();
+                          try {
+                            onConfirm != null ? onConfirm() : () {};
+                          } catch (e) {
+                            log(e.toString());
+                          }
                         },
                         child: Text(
                           confirmText,
@@ -161,8 +166,12 @@ class SweetDialog extends AlertDialog {
                             splashFactory: NoSplash.splashFactory,
                           ),
                           onPressed: () {
-                            Navigator.pop(context);
-                            onNeutral != null ? onNeutral() : () {};
+                            Get.back();
+                            try {
+                              onNeutral != null ? onNeutral() : () {};
+                            } catch (e) {
+                              log(e.toString());
+                            }
                           },
                           child: Text(
                             neutralText,
@@ -199,8 +208,12 @@ class SweetDialog extends AlertDialog {
                             splashFactory: NoSplash.splashFactory,
                           ),
                           onPressed: () {
-                            Navigator.pop(context);
-                            onCancel != null ? onCancel() : () {};
+                            Get.back();
+                            try {
+                              onCancel != null ? onCancel() : () {};
+                            } catch (e) {
+                              log(e.toString());
+                            }
                           },
                           child: Text(
                             cancelText,

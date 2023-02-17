@@ -171,6 +171,7 @@ PreferredSizeWidget appBar({
   required BuildContext context,
   String title = '',
   List<Widget> actions = const [],
+  Function()? onBack,
 }) {
   return AppBar(
     elevation: 3,
@@ -179,5 +180,12 @@ PreferredSizeWidget appBar({
     shadowColor: IColors.blacktransparant,
     title: appBarTitle(context: context, title: title),
     actions: actions,
+    // leading: IconButton(
+    //   onPressed: () => onBack,
+    //   icon: const Icon(
+    //     Icons.arrow_back_ios_rounded,
+    //     color: Colors.black,
+    //   ),
+    // ),
   );
 }

@@ -20,16 +20,16 @@ Future<void> main() async {
     textTheme: textTheme,
   );
   await GetStorage.init();
-//   Get.put<ApiProvider>(ApiProvider());
   runApp(
     FlutterWebFrame(
       builder: (context) => GetMaterialApp(
-        title: 'Enter invited guest data ',
+        title: 'Enter invited guest data',
         theme: lightTheme,
-        initialRoute: '/enter',
+        initialRoute: '/invitation',
         getPages: getRoutes,
         initialBinding: MainBinding(),
       ),
+      enabled: false,
       maximumSize: const Size(475, 1080),
     ),
   );
