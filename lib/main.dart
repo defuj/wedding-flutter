@@ -1,5 +1,4 @@
 import 'dart:io';
-import 'package:flutter_web_frame/flutter_web_frame.dart';
 import 'package:wedding/repositories.dart';
 
 class MyHttpOverrides extends HttpOverrides {
@@ -20,17 +19,24 @@ Future<void> main() async {
     textTheme: textTheme,
   );
   await GetStorage.init();
+
   runApp(
-    FlutterWebFrame(
-      builder: (context) => GetMaterialApp(
-        title: 'Enter invited guest data',
-        theme: lightTheme,
-        initialRoute: '/invitation',
-        getPages: getRoutes,
-        initialBinding: MainBinding(),
-      ),
-      enabled: false,
-      maximumSize: const Size(475, 1080),
+    // FlutterWebFrame(
+    //   builder: (context) => GetMaterialApp(
+    //     title: 'Enter invited guest data',
+    //     theme: lightTheme,
+    //     initialRoute: '/invitation',
+    //     getPages: getRoutes,
+    //     initialBinding: MainBinding(),
+    //   ),
+    //   maximumSize: const Size(475, 1080),
+    // ),
+    GetMaterialApp(
+      title: 'Enter invited guest data',
+      theme: lightTheme,
+      initialRoute: '/invitation',
+      getPages: getRoutes,
+      initialBinding: MainBinding(),
     ),
   );
 }

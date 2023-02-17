@@ -41,6 +41,38 @@ class ApiProvider extends GetConnect {
     httpClient.maxAuthRetries = 3;
   }
 
+  Future<String> sendComment({
+    required String name,
+    required String comment,
+  }) async {
+    final data = {
+      'full_name': name,
+      'comment': comment,
+    };
+    try {
+      final response = await request(
+        ApiEndPoints.submitComment,
+        'POST',
+        contentType: 'application/json',
+        body: data,
+      );
+      log('result: ${response.body}');
+      log('result: ${response.statusCode}');
+      if (response.status.hasError) {
+        return Future.error(
+            response.statusText ?? 'Terjadi kesalahan saat mengirim komentar');
+      } else {
+        if (response.body['status'] == false) {
+          return Future.error(response.body['message']);
+        } else {
+          return Future.value(response.body['message']);
+        }
+      }
+    } catch (e) {
+      return Future.error(e.toString());
+    }
+  }
+
   Future<Map<String, dynamic>> checkPhoneNumber({required String phone}) async {
     if (phone.substring(0, 1) == '0') {
       phone = phone.replaceFirst('0', '62');

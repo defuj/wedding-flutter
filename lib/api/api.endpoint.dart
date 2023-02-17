@@ -7,4 +7,6 @@ class ApiEndPoints {
   static const String addMember = '/reservasi/submit_anggota';
   static const String getSessions = '/reservasi/load_sesi';
   static const String submitMenus = '/menu/submit';
+  static const String submitComment = '/comment/submit';
+  static const String getComments = '/comment/load';
 }
