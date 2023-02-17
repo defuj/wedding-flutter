@@ -41,6 +41,25 @@ class ApiProvider extends GetConnect {
     httpClient.maxAuthRetries = 3;
   }
 
+  Future<List<CommentModel>> fetchComment() async {
+    try {
+      final response = await get(ApiEndPoints.getComments);
+      if (response.status.hasError) {
+        return Future.error(
+            response.statusText ?? 'Terjadi kesalahan saat memuat komentar');
+      } else {
+        if (response.body['status'] == false) {
+          return Future.error(response.body['message'] ?? 'Tidak ada komentar');
+        } else {
+          final comments = response.body['data'] as List;
+          return comments.map((e) => CommentModel.fromJson(e)).toList();
+        }
+      }
+    } catch (e) {
+      return Future.error(e.toString());
+    }
+  }
+
   Future<String> sendComment({
     required String name,
     required String comment,

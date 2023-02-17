@@ -553,35 +553,41 @@ class _View extends StatelessView<InvitationViewModel> {
                             ),
                           ],
                         ),
-                        const SizedBox(height: 24),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            const Icon(
-                              Icons.alarm,
-                              color: Colors.white,
-                            ),
-                            const SizedBox(width: 8),
-                            Expanded(
-                              child: Text(
-                                'Sesi 1 (11:00 - 13:00)',
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .headline2!
-                                    .copyWith(
-                                        color: Colors.white,
-                                        fontSize: edgeByWidth(
-                                          context: context,
-                                          xs: 16,
-                                          sm: 16,
-                                          md: 18,
-                                          lg: 22,
-                                          xl: 22,
-                                        ),
-                                        fontWeight: FontWeight.w400),
+                        Visibility(
+                          visible: viewModel.userSession.isNotEmpty,
+                          child: const SizedBox(height: 24),
+                        ),
+                        Visibility(
+                          visible: viewModel.userSession.isNotEmpty,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              const Icon(
+                                Icons.alarm,
+                                color: Colors.white,
                               ),
-                            ),
-                          ],
+                              const SizedBox(width: 8),
+                              Expanded(
+                                child: Text(
+                                  viewModel.userSession,
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .headline2!
+                                      .copyWith(
+                                          color: Colors.white,
+                                          fontSize: edgeByWidth(
+                                            context: context,
+                                            xs: 16,
+                                            sm: 16,
+                                            md: 18,
+                                            lg: 22,
+                                            xl: 22,
+                                          ),
+                                          fontWeight: FontWeight.w400),
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
                         const SizedBox(height: 24),
                         Row(
@@ -686,8 +692,8 @@ class _View extends StatelessView<InvitationViewModel> {
                                   ),
                                   fontWeight: FontWeight.w400),
                         ),
-                        const SizedBox(height: 24),
                         SpGrid(
+                          margin: const EdgeInsets.only(top: 24, bottom: 24),
                           spacing: 16,
                           width: double.infinity,
                           alignment: WrapAlignment.center,
@@ -700,7 +706,6 @@ class _View extends StatelessView<InvitationViewModel> {
                               child: Container(
                                 margin: const EdgeInsets.symmetric(
                                   horizontal: 16,
-                                  vertical: 8,
                                 ),
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.center,
@@ -965,7 +970,7 @@ class _View extends StatelessView<InvitationViewModel> {
                   xl: 4,
                 ).toInt(),
                 children: [
-                  for (var i = 0; i < viewModel.comments.length; i++)
+                  for (var i = 0; i < viewModel.showedComments.length; i++)
                     Container(
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(16),
@@ -988,7 +993,7 @@ class _View extends StatelessView<InvitationViewModel> {
                                   color: IColors.black10,
                                   child: Center(
                                     child: Text(
-                                      viewModel.comments[i].commentName!
+                                      viewModel.showedComments[i].commentName!
                                           .substring(0, 2),
                                       style: Theme.of(context)
                                           .textTheme
@@ -1006,7 +1011,7 @@ class _View extends StatelessView<InvitationViewModel> {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Text(
-                                      viewModel.comments[i].commentName!,
+                                      viewModel.showedComments[i].commentName!,
                                       style: Theme.of(context)
                                           .textTheme
                                           .bodyText1!
@@ -1016,7 +1021,11 @@ class _View extends StatelessView<InvitationViewModel> {
                                     ),
                                     const SizedBox(height: 4),
                                     Text(
-                                      viewModel.comments[i].commenyTime!,
+                                      viewModel.showedComments[i].commenyTime ==
+                                              null
+                                          ? '-'
+                                          : viewModel
+                                              .showedComments[i].commenyTime!,
                                       style: Theme.of(context)
                                           .textTheme
                                           .overline!
@@ -1033,7 +1042,7 @@ class _View extends StatelessView<InvitationViewModel> {
                             margin: const EdgeInsets.only(top: 16),
                             child: Expanded(
                               child: Text(
-                                'Selamat menempuh hidup baru, semoga kau bahagia dengan dia dan selalu diberi kesehatan dan kebahagiaan. Amin',
+                                viewModel.showedComments[i].commentContent!,
                                 maxLines: 3,
                                 style: Theme.of(context)
                                     .textTheme
@@ -1050,14 +1059,22 @@ class _View extends StatelessView<InvitationViewModel> {
                 ],
               ),
             ),
-            const SizedBox(height: 24),
-            Center(
-              child: SizedBox(
-                width: 100,
-                height: 46,
-                child: ButtonPrimary(
-                  text: 'Load More',
-                  onPressed: () {},
+            Visibility(
+              visible:
+                  viewModel.showedComments.length != viewModel.comments.length,
+              child: const SizedBox(height: 24),
+            ),
+            Visibility(
+              visible:
+                  viewModel.showedComments.length != viewModel.comments.length,
+              child: Center(
+                child: SizedBox(
+                  width: 100,
+                  height: 46,
+                  child: ButtonPrimary(
+                    text: 'Load More',
+                    onPressed: () => viewModel.showMoreComment(),
+                  ),
                 ),
               ),
             ),

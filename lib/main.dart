@@ -25,7 +25,7 @@ Future<void> main() async {
     //   builder: (context) => GetMaterialApp(
     //     title: 'Enter invited guest data',
     //     theme: lightTheme,
-    //     initialRoute: '/invitation',
+    //     initialRoute: '/',
     //     getPages: getRoutes,
     //     initialBinding: MainBinding(),
     //   ),
@@ -34,7 +34,7 @@ Future<void> main() async {
     GetMaterialApp(
       title: 'Enter invited guest data',
       theme: lightTheme,
-      initialRoute: '/invitation',
+      initialRoute: '/',
       getPages: getRoutes,
       initialBinding: MainBinding(),
     ),

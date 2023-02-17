@@ -27,7 +27,7 @@ var getRoutes = [
     transition: Transition.cupertino,
   ),
   GetPage(
-    name: '/invitation',
+    name: '/',
     page: () => const Invitation(),
     parameters: const {
       'name': 'Bpk.DedeFujiAbdul',

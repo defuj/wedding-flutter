@@ -23,6 +23,13 @@ class InvitationViewModel extends ViewModel {
     notifyListeners();
   }
 
+  String _userSession = '';
+  String get userSession => _userSession;
+  set userSession(String value) {
+    _userSession = value;
+    notifyListeners();
+  }
+
   String _fullName = '';
   String get fullName => _fullName;
   set fullName(String value) {
@@ -37,44 +44,17 @@ class InvitationViewModel extends ViewModel {
     notifyListeners();
   }
 
-  List<CommentModel> _comments = [
-    CommentModel(
-      commentName: 'Yusup Apandi',
-      commenyTime: '12 Minutes ago',
-      commentContent: 'Semoga sukses dan bahagia selalu',
-    ),
-    CommentModel(
-      commentName: 'Denjul',
-      commenyTime: '15 Minutes ago',
-      commentContent:
-          'Semoga sukses dan bahagia selalu, semangat ya malam pertamanya :D',
-    ),
-    CommentModel(
-      commentName: 'Otongsuke',
-      commenyTime: '1 Hour ago',
-      commentContent:
-          'Semoga sukses dan bahagia selalu, semangat ya malam pertamanya :D',
-    ),
-    CommentModel(
-      commentName: 'Sasuke',
-      commenyTime: '12 Minutes ago',
-      commentContent: 'Semoga sukses dan bahagia selalu',
-    ),
-    CommentModel(
-      commentName: 'Yusup Apandi',
-      commenyTime: '12 Minutes ago',
-      commentContent: 'Semoga sukses dan bahagia selalu',
-    ),
-    CommentModel(
-      commentName: 'Denjul',
-      commenyTime: '15 Minutes ago',
-      commentContent:
-          'Semoga sukses dan bahagia selalu, semangat ya malam pertamanya :D',
-    ),
-  ];
+  List<CommentModel> _comments = List<CommentModel>.empty(growable: true);
   List<CommentModel> get comments => _comments;
   set comments(List<CommentModel> value) {
     _comments = value;
+    notifyListeners();
+  }
+
+  List<CommentModel> _showedComments = List<CommentModel>.empty(growable: true);
+  List<CommentModel> get showedComments => _showedComments;
+  set showedComments(List<CommentModel> value) {
+    _showedComments = value;
     notifyListeners();
   }
 
@@ -82,7 +62,36 @@ class InvitationViewModel extends ViewModel {
     Get.toNamed('/enter');
   }
 
-  void fetchComment() async {}
+  void showMoreComment() {
+    if (comments.length > 6) {
+      // check if current comments list if add 6 comment is equals with comments master length
+      if (showedComments.length + 6 >= comments.length) {
+        showedComments = comments;
+      } else {
+        List<CommentModel> newComments =
+            List<CommentModel>.empty(growable: true);
+        for (var i = 0; i < showedComments.length + 6; i++) {
+          final comment = comments[i];
+          newComments.add(comment);
+        }
+        showedComments = newComments;
+      }
+    } else {
+      showedComments = comments;
+    }
+  }
+
+  void fetchComment() async {
+    await apiProvider.fetchComment().then((value) {
+      comments = value;
+      log(value.length.toString());
+      showMoreComment();
+    }, onError: (err) {
+      log(err);
+      comments = List<CommentModel>.empty(growable: true);
+      showedComments = List<CommentModel>.empty(growable: true);
+    });
+  }
 
   void sendComment() async {
     if (fullName.isEmpty) {
@@ -140,7 +149,7 @@ class InvitationViewModel extends ViewModel {
       barrierDismissible: false,
     );
     Future.delayed(Duration.zero, () {
-      comments = comments;
+      fetchComment();
       try {
         userName = Get.parameters['nama'] ?? '';
       } catch (e) {
@@ -149,6 +158,12 @@ class InvitationViewModel extends ViewModel {
 
       try {
         userAddress = Get.parameters['alamat'] ?? '';
+      } catch (e) {
+        log(e.toString());
+      }
+
+      try {
+        userSession = Get.parameters['sesi'] ?? '';
       } catch (e) {
         log(e.toString());
       }
