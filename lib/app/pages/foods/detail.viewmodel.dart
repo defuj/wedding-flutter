@@ -304,19 +304,29 @@ class MenuDetailViewModel extends ViewModel {
   }
 
   void checkStock() {
-    if (menu.menuStock! > 0) {
-      var totalMember = memberSelected.length + 1;
-      if (totalMember > menu.menuStock!) {
+    try {
+      if (menu.menuStock! > 0) {
+        var totalMember = memberSelected.length + 1;
+        if (totalMember > menu.menuStock!) {
+          SweetDialog(
+            context: context,
+            dialogType: SweetDialogType.error,
+            title: 'Oops...',
+            content: 'Jumlah member melebihi stok menu',
+          ).show();
+        } else {
+          checkProduct();
+        }
+      } else {
         SweetDialog(
           context: context,
           dialogType: SweetDialogType.error,
           title: 'Oops...',
-          content: 'Jumlah member melebihi stok menu',
+          content: 'Menu ini sudah habis',
         ).show();
-      } else {
-        checkProduct();
       }
-    } else {
+    } catch (e) {
+      log(e.toString());
       SweetDialog(
         context: context,
         dialogType: SweetDialogType.error,
@@ -354,6 +364,7 @@ class MenuDetailViewModel extends ViewModel {
         log('SessionID: $sessionID');
 
         Future.delayed(Duration.zero, () {
+          log(menu.toJson().toString());
           prepareBanner();
         });
       } catch (e) {

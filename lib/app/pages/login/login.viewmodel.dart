@@ -6,6 +6,21 @@ class LoginViewModel extends ViewModel {
   late ApiProvider apiProvider;
   late SweetDialog loading;
 
+  List<String> nickname = [
+    'Bpk',
+    'Ibu',
+    'Tuan/Mr',
+    'Nona',
+    'Ananda (0-6tahun)',
+  ];
+
+  String _nickNameSelected = '';
+  String get nickNameSelected => _nickNameSelected;
+  set nickNameSelected(String value) {
+    _nickNameSelected = value;
+    notifyListeners();
+  }
+
   String _userName = '';
   String get userName => _userName;
   set userName(String value) {
@@ -40,12 +55,15 @@ class LoginViewModel extends ViewModel {
     }
   }
 
-  void checkPhoneNumber() async {
+  void showNicknameDialog() {
     showModalBottomSheet(
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(
           top: Radius.circular(16),
         ),
+      ),
+      constraints: const BoxConstraints(
+        maxWidth: 475,
       ),
       isScrollControlled: true,
       backgroundColor: Colors.white,
@@ -78,7 +96,99 @@ class LoginViewModel extends ViewModel {
                 ),
               ),
               Text(
-                'Kamu belum terdaftar, silahkan masukan nama',
+                'Silahkan pilih nama panggilan',
+                style: Theme.of(context).textTheme.bodyText1!.copyWith(
+                      color: IColors.gray800,
+                      fontWeight: FontWeight.w400,
+                      fontFamily: 'open-sans',
+                    ),
+              ),
+              const SizedBox(height: 16),
+              ListView.builder(
+                key: UniqueKey(),
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                itemCount: nickname.length,
+                itemBuilder: (context, index) {
+                  return InkWell(
+                    splashColor: Colors.transparent,
+                    highlightColor: Colors.transparent,
+                    splashFactory: NoSplash.splashFactory,
+                    hoverColor: Colors.transparent,
+                    onTap: () {
+                      nickNameSelected = nickname[index];
+                      Navigator.pop(context);
+                    },
+                    child: Container(
+                      margin: const EdgeInsets.only(bottom: 6),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 8,
+                      ),
+                      decoration: BoxDecoration(
+                        color: IColors.gray50,
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Text(
+                        nickname[index],
+                        style: Theme.of(context).textTheme.bodyText2!.copyWith(
+                              color: IColors.black80,
+                              fontWeight: FontWeight.w400,
+                              fontFamily: 'open-sans',
+                            ),
+                      ),
+                    ),
+                  );
+                },
+              ),
+              const SizedBox(height: 8),
+            ],
+          ),
+        );
+      }),
+    );
+  }
+
+  void checkPhoneNumber(LoginViewModel viewModel) async {
+    showModalBottomSheet(
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(
+          top: Radius.circular(16),
+        ),
+      ),
+      constraints: const BoxConstraints(maxWidth: 475),
+      isScrollControlled: true,
+      backgroundColor: Colors.white,
+      context: context,
+      builder: ((context) {
+        return Container(
+          padding: EdgeInsets.only(
+            left: 16,
+            right: 16,
+            bottom: MediaQuery.of(context).viewInsets.bottom + 16,
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Center(
+                child: Container(
+                  margin: const EdgeInsets.only(
+                    bottom: 24,
+                    top: 16,
+                  ),
+                  height: 4,
+                  width: 80,
+                  decoration: const BoxDecoration(
+                    color: IColors.neutral20,
+                    borderRadius: BorderRadius.all(
+                      Radius.circular(12.0),
+                    ),
+                  ),
+                ),
+              ),
+              Text(
+                'Kamu belum terdaftar, silahkan masukan identitas',
                 style: Theme.of(context).textTheme.headline4!.copyWith(
                       color: IColors.gray800,
                       fontWeight: FontWeight.w400,
@@ -170,7 +280,7 @@ class LoginViewModel extends ViewModel {
       onError: (message) {
         log('result: $message');
         loading.dismiss();
-        checkPhoneNumber();
+        checkPhoneNumber(this);
       },
     );
   }

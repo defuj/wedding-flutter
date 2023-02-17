@@ -181,30 +181,37 @@ class ApiProvider extends GetConnect {
     required String sessionID,
     required List<MemberModel> members,
   }) async {
-    List<Map<String, String>> anggotas = [
-      for (var i = 0; i < members.length; i++)
-        {
-          'nama': members[i].memberName!,
-          'panggilan': members[i].nickname!,
-        }
-    ];
-    httpClient.defaultContentType = 'application/json';
-    final data = FormData({
+    List<Map<String, String>> anggotas =
+        List<Map<String, String>>.empty(growable: true);
+    for (var i = 0; i < members.length; i++) {
+      anggotas.add({
+        'nama': members[i].memberName!,
+        'panggilan': members[i].nickname!,
+      });
+    }
+
+    // httpClient.defaultContentType = 'application/json';
+    final data = {
       'id_reservasi': reservasionID,
       'id_sesi': sessionID,
       'anggota': anggotas,
-    });
+    };
 
     try {
-      final response = await post(ApiEndPoints.addMember, data);
+      final response = await request(
+        ApiEndPoints.addMember,
+        'POST',
+        body: data,
+        contentType: 'application/json',
+      );
       log('result: $response');
       if (response.status.hasError) {
-        return Future.error(
-            response.statusText ?? 'Terjadi kesalahan saat menambahkan member');
+        return Future.error(response.statusText ??
+            'Terjadi kesalahan saat menambahkan anggota');
       } else {
         if (response.body['status'] == false) {
           return Future.error(
-              response.body['message'] ?? 'Gagal menambahkan member');
+              response.body['message'] ?? 'Gagal menambahkan anggota');
         } else {
           return Future.value(response.body['message'] ?? '');
         }

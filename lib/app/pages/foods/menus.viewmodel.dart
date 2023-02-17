@@ -81,7 +81,7 @@ class MenusViewModel extends ViewModel {
 
   void getMenus() async {
     isLoading = true;
-    apiProvider.getMenus(categoryID: categorySelected.categoryID!).then(
+    await apiProvider.getMenus(categoryID: categorySelected.categoryID!).then(
       (value) {
         isLoading = false;
         menus = value;

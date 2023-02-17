@@ -18,7 +18,7 @@ class _View extends StatelessView<LoginViewModel> {
   @override
   Widget render(context, viewModel) {
     return FlutterWebFrame(
-      maximumSize: const Size(475, 1080),
+      maximumSize: Size(475, MediaQuery.of(context).size.height),
       builder: (context) => Scaffold(
         backgroundColor: Colors.white,
         body: SingleChildScrollView(
