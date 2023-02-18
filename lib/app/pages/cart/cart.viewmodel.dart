@@ -12,6 +12,7 @@ class CartViewModel extends ViewModel {
   set reservasionID(int value) {
     _reservasionID = value;
     notifyListeners();
+    getMember(reservasionID: value);
   }
 
   List<CartModel> _cart = List<CartModel>.empty(growable: true);
@@ -19,6 +20,8 @@ class CartViewModel extends ViewModel {
   set cart(List<CartModel> value) {
     _cart = value;
     notifyListeners();
+
+    reservasionID = box.read('reservasionID') ?? 0;
   }
 
   List<MemberModel> _members = List<MemberModel>.empty(growable: true);
@@ -26,7 +29,11 @@ class CartViewModel extends ViewModel {
   set members(List<MemberModel> value) {
     _members = value;
     notifyListeners();
-    checkFoodsMember();
+
+    for (var element in cart) {
+      log('checkFoodsMember - cart: ${element.menu!.menuName}');
+      checkFoodsMember(element);
+    }
   }
 
   List<CategoryModel> categories = [
@@ -76,53 +83,54 @@ class CartViewModel extends ViewModel {
     notifyListeners();
   }
 
-  void checkFoodsMember() {
+  void checkFoodsMember(CartModel itemCart) {
     appetizerNotSelected = '';
     mainCourseNotSelected = '';
     dessertNotSelected = '';
     drinkNotSelected = '';
-    log('checkFoodsMember - member: ${members.length}');
+    log('checkFoodsMember - member all: ${members.length}');
+    log('checkFoodsMember - member item: ${itemCart.members!.length}');
     log('checkFoodsMember - cart: ${cart.length}');
-    cart.map((itemCart) {
-      if (itemCart.members!.length != members.length) {
-        // member not selected this menu
-        members.map((itemMember) {
-          final check = members
-              .where((element) => element.memberID == itemMember.memberID);
-          if (check.isEmpty) {
-            if (itemCart.menu!.menuID == '1') {
-              if (appetizerNotSelected.isEmpty) {
-                appetizerNotSelected = itemMember.memberName!;
-              } else {
-                appetizerNotSelected =
-                    '$appetizerNotSelected, ${itemMember.memberName}';
-              }
-            } else if (itemCart.menu!.menuID == '2') {
-              if (mainCourseNotSelected.isEmpty) {
-                mainCourseNotSelected = itemMember.memberName!;
-              } else {
-                mainCourseNotSelected =
-                    '$mainCourseNotSelected, ${itemMember.memberName}';
-              }
-            } else if (itemCart.menu!.menuID == '3') {
-              if (dessertNotSelected.isEmpty) {
-                dessertNotSelected = itemMember.memberName!;
-              } else {
-                dessertNotSelected =
-                    '$dessertNotSelected, ${itemMember.memberName}';
-              }
-            } else if (itemCart.menu!.menuID == '4') {
-              if (drinkNotSelected.isEmpty) {
-                drinkNotSelected = itemMember.memberName!;
-              } else {
-                drinkNotSelected =
-                    '$drinkNotSelected, ${itemMember.memberName}';
-              }
+    if (itemCart.members!.length != members.length) {
+      // member not selected this menu
+      for (var itemMember in members) {
+        log('checking member: ${itemMember.memberName}');
+        final check = itemCart.members!
+            .where((element) => element.memberID == itemMember.memberID);
+        if (check.isEmpty) {
+          log('checkFoodsMember - member not selected: ${itemMember.memberName}');
+          log('checkFoodsMember - menu id : ${itemCart.menu!.menuID}');
+          if (itemCart.menu!.categoryID == '1') {
+            if (appetizerNotSelected.isEmpty) {
+              appetizerNotSelected = itemMember.memberName!;
+            } else {
+              appetizerNotSelected =
+                  '$appetizerNotSelected, ${itemMember.memberName}';
+            }
+          } else if (itemCart.menu!.categoryID == '2') {
+            if (mainCourseNotSelected.isEmpty) {
+              mainCourseNotSelected = itemMember.memberName!;
+            } else {
+              mainCourseNotSelected =
+                  '$mainCourseNotSelected, ${itemMember.memberName}';
+            }
+          } else if (itemCart.menu!.categoryID == '3') {
+            if (dessertNotSelected.isEmpty) {
+              dessertNotSelected = itemMember.memberName!;
+            } else {
+              dessertNotSelected =
+                  '$dessertNotSelected, ${itemMember.memberName}';
+            }
+          } else {
+            if (drinkNotSelected.isEmpty) {
+              drinkNotSelected = itemMember.memberName!;
+            } else {
+              drinkNotSelected = '$drinkNotSelected, ${itemMember.memberName}';
             }
           }
-        });
+        }
       }
-    });
+    }
   }
 
   void getMember({required int reservasionID}) async {
@@ -138,9 +146,22 @@ class CartViewModel extends ViewModel {
     );
   }
 
+  void confirmSubmit() {
+    SweetDialog(
+        context: context,
+        dialogType: SweetDialogType.warning,
+        title: 'Konfirmasi',
+        content: 'Apakah anda yakin ingin mengirim pesanan?',
+        confirmText: 'Ya',
+        cancelText: 'Tidak',
+        onConfirm: () {
+          submitMenu();
+        }).show();
+  }
+
   void submitMenu() async {
     loading.show();
-    Future.delayed(const Duration(seconds: 3), () {
+    Future.delayed(const Duration(seconds: 2), () {
       apiProvider.submitMenu(reservasionID: reservasionID, cart: cart).then(
         (value) {
           loading.dismiss();
@@ -189,12 +210,8 @@ class CartViewModel extends ViewModel {
       } else {
         cart = List<CartModel>.empty(growable: true);
       }
-      reservasionID = box.read('reservasionID') ?? 0;
-      getMember(reservasionID: reservasionID);
     } catch (e) {
       cart = List<CartModel>.empty(growable: true);
-      reservasionID = box.read('reservasionID') ?? 0;
-      getMember(reservasionID: reservasionID);
     }
 
     // try {

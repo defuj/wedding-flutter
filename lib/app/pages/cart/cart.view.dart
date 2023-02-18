@@ -48,7 +48,7 @@ class _View extends StatelessView<CartViewModel> {
             margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
             child: ButtonPrimary(
               text: 'Selesaikan Proses Pemesanan',
-              onPressed: () => viewModel.submitMenu(),
+              onPressed: () => viewModel.confirmSubmit(),
             ),
           ),
         ),
@@ -185,7 +185,7 @@ class _View extends StatelessView<CartViewModel> {
                           children: [
                             TextSpan(
                               text:
-                                  '${viewModel.mainCourseNotSelected} Belum meilih ',
+                                  '${viewModel.mainCourseNotSelected} Belum memilih ',
                               style: Theme.of(context)
                                   .textTheme
                                   .bodyText2!
@@ -205,6 +205,7 @@ class _View extends StatelessView<CartViewModel> {
                   ),
                 ),
               ),
+              const SizedBox(height: 16),
               Visibility(
                 visible: viewModel.cart.isNotEmpty,
                 child: Container(
@@ -342,7 +343,25 @@ class _View extends StatelessView<CartViewModel> {
                               ),
                             ),
                           ],
-                        )
+                        ),
+                        const SizedBox(height: 8),
+                        Text(
+                          'Catatan: ',
+                          style: Theme.of(context)
+                              .textTheme
+                              .bodyText2!
+                              .copyWith(
+                                  color: Colors.black,
+                                  fontWeight: FontWeight.w600),
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          menu.note ?? '-',
+                          style: Theme.of(context)
+                              .textTheme
+                              .bodyText2!
+                              .copyWith(color: Colors.black),
+                        ),
                       ],
                     ),
                   );
@@ -377,7 +396,7 @@ class _View extends StatelessView<CartViewModel> {
                           children: [
                             TextSpan(
                               text:
-                                  '${viewModel.appetizerNotSelected} Belum meilih ',
+                                  '${viewModel.appetizerNotSelected} Belum memilih ',
                               style: Theme.of(context)
                                   .textTheme
                                   .bodyText2!
@@ -397,6 +416,7 @@ class _View extends StatelessView<CartViewModel> {
                   ),
                 ),
               ),
+              const SizedBox(height: 16),
               Visibility(
                 visible: viewModel.cart.isNotEmpty,
                 child: Container(
@@ -457,7 +477,7 @@ class _View extends StatelessView<CartViewModel> {
                           children: [
                             TextSpan(
                               text:
-                                  '${viewModel.dessertNotSelected} Belum meilih ',
+                                  '${viewModel.dessertNotSelected} Belum memilih ',
                               style: Theme.of(context)
                                   .textTheme
                                   .bodyText2!
@@ -477,6 +497,7 @@ class _View extends StatelessView<CartViewModel> {
                   ),
                 ),
               ),
+              const SizedBox(height: 16),
               Visibility(
                 visible: viewModel.cart.isNotEmpty,
                 child: Container(
@@ -537,7 +558,7 @@ class _View extends StatelessView<CartViewModel> {
                           children: [
                             TextSpan(
                               text:
-                                  '${viewModel.drinkNotSelected} Belum meilih ',
+                                  '${viewModel.drinkNotSelected} Belum memilih ',
                               style: Theme.of(context)
                                   .textTheme
                                   .bodyText2!
@@ -557,6 +578,7 @@ class _View extends StatelessView<CartViewModel> {
                   ),
                 ),
               ),
+              const SizedBox(height: 16),
               Visibility(
                 visible: viewModel.cart.isEmpty,
                 child: Container(
@@ -583,6 +605,7 @@ class _View extends StatelessView<CartViewModel> {
                   ),
                 ),
               ),
+              const SizedBox(height: 16),
             ],
           ),
         ),
