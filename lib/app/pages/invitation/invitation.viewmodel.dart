@@ -62,7 +62,7 @@ class InvitationViewModel extends ViewModel {
     Get.toNamed('/enter');
   }
 
-  void showMoreComment() {
+  void showMoreComment(List<CommentModel> comments) {
     if (comments.length > 6) {
       // check if current comments list if add 6 comment is equals with comments master length
       if (showedComments.length + 6 >= comments.length) {
@@ -85,7 +85,7 @@ class InvitationViewModel extends ViewModel {
     await apiProvider.fetchComment().then((value) {
       comments = value;
       log(value.length.toString());
-      showMoreComment();
+      showMoreComment(value);
     }, onError: (err) {
       log(err);
       comments = List<CommentModel>.empty(growable: true);

@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:url_strategy/url_strategy.dart';
 import 'package:wedding/repositories.dart';
 
 class MyHttpOverrides extends HttpOverrides {
@@ -19,7 +20,7 @@ Future<void> main() async {
     textTheme: textTheme,
   );
   await GetStorage.init();
-
+  setPathUrlStrategy();
   runApp(
     // FlutterWebFrame(
     //   builder: (context) => GetMaterialApp(
@@ -32,7 +33,7 @@ Future<void> main() async {
     //   maximumSize: const Size(475, 1080),
     // ),
     GetMaterialApp(
-      title: 'Enter invited guest data',
+      title: 'Best Wedding',
       theme: lightTheme,
       initialRoute: '/',
       getPages: getRoutes,

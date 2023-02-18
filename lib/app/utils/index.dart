@@ -55,3 +55,17 @@ bool visibilityByWidth({
     return xs;
   }
 }
+
+// prepare phone number is country code exist
+String modifyPhoneNumber(String phone) {
+  var newPhone = phone;
+  if (newPhone.substring(0, 1) == '0') {
+    newPhone = newPhone.replaceFirst('0', '62');
+  } else if (newPhone.substring(0, 1) == '+') {
+    newPhone = newPhone.replaceFirst('+', '');
+  } else {
+    newPhone = '62$phone';
+  }
+
+  return newPhone;
+}

@@ -7,6 +7,13 @@ class MenusViewModel extends ViewModel {
   late ApiProvider apiProvider;
   final box = GetStorage();
 
+  int _cartCount = 0;
+  int get cartCount => _cartCount;
+  set cartCount(int value) {
+    _cartCount = value;
+    notifyListeners();
+  }
+
   List<MemberModel> _members = List<MemberModel>.empty(growable: true);
   List<MemberModel> get members => _members;
   set members(List<MemberModel> value) {
@@ -124,6 +131,26 @@ class MenusViewModel extends ViewModel {
     );
   }
 
+  void getCart() async {
+    try {
+      List<CartModel> cart = box.read('cart') ?? [];
+      cartCount = cart.length;
+    } catch (e) {
+      log('Error $e');
+      cartCount = 0;
+    }
+
+    box.listenKey('cart', (value) {
+      try {
+        List<CartModel> cart = value;
+        cartCount = cart.length;
+      } catch (e) {
+        log('Error $e');
+        cartCount = 0;
+      }
+    });
+  }
+
   @override
   void init() {
     apiProvider = getApiProvider;
@@ -147,6 +174,7 @@ class MenusViewModel extends ViewModel {
         Future.delayed(Duration.zero, () {
           getMenus();
           getMember(reservasionID: int.parse(args['reservasionID'].toString()));
+          getCart();
         });
       } catch (e) {
         log('Error: $e');

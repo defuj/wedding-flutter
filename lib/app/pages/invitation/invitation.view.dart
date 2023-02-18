@@ -31,11 +31,7 @@ class _View extends StatelessView<InvitationViewModel> {
                   sm: 0,
                   md: 4,
                   lg: 4,
-                  child: Positioned.fill(
-                    left: 0,
-                    top: 0,
-                    child: Image.asset('assets/images/component-1.png'),
-                  ),
+                  child: Image.asset('assets/images/component-1.png'),
                 ),
                 SpGridItem(
                   padding: const EdgeInsets.symmetric(
@@ -118,11 +114,7 @@ class _View extends StatelessView<InvitationViewModel> {
                   sm: 0,
                   md: 4,
                   lg: 4,
-                  child: Positioned.fill(
-                    right: 0,
-                    top: 0,
-                    child: Image.asset('assets/images/component-2.png'),
-                  ),
+                  child: Image.asset('assets/images/component-2.png'),
                 ),
               ],
             ),
@@ -236,11 +228,7 @@ class _View extends StatelessView<InvitationViewModel> {
                       sm: 0,
                       md: 1,
                       lg: 1,
-                      child: Positioned.fill(
-                        left: 0,
-                        top: 0,
-                        child: Image.asset('assets/images/component-8.png'),
-                      ),
+                      child: Image.asset('assets/images/component-8.png'),
                     ),
                   ],
                 ),
@@ -255,11 +243,7 @@ class _View extends StatelessView<InvitationViewModel> {
                   sm: 0,
                   md: 3,
                   lg: 3,
-                  child: Positioned.fill(
-                    left: 0,
-                    top: 0,
-                    child: Image.asset('assets/images/component-3.png'),
-                  ),
+                  child: Image.asset('assets/images/component-3.png'),
                 ),
                 SpGridItem(
                   padding: const EdgeInsets.symmetric(
@@ -375,11 +359,7 @@ class _View extends StatelessView<InvitationViewModel> {
                   sm: 0,
                   md: 3,
                   lg: 3,
-                  child: Positioned.fill(
-                    right: 0,
-                    top: 0,
-                    child: Image.asset('assets/images/component-4.png'),
-                  ),
+                  child: Image.asset('assets/images/component-4.png'),
                 ),
               ],
             ),
@@ -1040,17 +1020,21 @@ class _View extends StatelessView<InvitationViewModel> {
                           ),
                           Container(
                             margin: const EdgeInsets.only(top: 16),
-                            child: Expanded(
-                              child: Text(
-                                viewModel.showedComments[i].commentContent!,
-                                maxLines: 3,
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .bodyText1!
-                                    .copyWith(
-                                        color: Colors.black,
-                                        fontWeight: FontWeight.w400),
-                              ),
+                            child: Column(
+                              children: [
+                                Expanded(
+                                  child: Text(
+                                    viewModel.showedComments[i].commentContent!,
+                                    maxLines: 3,
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .bodyText1!
+                                        .copyWith(
+                                            color: Colors.black,
+                                            fontWeight: FontWeight.w400),
+                                  ),
+                                ),
+                              ],
                             ),
                           )
                         ],
@@ -1073,7 +1057,8 @@ class _View extends StatelessView<InvitationViewModel> {
                   height: 46,
                   child: ButtonPrimary(
                     text: 'Load More',
-                    onPressed: () => viewModel.showMoreComment(),
+                    onPressed: () =>
+                        viewModel.showMoreComment(viewModel.comments),
                   ),
                 ),
               ),
@@ -1111,11 +1096,7 @@ class _View extends StatelessView<InvitationViewModel> {
                       color: Colors.white,
                       borderRadius: BorderRadius.circular(16),
                     ),
-                    child: Positioned.fill(
-                      left: 0,
-                      bottom: 0,
-                      child: Image.asset('assets/images/component-5.png'),
-                    ),
+                    child: Image.asset('assets/images/component-5.png'),
                   ),
                 ),
                 SpGridItem(
@@ -1196,11 +1177,7 @@ class _View extends StatelessView<InvitationViewModel> {
                       color: Colors.white,
                       borderRadius: BorderRadius.circular(16),
                     ),
-                    child: Positioned.fill(
-                      right: 0,
-                      top: 0,
-                      child: Image.asset('assets/images/component-6.png'),
-                    ),
+                    child: Image.asset('assets/images/component-6.png'),
                   ),
                 ),
               ],

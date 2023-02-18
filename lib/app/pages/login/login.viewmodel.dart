@@ -249,31 +249,28 @@ class LoginViewModel extends ViewModel {
     // if the first character is 0, replace with 62
     // because the phone number format is 62xxxxxxxxxx
 
-    await apiProvider.checkPhoneNumber(phone: phoneNumber).then(
+    await apiProvider.checkPhoneNumber(phoneNumber: phoneNumber).then(
       (value) {
         // log('result: $value');
         loading.dismiss();
         userName = value['userName'];
-        final reservasionID = value['reservasionID'];
-        final sessionID = value['sessionID'];
+        final reservasionID = value['reservasionID'] as int;
+        final sessionID = value['sessionID'] as int;
+        final invitationID = value['invitationID'] as int;
 
-        if (reservasionID != null && sessionID != null) {
-          if (reservasionID != 0 && sessionID != 0) {
-            Get.offAllNamed('/menus', arguments: {
-              'userName': value['userName'],
-              'reservasionID': reservasionID,
-              'sessionID': sessionID,
-            });
-          } else {
-            Get.offAllNamed('/reservation', arguments: {
-              'userName': value['userName'],
-              'phoneNumber': phoneNumber,
-            });
-          }
+        if (reservasionID != 0) {
+          Get.offAllNamed('/menus', arguments: {
+            'userName': value['userName'],
+            'reservasionID': reservasionID,
+            'sessionID': sessionID,
+            'invitationID': invitationID,
+          });
         } else {
+          log(modifyPhoneNumber(phoneNumber));
           Get.offAllNamed('/reservation', arguments: {
-            'userName': value,
-            'phoneNumber': phoneNumber,
+            'userName': value['userName'],
+            'phoneNumber': modifyPhoneNumber(phoneNumber),
+            'invitationID': invitationID,
           });
         }
       },

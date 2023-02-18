@@ -10,33 +10,20 @@ class ApiProvider extends GetConnect {
     httpClient.defaultContentType = 'application/x-www-form-urlencoded';
     httpClient.timeout = const Duration(seconds: 60);
     httpClient.addRequestModifier<dynamic>((request) {
-      request.headers['Accept'] = '*/*';
-      // request.headers['Authorization'] = 'Basic ZndlYjp3MUQ0JEBzNTUwRXFHaHo=';
       final token =
           'Basic ${base64.encode(utf8.encode('${ApiConfig.username}:${ApiConfig.password}'))}';
       request.headers['Authorization'] = token;
+      request.headers['Accept'] = '*/*';
       request.headers['Access-Control-Allow-Origin'] = '*';
-      request.headers['Access-Control-Allow-Methods'] =
-          'GET, POST, PUT, DELETE, OPTIONS';
-      request.headers['Access-Control-Allow-Headers'] =
-          'Content-Type, Authorization';
+      request.headers['Access-Control-Allow-Methods'] = '*';
+      request.headers['vary'] = 'Accept-Encoding,User-Agent';
+      request.headers['x-xss-protection'] = '1; mode=block';
+      request.headers['x-content-type-options'] = 'nosniff';
+      request.headers['alt-svc'] =
+          'h3=":443"; ma=2592000, h3-29=":443"; ma=2592000, h3-Q050=":443"; ma=2592000, h3-Q046=":443"; ma=2592000, h3-Q043=":443"; ma=2592000, quic=":443"; ma=2592000; v="43,46"';
+
       return request;
     });
-
-    // httpClient.addResponseModifier<dynamic>((request, response) {
-    //   if (response.statusCode == 401) {
-    //     log('result: Unauthorized');
-    //   }
-    //   return response;
-    // });
-
-    // httpClient.addAuthenticator<dynamic>((request) async {
-    //   log('result: Authenticating');
-    //   //   request.headers['Authorization'] = 'Basic ZndlYjp3MUQ0JEBzNTUwRXFHaHo=';
-    //   request.headers['Authorization'] =
-    //       'Basic ${base64.encode(utf8.encode('${ApiConfig.username}:${ApiConfig.password}'))}';
-    //   return request;
-    // });
 
     httpClient.maxAuthRetries = 3;
   }
@@ -92,14 +79,9 @@ class ApiProvider extends GetConnect {
     }
   }
 
-  Future<Map<String, dynamic>> checkPhoneNumber({required String phone}) async {
-    if (phone.substring(0, 1) == '0') {
-      phone = phone.replaceFirst('0', '62');
-    } else if (phone.substring(0, 1) == '+') {
-      phone = phone.replaceFirst('+', '');
-    } else {
-      phone = '62$phone';
-    }
+  Future<Map<String, dynamic>> checkPhoneNumber(
+      {required String phoneNumber}) async {
+    var phone = modifyPhoneNumber(phoneNumber);
 
     try {
       final data = FormData({'nomor_wa': phone});
@@ -119,6 +101,7 @@ class ApiProvider extends GetConnect {
             'userName': response.body['nama'] ?? '',
             'reservasionID': response.body['id_reservasi'] ?? 0,
             'sessionID': response.body['id_sesi'] ?? 0,
+            'invitationID': response.body['id_undangan'],
           };
           return Future.value(result);
         }
@@ -149,13 +132,20 @@ class ApiProvider extends GetConnect {
     }
   }
 
-  Future<int> createReservasion(
-      {required String name, required String phone}) async {
+  Future<int> createReservasion({
+    required String name,
+    required String phoneNumber,
+    required int id,
+  }) async {
+    var phone = modifyPhoneNumber(phoneNumber);
     final data = FormData({
       'nama': name,
       'nomor_wa': phone,
       'force': 0,
+      'panggilan': '',
+      'id_undangan': id,
     });
+    log(phone);
 
     try {
       final response = await post(ApiEndPoints.submitReservasion, data);

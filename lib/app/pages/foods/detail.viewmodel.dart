@@ -198,48 +198,65 @@ class MenuDetailViewModel extends ViewModel {
   }
 
   void addToCart() async {
-    // List<CartModel> cartList = List<CartModel>.empty(growable: true);
-    var cartAvailable = box.read('cart') ?? [] as List<CartModel>;
-    List<CartModel> currentCart =
-        cartAvailable.map((e) => CartModel.fromJson(e)).toList();
-    // check if menu already in cart
-    var menuAvailable = currentCart
-        .where((element) => element.menu!.menuID == menu.menuID)
-        .toList()
-        .isNotEmpty;
+    // List<CartModel> cartAvailable = box.read('cart') ?? [];
+    log('cart available: ${box.read('cart')}');
+    final cart = CartModel(
+      menu: menu,
+      members: memberSelected,
+      note: note,
+    );
 
-    if (menuAvailable) {
-      // if menu already in cart, update menu
-      var menuIndex = currentCart
-          .indexWhere((element) => element.menu!.categoryID == menu.categoryID);
-      currentCart[menuIndex].members = memberSelected;
-      currentCart[menuIndex].menu = menu;
-      currentCart[menuIndex].note = note;
-      await box.write('cart', currentCart);
+    try {
+      loading.show();
+      List<CartModel> cartExist = List<CartModel>.empty(growable: true);
+      if (box.read('cart') != null) {
+        cartExist = box.read('cart');
+      }
 
+      var result = cartExist
+          .where((element) => element.menu!.menuID == cart.menu!.menuID);
+      if (result.isEmpty) {
+        // add new cart
+        var modCart = cartExist;
+        modCart.add(cart);
+        cartExist = modCart;
+        await box.write('cart', cartExist);
+
+        loading.dismiss();
+        SweetDialog(
+          context: context,
+          dialogType: SweetDialogType.success,
+          title: 'Berhasil',
+          content: 'Menu berhasil ditambahkan ke keranjang',
+        ).show();
+      } else {
+        // modify cart
+        List<CartModel> cartNew = List<CartModel>.empty(growable: true);
+        cartExist.map((e) {
+          if (e.menu!.menuID == cart.menu!.menuID) {
+            cartNew.add(cart);
+          } else {
+            cartNew.add(e);
+          }
+        });
+        cartExist = cartNew;
+        await box.write('cart', cartExist);
+
+        loading.dismiss();
+        SweetDialog(
+          context: context,
+          dialogType: SweetDialogType.success,
+          title: 'Berhasil',
+          content: 'Menu berhasil diperbarui',
+        ).show();
+      }
+    } catch (e) {
       loading.dismiss();
       SweetDialog(
         context: context,
-        dialogType: SweetDialogType.success,
-        title: 'Berhasil',
-        content: 'Menu berhasil diperbarui',
-      ).show();
-    } else {
-      // if menu not in cart, add menu
-      var cart = CartModel(
-        menu: menu,
-        members: memberSelected,
-        note: note,
-      );
-      currentCart.add(cart);
-      await box.write('cart', currentCart);
-
-      loading.dismiss();
-      SweetDialog(
-        context: context,
-        dialogType: SweetDialogType.success,
-        title: 'Berhasil',
-        content: 'Menu berhasil ditambahkan ke keranjang',
+        dialogType: SweetDialogType.error,
+        title: 'Gagal',
+        content: 'Menu gagal ditambahkan ke keranjang, Error: $e',
       ).show();
     }
   }
@@ -315,7 +332,8 @@ class MenuDetailViewModel extends ViewModel {
             content: 'Jumlah member melebihi stok menu',
           ).show();
         } else {
-          checkProduct();
+          //   checkProduct();
+          addToCart();
         }
       } else {
         SweetDialog(

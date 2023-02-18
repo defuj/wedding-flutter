@@ -32,6 +32,7 @@ dependencies:
   flutter_web_frame: ^0.0.3
   carousel_slider: ^4.2.1
   simple_grid: ^0.1.2
+  url_strategy: ^0.2.0
 
 dev_dependencies:
   flutter_test:

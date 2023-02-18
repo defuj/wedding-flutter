@@ -20,6 +20,13 @@ class RegisterViewModel extends ViewModel {
     notifyListeners();
   }
 
+  int _invitationID = 0;
+  int get invitationID => _invitationID;
+  set invitationID(int value) {
+    _invitationID = value;
+    notifyListeners();
+  }
+
   int _reservasionID = 0;
   int get reservasionID => _reservasionID;
   set reservasionID(int value) {
@@ -261,8 +268,6 @@ class RegisterViewModel extends ViewModel {
 
   void updateMemberName(String value, int index) {
     members[index].memberName = value;
-
-    log('updateMemberName: ${members[index].memberName}');
   }
 
   void addNewMember() {
@@ -274,8 +279,6 @@ class RegisterViewModel extends ViewModel {
   }
 
   void removeMember(int index) {
-    log('removeMember: $index');
-    log('memberLength: ${members.length}');
     var list = members;
     list.removeAt(index);
 
@@ -333,7 +336,8 @@ class RegisterViewModel extends ViewModel {
       addMember(members, reservasionID);
     } else {
       await apiProvider
-          .createReservasion(name: userName, phone: phoneNumber)
+          .createReservasion(
+              name: userName, phoneNumber: phoneNumber, id: invitationID)
           .then(
         (value) {
           isReservasion = true;
@@ -416,6 +420,7 @@ class RegisterViewModel extends ViewModel {
       if (args != null) {
         userName = args['userName'];
         phoneNumber = args['phoneNumber'];
+        invitationID = args['invitationID'] ?? 0;
         Future.delayed(Duration.zero, () {
           getDataSession();
         });
@@ -425,6 +430,7 @@ class RegisterViewModel extends ViewModel {
         });
       }
     } catch (e) {
+      log(e.toString());
       Future.delayed(Duration.zero, () {
         userNotFound();
       });

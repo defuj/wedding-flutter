@@ -43,29 +43,69 @@ class _View extends StatelessView<MenusViewModel> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Expanded(
-                        child: Text(
-                          'Silahkan Pilih Menu, ${capitalize(viewModel.userName)}',
-                          style: Theme.of(context)
-                              .textTheme
-                              .headline4!
-                              .copyWith(
-                                  color: IColors.black100,
-                                  fontWeight: FontWeight.w600,
-                                  fontSize: 24),
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(vertical: 10),
+                          child: Text(
+                            'Silahkan Pilih Menu, ${capitalize(viewModel.userName)}',
+                            style: Theme.of(context)
+                                .textTheme
+                                .headline4!
+                                .copyWith(
+                                    color: IColors.black100,
+                                    fontWeight: FontWeight.w600,
+                                    fontSize: 24),
+                          ),
                         ),
                       ),
                       InkWell(
-                        splashColor: Colors.transparent,
-                        highlightColor: Colors.transparent,
-                        splashFactory: NoSplash.splashFactory,
-                        hoverColor: Colors.transparent,
-                        onTap: () {},
-                        child: const Icon(
-                          Icons.shopping_cart_outlined,
-                          size: 30,
-                          color: IColors.black100,
-                        ),
-                      ),
+                          splashColor: Colors.transparent,
+                          highlightColor: Colors.transparent,
+                          splashFactory: NoSplash.splashFactory,
+                          hoverColor: Colors.transparent,
+                          onTap: () {
+                            Get.toNamed('/cart');
+                          },
+                          child: SizedBox(
+                            height: 50,
+                            width: 50,
+                            child: Stack(
+                              children: [
+                                const Center(
+                                  child: Icon(
+                                    Icons.shopping_cart_outlined,
+                                    size: 30,
+                                    color: IColors.black100,
+                                  ),
+                                ),
+                                Positioned(
+                                  right: 0,
+                                  child: Visibility(
+                                    visible: viewModel.cartCount != 0,
+                                    child: Container(
+                                      decoration: BoxDecoration(
+                                        color: IColors.pink50,
+                                        borderRadius: BorderRadius.circular(30),
+                                      ),
+                                      width: 24,
+                                      height: 24,
+                                      child: Center(
+                                        child: Text(
+                                          viewModel.cartCount.toString(),
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .overline!
+                                              .copyWith(
+                                                color: Colors.white,
+                                                fontWeight: FontWeight.w600,
+                                              ),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          )),
                     ],
                   ),
                 ),

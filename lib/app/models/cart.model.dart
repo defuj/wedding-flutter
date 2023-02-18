@@ -23,7 +23,7 @@ class CartModel {
           ? (json['members'] as List)
               .map((e) => MemberModel.fromJson(e))
               .toList()
-          : null,
+          : [],
       note: json['note'],
     );
   }
