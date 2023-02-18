@@ -59,6 +59,7 @@ class _View extends StatelessView<CartViewModel> {
               Visibility(
                 visible: viewModel.cart.isNotEmpty,
                 child: Container(
+                  margin: const EdgeInsets.only(bottom: 16),
                   padding: const EdgeInsets.all(10),
                   width: double.infinity,
                   color: Colors.white,
@@ -87,7 +88,6 @@ class _View extends StatelessView<CartViewModel> {
                   ),
                 ),
               ),
-              const SizedBox(height: 16),
               ListView.builder(
                 itemCount: viewModel.cart
                     .where((element) => element.menu!.categoryID == '2')
@@ -146,11 +146,72 @@ class _View extends StatelessView<CartViewModel> {
                                         .bodyText1!
                                         .copyWith(color: Colors.black),
                                   ),
+                                  const SizedBox(height: 4),
+                                  Text(
+                                    '${menu.members!.length} orang memilih',
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .bodyText2!
+                                        .copyWith(color: Colors.black),
+                                  ),
+                                  const SizedBox(height: 8),
+                                  Wrap(
+                                    children: [
+                                      for (var member in menu.members!)
+                                        Container(
+                                          margin: const EdgeInsets.only(
+                                              right: 8, bottom: 8),
+                                          padding: const EdgeInsets.symmetric(
+                                              horizontal: 8, vertical: 4),
+                                          decoration: BoxDecoration(
+                                            color: IColors.pink50_,
+                                            borderRadius:
+                                                BorderRadius.circular(8),
+                                          ),
+                                          child: Text(
+                                            member.memberName!,
+                                            style: Theme.of(context)
+                                                .textTheme
+                                                .overline!
+                                                .copyWith(
+                                                    color: Colors.black,
+                                                    fontSize: 12),
+                                          ),
+                                        ),
+                                    ],
+                                  ),
                                 ],
                               ),
                             ),
+                            const SizedBox(width: 12),
+                            IconButton(
+                              onPressed: () {},
+                              icon: const Icon(
+                                Icons.edit_note_rounded,
+                                size: 24,
+                                color: Colors.black,
+                              ),
+                            ),
                           ],
-                        )
+                        ),
+                        const SizedBox(height: 8),
+                        Text(
+                          'Catatan: ',
+                          style: Theme.of(context)
+                              .textTheme
+                              .bodyText2!
+                              .copyWith(
+                                  color: Colors.black,
+                                  fontWeight: FontWeight.w600),
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          menu.note ?? '-',
+                          style: Theme.of(context)
+                              .textTheme
+                              .bodyText2!
+                              .copyWith(color: Colors.black),
+                        ),
                       ],
                     ),
                   );
@@ -158,14 +219,19 @@ class _View extends StatelessView<CartViewModel> {
               ),
               const SizedBox(height: 16),
               Visibility(
-                visible: viewModel.mainCourseNotSelected.isNotEmpty,
+                visible: viewModel.cart.isNotEmpty &&
+                    viewModel.mainCourseNotSelected.isNotEmpty,
                 child: Container(
                   width: double.infinity,
                   decoration: BoxDecoration(
                     color: Colors.white,
                     borderRadius: BorderRadius.circular(8),
                   ),
-                  margin: const EdgeInsets.symmetric(horizontal: 16),
+                  margin: const EdgeInsets.only(
+                    left: 16,
+                    right: 16,
+                    bottom: 16,
+                  ),
                   padding: const EdgeInsets.symmetric(
                     vertical: 10,
                     horizontal: 10,
@@ -205,10 +271,10 @@ class _View extends StatelessView<CartViewModel> {
                   ),
                 ),
               ),
-              const SizedBox(height: 16),
               Visibility(
                 visible: viewModel.cart.isNotEmpty,
                 child: Container(
+                  margin: const EdgeInsets.only(bottom: 16),
                   padding: const EdgeInsets.all(10),
                   width: double.infinity,
                   color: Colors.white,
@@ -237,7 +303,6 @@ class _View extends StatelessView<CartViewModel> {
                   ),
                 ),
               ),
-              const SizedBox(height: 16),
               ListView.builder(
                 itemCount: viewModel.cart
                     .where((element) => element.menu!.categoryID == '1')
@@ -369,14 +434,19 @@ class _View extends StatelessView<CartViewModel> {
               ),
               const SizedBox(height: 16),
               Visibility(
-                visible: viewModel.appetizerNotSelected.isNotEmpty,
+                visible: viewModel.cart.isNotEmpty &&
+                    viewModel.appetizerNotSelected.isNotEmpty,
                 child: Container(
                   width: double.infinity,
                   decoration: BoxDecoration(
                     color: Colors.white,
                     borderRadius: BorderRadius.circular(8),
                   ),
-                  margin: const EdgeInsets.symmetric(horizontal: 16),
+                  margin: const EdgeInsets.only(
+                    left: 16,
+                    right: 16,
+                    bottom: 16,
+                  ),
                   padding: const EdgeInsets.symmetric(
                     vertical: 10,
                     horizontal: 10,
@@ -416,10 +486,10 @@ class _View extends StatelessView<CartViewModel> {
                   ),
                 ),
               ),
-              const SizedBox(height: 16),
               Visibility(
                 visible: viewModel.cart.isNotEmpty,
                 child: Container(
+                  margin: const EdgeInsets.only(bottom: 16),
                   padding: const EdgeInsets.all(10),
                   width: double.infinity,
                   color: Colors.white,
@@ -448,16 +518,150 @@ class _View extends StatelessView<CartViewModel> {
                   ),
                 ),
               ),
+              ListView.builder(
+                itemCount: viewModel.cart
+                    .where((element) => element.menu!.categoryID == '3')
+                    .toList()
+                    .length,
+                shrinkWrap: true,
+                itemBuilder: (context, index) {
+                  final menu = viewModel.cart
+                      .where((element) => element.menu!.categoryID == '3')
+                      .toList()[index];
+
+                  return Container(
+                    margin: const EdgeInsets.symmetric(
+                      vertical: 8,
+                      horizontal: 16,
+                    ),
+                    padding: const EdgeInsets.symmetric(
+                      vertical: 12,
+                      horizontal: 16,
+                    ),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            ClipRRect(
+                              borderRadius: BorderRadius.circular(8),
+                              child: Image.network(
+                                menu.menu!.menuCoverPicture ?? '',
+                                width: 80,
+                                height: 80,
+                                fit: BoxFit.cover,
+                                errorBuilder: (context, error, stackTrace) {
+                                  return Image.asset(
+                                    'assets/images/no_image_placeholder.png',
+                                    width: 80,
+                                    height: 80,
+                                    fit: BoxFit.cover,
+                                  );
+                                },
+                              ),
+                            ),
+                            const SizedBox(width: 12),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    menu.menu!.menuName!,
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .bodyText1!
+                                        .copyWith(color: Colors.black),
+                                  ),
+                                  const SizedBox(height: 4),
+                                  Text(
+                                    '${menu.members!.length} orang memilih',
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .bodyText2!
+                                        .copyWith(color: Colors.black),
+                                  ),
+                                  const SizedBox(height: 8),
+                                  Wrap(
+                                    children: [
+                                      for (var member in menu.members!)
+                                        Container(
+                                          margin: const EdgeInsets.only(
+                                              right: 8, bottom: 8),
+                                          padding: const EdgeInsets.symmetric(
+                                              horizontal: 8, vertical: 4),
+                                          decoration: BoxDecoration(
+                                            color: IColors.pink50_,
+                                            borderRadius:
+                                                BorderRadius.circular(8),
+                                          ),
+                                          child: Text(
+                                            member.memberName!,
+                                            style: Theme.of(context)
+                                                .textTheme
+                                                .overline!
+                                                .copyWith(
+                                                    color: Colors.black,
+                                                    fontSize: 12),
+                                          ),
+                                        ),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                            ),
+                            const SizedBox(width: 12),
+                            IconButton(
+                              onPressed: () {},
+                              icon: const Icon(
+                                Icons.edit_note_rounded,
+                                size: 24,
+                                color: Colors.black,
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 8),
+                        Text(
+                          'Catatan: ',
+                          style: Theme.of(context)
+                              .textTheme
+                              .bodyText2!
+                              .copyWith(
+                                  color: Colors.black,
+                                  fontWeight: FontWeight.w600),
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          menu.note ?? '-',
+                          style: Theme.of(context)
+                              .textTheme
+                              .bodyText2!
+                              .copyWith(color: Colors.black),
+                        ),
+                      ],
+                    ),
+                  );
+                },
+              ),
               const SizedBox(height: 16),
               Visibility(
-                visible: viewModel.dessertNotSelected.isNotEmpty,
+                visible: viewModel.cart.isNotEmpty &&
+                    viewModel.dessertNotSelected.isNotEmpty,
                 child: Container(
                   width: double.infinity,
                   decoration: BoxDecoration(
                     color: Colors.white,
                     borderRadius: BorderRadius.circular(8),
                   ),
-                  margin: const EdgeInsets.symmetric(horizontal: 16),
+                  margin: const EdgeInsets.only(
+                    left: 16,
+                    right: 16,
+                    bottom: 16,
+                  ),
                   padding: const EdgeInsets.symmetric(
                     vertical: 10,
                     horizontal: 10,
@@ -497,10 +701,10 @@ class _View extends StatelessView<CartViewModel> {
                   ),
                 ),
               ),
-              const SizedBox(height: 16),
               Visibility(
                 visible: viewModel.cart.isNotEmpty,
                 child: Container(
+                  margin: const EdgeInsets.only(bottom: 16),
                   padding: const EdgeInsets.all(10),
                   width: double.infinity,
                   color: Colors.white,
@@ -529,16 +733,150 @@ class _View extends StatelessView<CartViewModel> {
                   ),
                 ),
               ),
+              ListView.builder(
+                itemCount: viewModel.cart
+                    .where((element) => element.menu!.categoryID == '4')
+                    .toList()
+                    .length,
+                shrinkWrap: true,
+                itemBuilder: (context, index) {
+                  final menu = viewModel.cart
+                      .where((element) => element.menu!.categoryID == '4')
+                      .toList()[index];
+
+                  return Container(
+                    margin: const EdgeInsets.symmetric(
+                      vertical: 8,
+                      horizontal: 16,
+                    ),
+                    padding: const EdgeInsets.symmetric(
+                      vertical: 12,
+                      horizontal: 16,
+                    ),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            ClipRRect(
+                              borderRadius: BorderRadius.circular(8),
+                              child: Image.network(
+                                menu.menu!.menuCoverPicture ?? '',
+                                width: 80,
+                                height: 80,
+                                fit: BoxFit.cover,
+                                errorBuilder: (context, error, stackTrace) {
+                                  return Image.asset(
+                                    'assets/images/no_image_placeholder.png',
+                                    width: 80,
+                                    height: 80,
+                                    fit: BoxFit.cover,
+                                  );
+                                },
+                              ),
+                            ),
+                            const SizedBox(width: 12),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    menu.menu!.menuName!,
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .bodyText1!
+                                        .copyWith(color: Colors.black),
+                                  ),
+                                  const SizedBox(height: 4),
+                                  Text(
+                                    '${menu.members!.length} orang memilih',
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .bodyText2!
+                                        .copyWith(color: Colors.black),
+                                  ),
+                                  const SizedBox(height: 8),
+                                  Wrap(
+                                    children: [
+                                      for (var member in menu.members!)
+                                        Container(
+                                          margin: const EdgeInsets.only(
+                                              right: 8, bottom: 8),
+                                          padding: const EdgeInsets.symmetric(
+                                              horizontal: 8, vertical: 4),
+                                          decoration: BoxDecoration(
+                                            color: IColors.pink50_,
+                                            borderRadius:
+                                                BorderRadius.circular(8),
+                                          ),
+                                          child: Text(
+                                            member.memberName!,
+                                            style: Theme.of(context)
+                                                .textTheme
+                                                .overline!
+                                                .copyWith(
+                                                    color: Colors.black,
+                                                    fontSize: 12),
+                                          ),
+                                        ),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                            ),
+                            const SizedBox(width: 12),
+                            IconButton(
+                              onPressed: () {},
+                              icon: const Icon(
+                                Icons.edit_note_rounded,
+                                size: 24,
+                                color: Colors.black,
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 8),
+                        Text(
+                          'Catatan: ',
+                          style: Theme.of(context)
+                              .textTheme
+                              .bodyText2!
+                              .copyWith(
+                                  color: Colors.black,
+                                  fontWeight: FontWeight.w600),
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          menu.note ?? '-',
+                          style: Theme.of(context)
+                              .textTheme
+                              .bodyText2!
+                              .copyWith(color: Colors.black),
+                        ),
+                      ],
+                    ),
+                  );
+                },
+              ),
               const SizedBox(height: 16),
               Visibility(
-                visible: viewModel.drinkNotSelected.isNotEmpty,
+                visible: viewModel.cart.isNotEmpty &&
+                    viewModel.drinkNotSelected.isNotEmpty,
                 child: Container(
                   width: double.infinity,
                   decoration: BoxDecoration(
                     color: Colors.white,
                     borderRadius: BorderRadius.circular(8),
                   ),
-                  margin: const EdgeInsets.symmetric(horizontal: 16),
+                  margin: const EdgeInsets.only(
+                    left: 16,
+                    right: 16,
+                    bottom: 16,
+                  ),
                   padding: const EdgeInsets.symmetric(
                     vertical: 10,
                     horizontal: 10,
@@ -578,7 +916,7 @@ class _View extends StatelessView<CartViewModel> {
                   ),
                 ),
               ),
-              const SizedBox(height: 16),
+              // Empty Section
               Visibility(
                 visible: viewModel.cart.isEmpty,
                 child: Container(
@@ -605,7 +943,6 @@ class _View extends StatelessView<CartViewModel> {
                   ),
                 ),
               ),
-              const SizedBox(height: 16),
             ],
           ),
         ),

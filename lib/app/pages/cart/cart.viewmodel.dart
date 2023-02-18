@@ -30,10 +30,10 @@ class CartViewModel extends ViewModel {
     _members = value;
     notifyListeners();
 
-    for (var element in cart) {
-      log('checkFoodsMember - cart: ${element.menu!.menuName}');
-      checkFoodsMember(element);
-    }
+    checkFoodsMember(cart, '1');
+    checkFoodsMember(cart, '2');
+    checkFoodsMember(cart, '3');
+    checkFoodsMember(cart, '4');
   }
 
   List<CategoryModel> categories = [
@@ -83,49 +83,95 @@ class CartViewModel extends ViewModel {
     notifyListeners();
   }
 
-  void checkFoodsMember(CartModel itemCart) {
-    appetizerNotSelected = '';
-    mainCourseNotSelected = '';
-    dessertNotSelected = '';
-    drinkNotSelected = '';
-    log('checkFoodsMember - member all: ${members.length}');
-    log('checkFoodsMember - member item: ${itemCart.members!.length}');
-    log('checkFoodsMember - cart: ${cart.length}');
-    if (itemCart.members!.length != members.length) {
+  void checkFoodsMember(List<CartModel> cart, String categoryID) {
+    if (categoryID == '1') {
+      appetizerNotSelected = '';
+    }
+
+    if (categoryID == '2') {
+      mainCourseNotSelected = '';
+    }
+
+    if (categoryID == '3') {
+      dessertNotSelected = '';
+    }
+
+    if (categoryID == '4') {
+      drinkNotSelected = '';
+    }
+
+    // check if member selected this menu category
+    final checkCategory =
+        cart.where((element) => element.menu!.categoryID == categoryID);
+    if (checkCategory.isEmpty) {
       // member not selected this menu
       for (var itemMember in members) {
-        log('checking member: ${itemMember.memberName}');
-        final check = itemCart.members!
-            .where((element) => element.memberID == itemMember.memberID);
-        if (check.isEmpty) {
-          log('checkFoodsMember - member not selected: ${itemMember.memberName}');
-          log('checkFoodsMember - menu id : ${itemCart.menu!.menuID}');
-          if (itemCart.menu!.categoryID == '1') {
-            if (appetizerNotSelected.isEmpty) {
-              appetizerNotSelected = itemMember.memberName!;
-            } else {
-              appetizerNotSelected =
-                  '$appetizerNotSelected, ${itemMember.memberName}';
-            }
-          } else if (itemCart.menu!.categoryID == '2') {
-            if (mainCourseNotSelected.isEmpty) {
-              mainCourseNotSelected = itemMember.memberName!;
-            } else {
-              mainCourseNotSelected =
-                  '$mainCourseNotSelected, ${itemMember.memberName}';
-            }
-          } else if (itemCart.menu!.categoryID == '3') {
-            if (dessertNotSelected.isEmpty) {
-              dessertNotSelected = itemMember.memberName!;
-            } else {
-              dessertNotSelected =
-                  '$dessertNotSelected, ${itemMember.memberName}';
-            }
+        if (categoryID == '1') {
+          if (appetizerNotSelected.isEmpty) {
+            appetizerNotSelected = itemMember.memberName!;
           } else {
-            if (drinkNotSelected.isEmpty) {
-              drinkNotSelected = itemMember.memberName!;
+            appetizerNotSelected =
+                '$appetizerNotSelected, ${itemMember.memberName}';
+          }
+        } else if (categoryID == '2') {
+          if (mainCourseNotSelected.isEmpty) {
+            mainCourseNotSelected = itemMember.memberName!;
+          } else {
+            mainCourseNotSelected =
+                '$mainCourseNotSelected, ${itemMember.memberName}';
+          }
+        } else if (categoryID == '3') {
+          if (dessertNotSelected.isEmpty) {
+            dessertNotSelected = itemMember.memberName!;
+          } else {
+            dessertNotSelected =
+                '$dessertNotSelected, ${itemMember.memberName}';
+          }
+        } else {
+          if (drinkNotSelected.isEmpty) {
+            drinkNotSelected = itemMember.memberName!;
+          } else {
+            drinkNotSelected = '$drinkNotSelected, ${itemMember.memberName}';
+          }
+        }
+      }
+    }
+
+    for (var itemCart in cart) {
+      if (itemCart.members!.length != members.length) {
+        // member not selected this menu
+        for (var itemMember in members) {
+          final check = itemCart.members!
+              .where((element) => element.memberID == itemMember.memberID);
+          if (check.isEmpty) {
+            if (itemCart.menu!.categoryID == '1') {
+              if (appetizerNotSelected.isEmpty) {
+                appetizerNotSelected = itemMember.memberName!;
+              } else {
+                appetizerNotSelected =
+                    '$appetizerNotSelected, ${itemMember.memberName}';
+              }
+            } else if (itemCart.menu!.categoryID == '2') {
+              if (mainCourseNotSelected.isEmpty) {
+                mainCourseNotSelected = itemMember.memberName!;
+              } else {
+                mainCourseNotSelected =
+                    '$mainCourseNotSelected, ${itemMember.memberName}';
+              }
+            } else if (itemCart.menu!.categoryID == '3') {
+              if (dessertNotSelected.isEmpty) {
+                dessertNotSelected = itemMember.memberName!;
+              } else {
+                dessertNotSelected =
+                    '$dessertNotSelected, ${itemMember.memberName}';
+              }
             } else {
-              drinkNotSelected = '$drinkNotSelected, ${itemMember.memberName}';
+              if (drinkNotSelected.isEmpty) {
+                drinkNotSelected = itemMember.memberName!;
+              } else {
+                drinkNotSelected =
+                    '$drinkNotSelected, ${itemMember.memberName}';
+              }
             }
           }
         }
