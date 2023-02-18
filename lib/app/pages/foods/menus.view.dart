@@ -46,7 +46,7 @@ class _View extends StatelessView<MenusViewModel> {
                         child: Container(
                           padding: const EdgeInsets.symmetric(vertical: 10),
                           child: Text(
-                            'Silahkan Pilih Menu, ${capitalize(viewModel.userName)}',
+                            'Silahkan Pilih Menu,\n${capitalize(viewModel.userName)}',
                             style: Theme.of(context)
                                 .textTheme
                                 .headline4!
@@ -160,6 +160,10 @@ class _View extends StatelessView<MenusViewModel> {
                                 category.categoryIcon!,
                                 width: 24,
                                 height: 24,
+                                color: category.categoryID ==
+                                        viewModel.categorySelected.categoryID
+                                    ? Colors.white
+                                    : IColors.pink50,
                               ),
                               const SizedBox(width: 4),
                               Text(

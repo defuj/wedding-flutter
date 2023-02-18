@@ -913,7 +913,8 @@ class _View extends StatelessView<InvitationViewModel> {
               ),
             ),
             const SizedBox(height: 32),
-            Padding(
+            Container(
+              width: MediaQuery.of(context).size.width,
               padding: EdgeInsets.symmetric(
                 horizontal: edgeByWidth(
                   context: context,
@@ -1022,17 +1023,15 @@ class _View extends StatelessView<InvitationViewModel> {
                             margin: const EdgeInsets.only(top: 16),
                             child: Column(
                               children: [
-                                Expanded(
-                                  child: Text(
-                                    viewModel.showedComments[i].commentContent!,
-                                    maxLines: 3,
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .bodyText1!
-                                        .copyWith(
-                                            color: Colors.black,
-                                            fontWeight: FontWeight.w400),
-                                  ),
+                                Text(
+                                  viewModel.showedComments[i].commentContent!,
+                                  maxLines: 3,
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .bodyText1!
+                                      .copyWith(
+                                          color: Colors.black,
+                                          fontWeight: FontWeight.w400),
                                 ),
                               ],
                             ),
@@ -1057,8 +1056,7 @@ class _View extends StatelessView<InvitationViewModel> {
                   height: 46,
                   child: ButtonPrimary(
                     text: 'Load More',
-                    onPressed: () =>
-                        viewModel.showMoreComment(viewModel.comments),
+                    onPressed: () => viewModel.showMoreComment(),
                   ),
                 ),
               ),

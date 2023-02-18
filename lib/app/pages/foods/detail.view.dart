@@ -45,12 +45,20 @@ class _View extends StatelessView<MenuDetailViewModel> {
   @override
   Widget render(context, viewModel) {
     return FlutterWebFrame(
-      maximumSize: const Size(475, 1080),
+      maximumSize: Size(475, MediaQuery.of(context).size.height),
       builder: (context) => Scaffold(
         backgroundColor: Colors.white,
         appBar: appBar(
           context: context,
           title: 'Detail Menu',
+          centerTitle: false,
+          leading: IconButton(
+            icon: const Icon(
+              Icons.arrow_back_ios_rounded,
+              color: Colors.black,
+            ),
+            onPressed: () => Get.toNamed('/menus'),
+          ),
         ),
         body: ListView(
           scrollDirection: Axis.vertical,

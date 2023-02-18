@@ -16,16 +16,51 @@ class ApiProvider extends GetConnect {
       request.headers['Accept'] = '*/*';
       request.headers['Access-Control-Allow-Origin'] = '*';
       request.headers['Access-Control-Allow-Methods'] = '*';
-      request.headers['vary'] = 'Accept-Encoding,User-Agent';
-      request.headers['x-xss-protection'] = '1; mode=block';
-      request.headers['x-content-type-options'] = 'nosniff';
-      request.headers['alt-svc'] =
-          'h3=":443"; ma=2592000, h3-29=":443"; ma=2592000, h3-Q050=":443"; ma=2592000, h3-Q046=":443"; ma=2592000, h3-Q043=":443"; ma=2592000, quic=":443"; ma=2592000; v="43,46"';
-
       return request;
     });
 
     httpClient.maxAuthRetries = 3;
+  }
+
+  Future<String> submitMenu({
+    required int reservasionID,
+    required List<CartModel> cart,
+  }) async {
+    try {
+      Map<String, Map<String, dynamic>> category = {};
+      cart.map((e) {
+        category['${e.menu!.categoryID}'] = {
+          'id_menu': e.menu!.menuID,
+          'catatan': e.note,
+          'id_anggota': e.members!.map((e) => '${e.memberID}').toList(),
+        };
+      });
+
+      final data = {
+        'id_reservasi': reservasionID,
+        'data': [category],
+      };
+      final response = await request(
+        ApiEndPoints.submitMenus,
+        'POST',
+        body: data,
+        contentType: 'application/json',
+      );
+      if (response.status.hasError) {
+        return Future.error(
+            response.statusText ?? 'Terjadi kesalahan saat mengirim pesanan');
+      } else {
+        if (response.body['status'] == false) {
+          return Future.error(
+              response.body['message'] ?? 'Gagal mengirim pesanan');
+        } else {
+          return Future.value(
+              response.body['message'] ?? 'Pesanan berhasil dikirim');
+        }
+      }
+    } catch (e) {
+      return Future.error(e.toString());
+    }
   }
 
   Future<List<CommentModel>> fetchComment() async {

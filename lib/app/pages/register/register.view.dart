@@ -22,9 +22,10 @@ class _View extends StatelessView<RegisterViewModel> {
       builder: (context) => Scaffold(
         backgroundColor: IColors.pinkBackground,
         appBar: appBar(
-          title: 'Silahkan lanjutkan registrasi',
+          title: 'Silahkan lanjutkan reservasi',
           context: context,
           onBack: () => Get.back(),
+          centerTitle: false,
         ),
         body: SingleChildScrollView(
           child: Padding(

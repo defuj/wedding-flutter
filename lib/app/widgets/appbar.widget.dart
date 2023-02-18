@@ -172,9 +172,13 @@ PreferredSizeWidget appBar({
   String title = '',
   List<Widget> actions = const [],
   Function()? onBack,
+  bool centerTitle = true,
+  Widget? leading,
 }) {
   return AppBar(
+    leading: leading,
     elevation: 3,
+    centerTitle: centerTitle,
     surfaceTintColor: Colors.white,
     backgroundColor: Colors.white,
     shadowColor: IColors.blacktransparant,

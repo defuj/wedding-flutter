@@ -76,6 +76,9 @@ class MenuDetailViewModel extends ViewModel {
   void showMemberList() {
     if (members.isNotEmpty) {
       showModalBottomSheet(
+        constraints: const BoxConstraints(
+          maxWidth: 475,
+        ),
         shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.vertical(
             top: Radius.circular(16),
@@ -207,7 +210,6 @@ class MenuDetailViewModel extends ViewModel {
     );
 
     try {
-      loading.show();
       List<CartModel> cartExist = List<CartModel>.empty(growable: true);
       if (box.read('cart') != null) {
         cartExist = box.read('cart');
@@ -222,7 +224,6 @@ class MenuDetailViewModel extends ViewModel {
         cartExist = modCart;
         await box.write('cart', cartExist);
 
-        loading.dismiss();
         SweetDialog(
           context: context,
           dialogType: SweetDialogType.success,
@@ -242,7 +243,6 @@ class MenuDetailViewModel extends ViewModel {
         cartExist = cartNew;
         await box.write('cart', cartExist);
 
-        loading.dismiss();
         SweetDialog(
           context: context,
           dialogType: SweetDialogType.success,
@@ -251,13 +251,16 @@ class MenuDetailViewModel extends ViewModel {
         ).show();
       }
     } catch (e) {
-      loading.dismiss();
-      SweetDialog(
-        context: context,
-        dialogType: SweetDialogType.error,
-        title: 'Gagal',
-        content: 'Menu gagal ditambahkan ke keranjang, Error: $e',
-      ).show();
+      log('Error: $e');
+      //   loading.dismiss();
+      //   SweetDialog(
+      //     context: context,
+      //     dialogType: SweetDialogType.error,
+      //     title: 'Gagal',
+      //     content: 'Menu gagal ditambahkan ke keranjang, Error: $e',
+      //   ).show();
+      await box.remove('cart');
+      addToCart();
     }
   }
 
@@ -323,17 +326,27 @@ class MenuDetailViewModel extends ViewModel {
   void checkStock() {
     try {
       if (menu.menuStock! > 0) {
-        var totalMember = memberSelected.length + 1;
-        if (totalMember > menu.menuStock!) {
+        var totalMember = memberSelected.length;
+        if (totalMember == 0) {
           SweetDialog(
             context: context,
             dialogType: SweetDialogType.error,
             title: 'Oops...',
-            content: 'Jumlah member melebihi stok menu',
+            content: 'Tidak ada member yang terdaftar',
           ).show();
         } else {
-          //   checkProduct();
-          addToCart();
+          var totalMember = memberSelected.length + 1;
+          if (totalMember > menu.menuStock!) {
+            SweetDialog(
+              context: context,
+              dialogType: SweetDialogType.error,
+              title: 'Oops...',
+              content: 'Jumlah member melebihi stok menu',
+            ).show();
+          } else {
+            //   checkProduct();
+            addToCart();
+          }
         }
       } else {
         SweetDialog(
