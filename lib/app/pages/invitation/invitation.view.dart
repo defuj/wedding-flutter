@@ -954,7 +954,7 @@ class _View extends StatelessView<InvitationViewModel> {
                         fontWeight: FontWeight.w400),
                   ),
                   const SizedBox(height: 8),
-                  InputText(
+                  InputFormText(
                     controller: viewModel.nameController,
                     hintText: 'Your Full Name',
                     onChanged: (value) => viewModel.fullName = value,
@@ -977,7 +977,7 @@ class _View extends StatelessView<InvitationViewModel> {
                   const SizedBox(height: 8),
                   SizedBox(
                     height: 100,
-                    child: InputText(
+                    child: InputFormText(
                       controller: viewModel.commentController,
                       hintText: 'Write Your Wish',
                       onChanged: (value) => viewModel.comment = value,

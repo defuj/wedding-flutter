@@ -77,6 +77,100 @@ class RegisterViewModel extends ViewModel {
     'Ananda (0-6tahun)',
   ];
 
+  var newMamberName = '';
+
+  void writeMemberName(int indexMember, String initialValue) {
+    newMamberName = initialValue;
+    showModalBottomSheet(
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(
+          top: Radius.circular(16),
+        ),
+      ),
+      constraints: const BoxConstraints(maxWidth: 475),
+      isScrollControlled: true,
+      backgroundColor: Colors.white,
+      context: context,
+      builder: ((context) {
+        return Padding(
+          padding: EdgeInsets.only(
+            left: 16,
+            right: 16,
+            bottom: MediaQuery.of(context).viewInsets.bottom + 16,
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Center(
+                child: Container(
+                  margin: const EdgeInsets.only(
+                    bottom: 24,
+                    top: 16,
+                  ),
+                  height: 4,
+                  width: 80,
+                  decoration: const BoxDecoration(
+                    color: IColors.neutral20,
+                    borderRadius: BorderRadius.all(
+                      Radius.circular(12.0),
+                    ),
+                  ),
+                ),
+              ),
+              Text(
+                'Silahkan ketik nama lengkap',
+                style: Theme.of(context).textTheme.bodyText1!.copyWith(
+                      color: IColors.gray800,
+                      fontWeight: FontWeight.w400,
+                      fontFamily: 'OpenSans',
+                    ),
+              ),
+              const SizedBox(height: 16),
+              InputFormText(
+                initialValue: initialValue,
+                height: 50,
+                padding: const EdgeInsets.only(
+                  left: 0,
+                  right: 0,
+                ),
+                keyboardType: TextInputType.text,
+                textInputAction: TextInputAction.done,
+                onChanged: (value) => newMamberName = value,
+                hintText: 'Masukkan nama lengkap',
+                prefixIcon: Container(
+                  height: 50,
+                  color: IColors.pink50,
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 13,
+                  ),
+                  margin: const EdgeInsets.only(right: 8),
+                  child: const Icon(
+                    Icons.person_outline_rounded,
+                    color: Colors.white,
+                    size: 18,
+                  ),
+                ),
+              ),
+              const SizedBox(height: 8),
+              SizedBox(
+                height: 50,
+                child: ButtonPrimary(
+                  text: 'Simpan',
+                  onPressed: () {
+                    updateMemberName(newMamberName, indexMember);
+                    Navigator.pop(context);
+                  },
+                ),
+              ),
+            ],
+          ),
+        );
+      }),
+    );
+  }
+
   void showNicknameDialog(int indexMember) {
     showModalBottomSheet(
       shape: const RoundedRectangleBorder(
@@ -120,7 +214,7 @@ class RegisterViewModel extends ViewModel {
                 style: Theme.of(context).textTheme.bodyText1!.copyWith(
                       color: IColors.gray800,
                       fontWeight: FontWeight.w400,
-                      fontFamily: 'open-sans',
+                      fontFamily: 'OpenSans',
                     ),
               ),
               const SizedBox(height: 16),
@@ -155,7 +249,7 @@ class RegisterViewModel extends ViewModel {
                         style: Theme.of(context).textTheme.bodyText2!.copyWith(
                               color: IColors.black80,
                               fontWeight: FontWeight.w400,
-                              fontFamily: 'open-sans',
+                              fontFamily: 'OpenSans',
                             ),
                       ),
                     ),
@@ -213,7 +307,7 @@ class RegisterViewModel extends ViewModel {
                 style: Theme.of(context).textTheme.bodyText1!.copyWith(
                       color: IColors.gray800,
                       fontWeight: FontWeight.w400,
-                      fontFamily: 'open-sans',
+                      fontFamily: 'OpenSans',
                     ),
               ),
               const SizedBox(height: 16),
@@ -251,7 +345,7 @@ class RegisterViewModel extends ViewModel {
                         style: Theme.of(context).textTheme.bodyText2!.copyWith(
                               color: IColors.black80,
                               fontWeight: FontWeight.w400,
-                              fontFamily: 'open-sans',
+                              fontFamily: 'OpenSans',
                             ),
                       ),
                     ),
@@ -268,14 +362,29 @@ class RegisterViewModel extends ViewModel {
 
   void updateMemberName(String value, int index) {
     members[index].memberName = value;
+    members = members;
   }
 
   void addNewMember() {
-    // members = members;
-    members.add(MemberModel(
-      memberID: '${members.length + 1}',
-    ));
-    notifyListeners();
+    // check if member name is empty
+    if (members.isEmpty) {
+      List<MemberModel> list = [MemberModel(memberID: '${members.length + 1}')];
+      members = list;
+    } else {
+      if (members[members.length - 1].memberName == null ||
+          members[members.length - 1].nickname == null) {
+        SweetDialog(
+          context: context,
+          title: 'Nama dan panggilan harus diisi',
+          content: 'Silahkan isi nama dan panggilan terlebih dahulu',
+          dialogType: SweetDialogType.error,
+        ).show();
+      } else {
+        List<MemberModel> list = members;
+        list.add(MemberModel(memberID: '${members.length + 1}'));
+        members = list;
+      }
+    }
   }
 
   void removeMember(int index) {

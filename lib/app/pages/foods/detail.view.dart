@@ -220,7 +220,7 @@ class _View extends StatelessView<MenuDetailViewModel> {
             const SizedBox(height: 6),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16),
-              child: InputText(
+              child: InputFormText(
                 height: 80,
                 maxLength: 500,
                 maxLines: 50,

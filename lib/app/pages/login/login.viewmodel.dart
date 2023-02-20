@@ -100,7 +100,7 @@ class LoginViewModel extends ViewModel {
                 style: Theme.of(context).textTheme.bodyText1!.copyWith(
                       color: IColors.gray800,
                       fontWeight: FontWeight.w400,
-                      fontFamily: 'open-sans',
+                      fontFamily: 'OpenSans',
                     ),
               ),
               const SizedBox(height: 16),
@@ -134,7 +134,7 @@ class LoginViewModel extends ViewModel {
                         style: Theme.of(context).textTheme.bodyText2!.copyWith(
                               color: IColors.black80,
                               fontWeight: FontWeight.w400,
-                              fontFamily: 'open-sans',
+                              fontFamily: 'OpenSans',
                             ),
                       ),
                     ),
@@ -192,7 +192,7 @@ class LoginViewModel extends ViewModel {
                 style: Theme.of(context).textTheme.headline4!.copyWith(
                       color: IColors.gray800,
                       fontWeight: FontWeight.w400,
-                      fontFamily: 'open-sans',
+                      fontFamily: 'OpenSans',
                     ),
               ),
               const SizedBox(height: 24),
@@ -205,7 +205,7 @@ class LoginViewModel extends ViewModel {
                     .copyWith(color: Colors.black),
               ),
               const SizedBox(height: 4),
-              InputText(
+              InputFormText(
                 height: 50,
                 padding: const EdgeInsets.only(
                   left: 0,

@@ -80,3 +80,10 @@ flutter:
               - asset: assets/fonts/PlayfairDisplay-Regular.ttf
               - asset: assets/fonts/PlayfairDisplay-SemiBold.ttf
               - asset: assets/fonts/PlayfairDisplay-Medium.ttf
+
+        - family: OpenSans
+          fonts:
+              - asset: assets/fonts/OpenSans-Regular.ttf
+              - asset: assets/fonts/OpenSans-SemiBold.ttf
+              - asset: assets/fonts/OpenSans-Medium.ttf
+              - asset: assets/fonts/OpenSans-Bold.ttf

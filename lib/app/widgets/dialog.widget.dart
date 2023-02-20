@@ -1,4 +1,3 @@
-import 'dart:developer';
 import 'dart:ui';
 import 'package:wedding/repositories.dart';
 
@@ -16,14 +15,14 @@ class SweetDialog extends AlertDialog {
     String content = '',
     this.barrierDismissible = true,
     this.dialogType = 'normal',
-    String? cancelText,
+    String cancelText = '',
     String confirmText = 'Oke',
-    String? neutralText,
-    VoidCallback? onCancel,
-    VoidCallback? onConfirm,
-    VoidCallback? onNeutral,
+    String neutralText = '',
+    Function()? onCancel,
+    Function()? onConfirm,
+    Function()? onNeutral,
   }) : super(
-          key: key,
+          key: key ?? UniqueKey(),
           insetPadding: const EdgeInsets.all(45),
           backgroundColor: Colors.white,
           actionsPadding: const EdgeInsets.all(0),
@@ -66,11 +65,11 @@ class SweetDialog extends AlertDialog {
               Text(
                 title,
                 textAlign: TextAlign.center,
-                style: Theme.of(context).textTheme.headline3!.copyWith(
+                style: Theme.of(context).textTheme.bodyText1!.copyWith(
                     color: IColors.neutral10,
                     fontSize: 22,
                     fontWeight: FontWeight.w700,
-                    fontFamily: 'open-sans'),
+                    fontFamily: 'OpenSans'),
               ),
             ],
           ),
@@ -78,24 +77,64 @@ class SweetDialog extends AlertDialog {
             content,
             textAlign: TextAlign.center,
             style: Theme.of(context).textTheme.bodyText1!.copyWith(
-                color: IColors.neutral20,
-                fontSize: 15,
-                fontFamily: 'open-sans'),
+                color: IColors.neutral20, fontSize: 15, fontFamily: 'OpenSans'),
           ),
           actions: [
-            ClipRRect(
-              child: Container(
-                clipBehavior: Clip.hardEdge,
-                decoration: const BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.only(
-                    bottomLeft: Radius.circular(16.0),
-                    bottomRight: Radius.circular(16.0),
-                  ),
+            Container(
+              clipBehavior: Clip.hardEdge,
+              decoration: const BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.only(
+                  bottomLeft: Radius.circular(16.0),
+                  bottomRight: Radius.circular(16.0),
                 ),
-                child: Column(
-                  children: [
-                    // Confirm Button
+              ),
+              child: Column(
+                children: [
+                  // Confirm Button
+                  Container(
+                    decoration: const BoxDecoration(
+                      border: Border(
+                        top: BorderSide(
+                          color: IColors.neutral95,
+                          width: 1,
+                        ),
+                      ),
+                    ),
+                    width: double.infinity,
+                    height: 50,
+                    child: TextButton(
+                      style: ButtonStyle(
+                        shape:
+                            MaterialStateProperty.all<RoundedRectangleBorder>(
+                          const RoundedRectangleBorder(
+                            borderRadius: BorderRadius.zero,
+                          ),
+                        ),
+                        splashFactory: NoSplash.splashFactory,
+                      ),
+                      onPressed: () {
+                        Get.back();
+                        if (onConfirm == null) return;
+                        onConfirm();
+                      },
+                      child: Text(
+                        confirmText,
+                        style: Theme.of(context).textTheme.bodyText2!.copyWith(
+                              color: dialogType.toString() ==
+                                          SweetDialogType.warning.toString() ||
+                                      dialogType.toString() ==
+                                          SweetDialogType.error.toString()
+                                  ? Colors.red[600]
+                                  : Colors.blue[500],
+                              fontWeight: FontWeight.w700,
+                              fontFamily: 'OpenSans',
+                            ),
+                      ),
+                    ),
+                  ),
+                  // Neutral Button
+                  if (neutralText.isNotEmpty)
                     Container(
                       decoration: const BoxDecoration(
                         border: Border(
@@ -119,115 +158,61 @@ class SweetDialog extends AlertDialog {
                         ),
                         onPressed: () {
                           Get.back();
-                          try {
-                            onConfirm != null ? onConfirm() : () {};
-                          } catch (e) {
-                            log(e.toString());
-                          }
+                          if (onNeutral == null) return;
+                          onNeutral();
                         },
                         child: Text(
-                          confirmText,
+                          neutralText,
                           style:
                               Theme.of(context).textTheme.bodyText2!.copyWith(
-                                    color: dialogType.toString() ==
-                                                SweetDialogType.warning
-                                                    .toString() ||
-                                            dialogType.toString() ==
-                                                SweetDialogType.error.toString()
-                                        ? Colors.red[600]
-                                        : Colors.blue[500],
-                                    fontWeight: FontWeight.w700,
-                                    fontFamily: 'open-sans',
+                                    color: IColors.neutral20,
+                                    fontWeight: FontWeight.w500,
+                                    fontFamily: 'OpenSans',
                                   ),
                         ),
                       ),
                     ),
-                    // Neutral Button
-                    if (neutralText != null)
-                      Container(
-                        decoration: const BoxDecoration(
-                          border: Border(
-                            top: BorderSide(
-                              color: IColors.neutral95,
-                              width: 1,
-                            ),
-                          ),
-                        ),
-                        width: double.infinity,
-                        height: 50,
-                        child: TextButton(
-                          style: ButtonStyle(
-                            shape: MaterialStateProperty.all<
-                                RoundedRectangleBorder>(
-                              const RoundedRectangleBorder(
-                                borderRadius: BorderRadius.zero,
-                              ),
-                            ),
-                            splashFactory: NoSplash.splashFactory,
-                          ),
-                          onPressed: () {
-                            Get.back();
-                            try {
-                              onNeutral != null ? onNeutral() : () {};
-                            } catch (e) {
-                              log(e.toString());
-                            }
-                          },
-                          child: Text(
-                            neutralText,
-                            style:
-                                Theme.of(context).textTheme.bodyText2!.copyWith(
-                                      color: IColors.neutral20,
-                                      fontWeight: FontWeight.w500,
-                                      fontFamily: 'open-sans',
-                                    ),
+                  // Cancel Button
+                  if (cancelText.isNotEmpty)
+                    Container(
+                      decoration: const BoxDecoration(
+                        border: Border(
+                          top: BorderSide(
+                            color: IColors.neutral95,
+                            width: 1,
                           ),
                         ),
                       ),
-                    // Cancel Button
-                    if (cancelText != null)
-                      Container(
-                        decoration: const BoxDecoration(
-                          border: Border(
-                            top: BorderSide(
-                              color: IColors.neutral95,
-                              width: 1,
+                      width: double.infinity,
+                      height: 50,
+                      child: TextButton(
+                        style: ButtonStyle(
+                          shape:
+                              MaterialStateProperty.all<RoundedRectangleBorder>(
+                            const RoundedRectangleBorder(
+                              borderRadius: BorderRadius.zero,
                             ),
                           ),
+                          splashFactory: NoSplash.splashFactory,
                         ),
-                        width: double.infinity,
-                        height: 50,
-                        child: TextButton(
-                          style: ButtonStyle(
-                            shape: MaterialStateProperty.all<
-                                RoundedRectangleBorder>(
-                              const RoundedRectangleBorder(
-                                borderRadius: BorderRadius.zero,
-                              ),
-                            ),
-                            splashFactory: NoSplash.splashFactory,
-                          ),
-                          onPressed: () {
-                            Get.back();
-                            try {
-                              onCancel != null ? onCancel() : () {};
-                            } catch (e) {
-                              log(e.toString());
-                            }
-                          },
-                          child: Text(
-                            cancelText,
-                            style:
-                                Theme.of(context).textTheme.bodyText2!.copyWith(
-                                      color: IColors.neutral20,
-                                      fontWeight: FontWeight.w500,
-                                      fontFamily: 'open-sans',
-                                    ),
-                          ),
+                        onPressed: () {
+                          Get.back();
+                          // check if cancel function is null
+                          if (onCancel == null) return;
+                          onCancel();
+                        },
+                        child: Text(
+                          cancelText,
+                          style:
+                              Theme.of(context).textTheme.bodyText2!.copyWith(
+                                    color: IColors.neutral20,
+                                    fontWeight: FontWeight.w500,
+                                    fontFamily: 'OpenSans',
+                                  ),
                         ),
                       ),
-                  ],
-                ),
+                    ),
+                ],
               ),
             ),
           ],

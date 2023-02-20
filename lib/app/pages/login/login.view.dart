@@ -142,7 +142,7 @@ class _View extends StatelessView<LoginViewModel> {
                               .copyWith(color: Colors.black),
                         ),
                         const SizedBox(height: 4),
-                        InputText(
+                        InputFormText(
                           height: 50,
                           padding: const EdgeInsets.only(
                             left: 0,

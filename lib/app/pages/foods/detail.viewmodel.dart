@@ -119,7 +119,7 @@ class MenuDetailViewModel extends ViewModel {
                   style: Theme.of(context).textTheme.bodyText1!.copyWith(
                         color: IColors.gray800,
                         fontWeight: FontWeight.w400,
-                        fontFamily: 'open-sans',
+                        fontFamily: 'OpenSans',
                       ),
                 ),
                 const SizedBox(height: 16),
@@ -169,7 +169,7 @@ class MenuDetailViewModel extends ViewModel {
                               Theme.of(context).textTheme.bodyText2!.copyWith(
                                     color: IColors.black80,
                                     fontWeight: FontWeight.w400,
-                                    fontFamily: 'open-sans',
+                                    fontFamily: 'OpenSans',
                                   ),
                         ),
                       ),

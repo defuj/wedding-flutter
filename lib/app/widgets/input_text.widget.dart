@@ -24,6 +24,10 @@ class InputText extends StatefulWidget {
   final TextAlignVertical? textAlignVertical;
   final Widget? suffixIcon;
   final Function()? suffixAction;
+  final Function()? onTap;
+  final FocusNode? focusNode;
+  final bool autofocus;
+  final bool enabled;
   const InputText({
     super.key,
     this.onSaved,
@@ -51,6 +55,10 @@ class InputText extends StatefulWidget {
     ),
     this.suffixIcon,
     this.suffixAction,
+    this.onTap,
+    this.focusNode,
+    this.autofocus = false,
+    this.enabled = true,
   });
 
   @override
@@ -71,10 +79,17 @@ class _InputTextState extends State<InputText> {
           // borderRadius: BorderRadius.all(Radius.circular(8.0)),
           // border: widget.border,
         ),
-        child: TextFormField(
+        child: TextField(
+          onTap: () {
+            if (widget.onTap != null) {
+              widget.onTap!();
+            }
+          },
+          focusNode: widget.focusNode,
+          autofocus: widget.autofocus,
+          enabled: widget.enabled,
           controller: widget.controller,
           textAlign: widget.textAlign!,
-          onFieldSubmitted: widget.onFieldSubmitted,
           onEditingComplete: widget.onEditingComplete,
           textInputAction: widget.textInputAction,
           maxLines: widget.maxLines,
