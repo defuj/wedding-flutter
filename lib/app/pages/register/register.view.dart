@@ -21,12 +21,6 @@ class _View extends StatelessView<RegisterViewModel> {
       maximumSize: Size(475, MediaQuery.of(context).size.height),
       builder: (context) => Scaffold(
         backgroundColor: IColors.pinkBackground,
-        appBar: appBar(
-          title: 'Silahkan lanjutkan reservasi',
-          context: context,
-          onBack: () => Get.back(),
-          centerTitle: false,
-        ),
         body: SingleChildScrollView(
           child: Padding(
             padding: const EdgeInsets.all(16.0),
@@ -128,6 +122,7 @@ class _View extends StatelessView<RegisterViewModel> {
                                 child: Row(
                                   children: [
                                     Container(
+                                      height: 50,
                                       color: IColors.pink50,
                                       padding: const EdgeInsets.symmetric(
                                         horizontal: 12,
@@ -183,7 +178,7 @@ class _View extends StatelessView<RegisterViewModel> {
                                 size: 14,
                               ),
                             ),
-                            height: 44,
+                            height: 50,
                             padding: const EdgeInsets.only(
                               left: 0,
                               right: 0,
@@ -194,6 +189,7 @@ class _View extends StatelessView<RegisterViewModel> {
                                 viewModel.updateMemberName(value, index),
                             hintText: 'Masukkan nama lengkap',
                             prefixIcon: Container(
+                              height: 50,
                               color: IColors.pink50,
                               padding: const EdgeInsets.symmetric(
                                 horizontal: 12,
@@ -273,7 +269,7 @@ class _View extends StatelessView<RegisterViewModel> {
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(8),
                     child: Container(
-                      height: 44,
+                      height: 50,
                       width: double.infinity,
                       decoration: BoxDecoration(
                         color: IColors.black5,
@@ -283,8 +279,8 @@ class _View extends StatelessView<RegisterViewModel> {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Container(
-                            height: 44,
-                            width: 44,
+                            height: 50,
+                            width: 50,
                             color: IColors.pink50,
                             child: const Icon(
                               Icons.access_time_rounded,
@@ -322,7 +318,7 @@ class _View extends StatelessView<RegisterViewModel> {
                 ),
                 const SizedBox(height: 24),
                 SizedBox(
-                  height: 44,
+                  height: 50,
                   child: ButtonPrimary(
                     text: 'Lajut Pilih Makan',
                     onPressed: () => viewModel.chooseFoods(),

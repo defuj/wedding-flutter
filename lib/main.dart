@@ -33,7 +33,7 @@ Future<void> main() async {
     //   maximumSize: const Size(475, 1080),
     // ),
     GetMaterialApp(
-      title: 'Best Wedding',
+      title: 'Wedding Invitation',
       theme: lightTheme,
       initialRoute: '/',
       getPages: getRoutes,

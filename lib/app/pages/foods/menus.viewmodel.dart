@@ -185,7 +185,7 @@ class MenusViewModel extends ViewModel {
           content: 'Tidak menemukan data reservasi',
           barrierDismissible: false,
           confirmText: 'Kembali',
-          onConfirm: () => Get.toNamed('/enter'),
+          onConfirm: () => Get.toNamed('/rsvp'),
         ).show();
       }
     } else {
@@ -202,7 +202,7 @@ class MenusViewModel extends ViewModel {
         });
       } else {
         try {
-          Get.toNamed('/enter');
+          Get.toNamed('/rsvp');
         } catch (e) {
           log('Error: $e');
         }

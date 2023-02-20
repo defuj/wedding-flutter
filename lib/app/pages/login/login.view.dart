@@ -47,12 +47,14 @@ class _View extends StatelessView<LoginViewModel> {
                               left: 16,
                               right: 16,
                               bottom: 30,
+                              top: 24,
                             ),
                             child: AspectRatio(
                               aspectRatio: 1 / 1,
                               child: ClipOval(
-                                child: Image.network(
-                                    'https://cf.shopee.co.id/file/a462f22068f1cc83693c9d1773c7679a'),
+                                child: Image.asset(
+                                  'assets/images/client.png',
+                                ),
                               ),
                             ),
                           ),
@@ -141,7 +143,7 @@ class _View extends StatelessView<LoginViewModel> {
                         ),
                         const SizedBox(height: 4),
                         InputText(
-                          height: 44,
+                          height: 50,
                           padding: const EdgeInsets.only(
                             left: 0,
                             right: 16,
@@ -149,8 +151,9 @@ class _View extends StatelessView<LoginViewModel> {
                           keyboardType: TextInputType.phone,
                           textInputAction: TextInputAction.done,
                           onChanged: (value) => viewModel.phoneNumber = value,
-                          hintText: 'Masukkan nomor handphone',
+                          hintText: '62 xxxx xxxx xxx',
                           prefixIcon: Container(
+                            height: 50,
                             color: IColors.pink50,
                             padding: const EdgeInsets.symmetric(
                               horizontal: 12,
@@ -164,9 +167,19 @@ class _View extends StatelessView<LoginViewModel> {
                             ),
                           ),
                         ),
+                        const SizedBox(height: 4),
+                        Text(
+                          'Note: Sertakan kode negara',
+                          style: Theme.of(context)
+                              .textTheme
+                              .bodyText2!
+                              .copyWith(
+                                  color: Colors.black,
+                                  fontWeight: FontWeight.w600),
+                        ),
                         const SizedBox(height: 24),
                         SizedBox(
-                          height: 44,
+                          height: 50,
                           child: ButtonPrimary(
                             text: 'Lanjutkan',
                             onPressed: viewModel.validatePhone,

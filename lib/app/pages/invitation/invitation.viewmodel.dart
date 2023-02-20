@@ -60,7 +60,7 @@ class InvitationViewModel extends ViewModel {
   }
 
   void enterReservation() {
-    Get.toNamed('/enter');
+    Get.toNamed('/rsvp');
   }
 
   void showMoreComment() {
@@ -121,6 +121,8 @@ class InvitationViewModel extends ViewModel {
       loading.dismiss();
       nameController.text = '';
       commentController.text = '';
+      fullName = '';
+      comment = '';
       SweetDialog(
         context: context,
         dialogType: SweetDialogType.success,

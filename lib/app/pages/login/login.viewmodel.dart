@@ -206,7 +206,7 @@ class LoginViewModel extends ViewModel {
               ),
               const SizedBox(height: 4),
               InputText(
-                height: 44,
+                height: 50,
                 padding: const EdgeInsets.only(
                   left: 0,
                   right: 16,
@@ -216,6 +216,7 @@ class LoginViewModel extends ViewModel {
                 onChanged: (value) => userName = value,
                 hintText: 'Masukkan nama lengkap kamu',
                 prefixIcon: Container(
+                  height: 50,
                   color: IColors.pink50,
                   padding: const EdgeInsets.symmetric(
                     horizontal: 12,
@@ -231,7 +232,7 @@ class LoginViewModel extends ViewModel {
               ),
               const SizedBox(height: 24),
               SizedBox(
-                height: 48,
+                height: 50,
                 child: ButtonPrimary(
                   text: 'Simpan',
                   onPressed: saveUser,

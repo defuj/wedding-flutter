@@ -296,10 +296,12 @@ class _View extends StatelessView<MenusViewModel> {
               visible: viewModel.menus.isEmpty && !viewModel.isLoading,
               child: Container(
                 margin: const EdgeInsets.only(top: 200),
-                height: MediaQuery.of(context).size.height - 200,
+                height: MediaQuery.of(context).size.height,
                 padding: const EdgeInsets.all(24),
                 child: Center(
                   child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       SvgPicture.asset(
                         'assets/icons/svg/foods.svg',

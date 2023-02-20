@@ -322,7 +322,7 @@ class RegisterViewModel extends ViewModel {
         loading.dismiss();
         SweetDialog(
           context: context,
-          title: 'Gagal menambahkan member',
+          title: 'Gagal menambahkan anggota',
           content: e.toString(),
           dialogType: SweetDialogType.error,
         ).show();
@@ -373,6 +373,16 @@ class RegisterViewModel extends ViewModel {
       return;
     }
 
+    if (members.isEmpty) {
+      SweetDialog(
+        context: context,
+        title: 'Belum menambahkan anggota',
+        content: 'Silahkan tambahkan setidaknya 1 anggota, yaitu anda sendiri',
+        dialogType: SweetDialogType.error,
+      ).show();
+      return;
+    }
+
     createReservasion();
   }
 
@@ -402,7 +412,7 @@ class RegisterViewModel extends ViewModel {
       dialogType: SweetDialogType.error,
       barrierDismissible: false,
       confirmText: 'Kembali',
-      onConfirm: () => Get.toNamed('/enter'),
+      onConfirm: () => Get.toNamed('/rsvp'),
     ).show();
   }
 

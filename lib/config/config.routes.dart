@@ -2,7 +2,7 @@ import 'package:wedding/repositories.dart';
 
 var getRoutes = [
   GetPage(
-    name: '/enter',
+    name: '/rsvp',
     page: () => const Login(),
     transition: Transition.cupertino,
   ),
