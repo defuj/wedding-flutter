@@ -58,14 +58,15 @@ bool visibilityByWidth({
 
 // prepare phone number is country code exist
 String modifyPhoneNumber(String phone) {
-  var newPhone = phone;
-  if (newPhone.substring(0, 1) == '0') {
-    newPhone = newPhone.replaceFirst('0', '62');
-  } else if (newPhone.substring(0, 1) == '+') {
-    newPhone = newPhone.replaceFirst('+', '');
-  } else {
-    newPhone = '62$phone';
+  var str = phone;
+  if (str.startsWith("0")) {
+    str = "62${str.substring(1)}";
   }
-
-  return newPhone;
+  if (str.startsWith("+")) {
+    str = str.substring(1);
+  }
+  if (!str.startsWith("62")) {
+    str = "62$str";
+  }
+  return str;
 }

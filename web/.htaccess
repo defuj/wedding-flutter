@@ -1,6 +1,4 @@
-RewriteEngine On
-RewriteBase /
-
-# Redirect direct folder access
+RewriteEngine on
 RewriteCond %{REQUEST_FILENAME} !-d
-RewriteRule ^(.*?)/$ /$1 [R=301,L]
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteRule . /index.html [L]

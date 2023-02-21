@@ -7,6 +7,13 @@ class MenuDetailViewModel extends ViewModel {
   late ApiProvider apiProvider;
   final box = GetStorage();
 
+  List<CartModel> _cartExist = List<CartModel>.empty(growable: true);
+  List<CartModel> get cartExist => _cartExist;
+  set cartExist(List<CartModel> value) {
+    _cartExist = value;
+    notifyListeners();
+  }
+
   String _note = '';
   String get note => _note;
   set note(String value) {
@@ -73,6 +80,41 @@ class MenuDetailViewModel extends ViewModel {
     this.banners = banners;
   }
 
+  void addMemberToMenu(int index) {
+    if (memberSelected
+        .where((element) => element.memberID == members[index].memberID)
+        .isEmpty) {
+      // check if member is already selected by other menu with same menu categoryID
+      if (cartExist
+          .where((element) =>
+              element.menu!.categoryID == menu.categoryID &&
+              element.members!
+                  .where(
+                      (element) => element.memberID == members[index].memberID)
+                  .isNotEmpty)
+          .isNotEmpty) {
+        Navigator.pop(context);
+        log('Tidak bisa dipilih');
+        SweetDialog(
+          context: context,
+          dialogType: SweetDialogType.error,
+          title: 'Tidak bisa dipilih',
+          content:
+              '${members[index].memberName} sudah memilih menu lain pada kategori ini',
+        ).show();
+      } else {
+        memberSelected.add(members[index]);
+        notifyListeners();
+        Navigator.pop(context);
+      }
+    } else {
+      memberSelected.removeWhere(
+          (element) => element.memberID == members[index].memberID);
+      notifyListeners();
+      Navigator.pop(context);
+    }
+  }
+
   void showMemberList() {
     if (members.isNotEmpty) {
       showModalBottomSheet(
@@ -134,18 +176,7 @@ class MenuDetailViewModel extends ViewModel {
                       splashFactory: NoSplash.splashFactory,
                       hoverColor: Colors.transparent,
                       onTap: () {
-                        if (memberSelected
-                            .where((element) =>
-                                element.memberID == members[index].memberID)
-                            .isEmpty) {
-                          memberSelected.add(members[index]);
-                          notifyListeners();
-                        } else {
-                          memberSelected.removeWhere((element) =>
-                              element.memberID == members[index].memberID);
-                          notifyListeners();
-                        }
-                        Navigator.pop(context);
+                        addMemberToMenu(index);
                       },
                       child: Container(
                         margin: const EdgeInsets.only(bottom: 6),
@@ -210,19 +241,17 @@ class MenuDetailViewModel extends ViewModel {
     );
 
     try {
-      List<CartModel> cartExist = List<CartModel>.empty(growable: true);
-      if (box.read('cart') != null) {
-        cartExist = box.read('cart');
-      }
-
+      // check if menu already exist in cart
       var result = cartExist
-          .where((element) => element.menu!.menuID == cart.menu!.menuID);
+          .where((element) => element.menu!.menuID == cart.menu!.menuID)
+          .toList();
+      // if menu not exist in cart
       if (result.isEmpty) {
         // add new cart
         var modCart = cartExist;
         modCart.add(cart);
         cartExist = modCart;
-        await box.write('cart', cartExist);
+        await box.write('cart', cartExist.toList());
 
         SweetDialog(
           context: context,
@@ -241,7 +270,7 @@ class MenuDetailViewModel extends ViewModel {
           }
         });
         cartExist = cartNew;
-        await box.write('cart', cartExist);
+        await box.write('cart', cartExist.toList());
 
         SweetDialog(
           context: context,
@@ -252,15 +281,14 @@ class MenuDetailViewModel extends ViewModel {
       }
     } catch (e) {
       log('Error: $e');
-      //   loading.dismiss();
-      //   SweetDialog(
-      //     context: context,
-      //     dialogType: SweetDialogType.error,
-      //     title: 'Gagal',
-      //     content: 'Menu gagal ditambahkan ke keranjang, Error: $e',
-      //   ).show();
+      SweetDialog(
+        context: context,
+        dialogType: SweetDialogType.error,
+        title: 'Gagal',
+        content: 'Menu gagal ditambahkan ke keranjang, Error: $e',
+      ).show();
       await box.remove('cart');
-      addToCart();
+      //   addToCart();
     }
   }
 
@@ -367,6 +395,32 @@ class MenuDetailViewModel extends ViewModel {
     }
   }
 
+  void reloadMemberSelected() {
+    if (box.hasData('cart')) {
+      log('cart exist');
+      log(box.read<List<CartModel>>('cart')!.toString());
+      cartExist = box.read<List<CartModel>>('cart')!;
+    }
+    final currentMenuOnCart = cartExist
+        .where((element) => element.menu!.menuID == menu.menuID)
+        .toList();
+    if (currentMenuOnCart.isNotEmpty) {
+      memberSelected = currentMenuOnCart[0].members!;
+    }
+  }
+
+  void reservationNotFound() {
+    SweetDialog(
+      context: context,
+      dialogType: SweetDialogType.error,
+      title: 'Oops!',
+      content: 'Tidak menemukan data reservasi',
+      barrierDismissible: false,
+      confirmText: 'Kembali',
+      onConfirm: () => Get.toNamed('/rsvp'),
+    ).show();
+  }
+
   @override
   void init() {
     apiProvider = getApiProvider;
@@ -395,28 +449,23 @@ class MenuDetailViewModel extends ViewModel {
         log('SessionID: $sessionID');
 
         Future.delayed(Duration.zero, () {
-          log(menu.toJson().toString());
+          reloadMemberSelected();
+        });
+
+        Future.delayed(Duration.zero, () {
           prepareBanner();
         });
       } catch (e) {
-        log('Error wae: $e');
-        SweetDialog(
-          context: context,
-          dialogType: SweetDialogType.error,
-          title: 'Oops!',
-          content: 'Tidak menemukan data reservasi',
-          barrierDismissible: false,
-          confirmText: 'Kembali',
-          onConfirm: () => Get.toNamed('/rsvp'),
-        );
+        Future.delayed(Duration.zero, () {
+          reservationNotFound();
+        });
       }
     } else {
       if (box.read('reservasionID') != null && box.read('sessionID') != null) {
         reservasionID = box.read('reservasionID');
         sessionID = box.read('sessionID');
         menu = MenuModel.fromJson(box.read('menu'));
-        var member = box.read('members') as List;
-        members = member.map((e) => MemberModel.fromJson(e)).toList();
+        members = box.read<List<MemberModel>>('members') ?? [];
 
         log('Menu: ${menu.toJson()}');
         log('Members: ${members.length}');
@@ -424,25 +473,28 @@ class MenuDetailViewModel extends ViewModel {
         log('SessionID: $sessionID');
 
         Future.delayed(Duration.zero, () {
+          reloadMemberSelected();
+        });
+
+        Future.delayed(Duration.zero, () {
           prepareBanner();
         });
       } else {
-        try {
-          Get.toNamed('/rsvp');
-        } catch (e) {
-          log('Error: $e');
-        }
+        Future.delayed(Duration.zero, () {
+          reservationNotFound();
+        });
       }
     }
-    Get.toNamed(
-      '/menus/detail',
-      arguments: {
-        'reservasionID': reservasionID,
-        'sessionID': sessionID,
-        'menu': menu,
-        'members': members,
-      },
-    );
+
+    // Get.toNamed(
+    //   '/menus/detail',
+    //   arguments: {
+    //     'reservasionID': reservasionID,
+    //     'sessionID': sessionID,
+    //     'menu': menu,
+    //     'members': members,
+    //   },
+    // );
   }
 
   @override

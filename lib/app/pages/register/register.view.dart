@@ -445,7 +445,7 @@ class _View extends StatelessView<RegisterViewModel> {
                 SizedBox(
                   height: 50,
                   child: ButtonPrimary(
-                    text: 'Lajut Pilih Makan',
+                    text: 'Lanjut Pilih Makan',
                     onPressed: () => viewModel.chooseFoods(),
                   ),
                 ),
