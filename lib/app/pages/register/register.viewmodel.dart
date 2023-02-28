@@ -439,7 +439,7 @@ class RegisterViewModel extends ViewModel {
                     onTap: () {
                       selectedSession = int.parse(sessions[index].sessionID!);
                       selectedSessionName =
-                          'Sesi ${sessions[index].sessionName} (${sessions[index].sessionStart} sd ${sessions[index].sessionEnd}) ${sessions[index].sessionQuota} kuota tersisa';
+                          'Sesi ${sessions[index].sessionName} (${sessions[index].sessionStart} sd ${sessions[index].sessionEnd})';
                       Navigator.pop(context);
                     },
                     child: Container(
@@ -532,6 +532,7 @@ class RegisterViewModel extends ViewModel {
       barrierDismissible: false,
       confirmText: 'Lanjutkan',
       onConfirm: () {
+        box.write('sessionName', selectedSessionName);
         box.write('userName', userName);
         box.write('reservasionID', reservasionID);
         box.write('sessionID', selectedSession);

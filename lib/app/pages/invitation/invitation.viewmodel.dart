@@ -4,6 +4,7 @@ import 'package:wedding/repositories.dart';
 class InvitationViewModel extends ViewModel {
   late ApiProvider apiProvider;
   late SweetDialog loading;
+  final box = GetStorage();
 
   TextEditingController nameController = TextEditingController();
   TextEditingController commentController = TextEditingController();
@@ -149,10 +150,18 @@ class InvitationViewModel extends ViewModel {
       dialogType: SweetDialogType.loading,
       barrierDismissible: false,
     );
-    Future.delayed(Duration.zero, () {
-      fetchComment();
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
       try {
-        userName = Get.parameters['nama'] ?? '';
+        if (Get.parameters['nama'] != null) {
+          userName = Get.parameters['nama'] ?? '';
+        } else {
+          if (box.hasData('userName')) {
+            userName = box.read('userName');
+          } else {
+            userName = '';
+          }
+        }
       } catch (e) {
         log(e.toString());
       }
@@ -164,10 +173,19 @@ class InvitationViewModel extends ViewModel {
       }
 
       try {
-        userSession = Get.parameters['sesi'] ?? '';
+        if (Get.parameters['sesi'] != null) {
+          userSession = Get.parameters['sesi'] ?? '';
+        } else {
+          if (box.hasData('sessionName')) {
+            userSession = box.read('sessionName');
+          } else {
+            userSession = '';
+          }
+        }
       } catch (e) {
         log(e.toString());
       }
+      fetchComment();
     });
   }
 

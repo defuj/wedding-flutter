@@ -526,7 +526,14 @@ class _View extends StatelessView<InvitationViewModel> {
                           ),
                           const SizedBox(height: 24),
                           AspectRatio(
-                            aspectRatio: 16 / 9,
+                            aspectRatio: edgeByWidth(
+                              context: context,
+                              xs: 1 / 1,
+                              sm: 1 / 1,
+                              md: 16 / 9,
+                              lg: 16 / 9,
+                              xl: 16 / 9,
+                            ),
                             child: ClipRRect(
                               borderRadius: BorderRadius.circular(8),
                               child: GoogleMap(
@@ -671,7 +678,14 @@ class _View extends StatelessView<InvitationViewModel> {
                           ),
                           const SizedBox(height: 24),
                           AspectRatio(
-                            aspectRatio: 16 / 9,
+                            aspectRatio: edgeByWidth(
+                              context: context,
+                              xs: 1 / 1,
+                              sm: 1 / 1,
+                              md: 16 / 9,
+                              lg: 16 / 9,
+                              xl: 16 / 9,
+                            ),
                             child: ClipRRect(
                               borderRadius: BorderRadius.circular(8),
                               child: GoogleMap(
@@ -830,7 +844,14 @@ class _View extends StatelessView<InvitationViewModel> {
                     md: 6,
                     lg: 6,
                     child: AspectRatio(
-                      aspectRatio: 16 / 9,
+                      aspectRatio: edgeByWidth(
+                        context: context,
+                        xs: 1 / 1,
+                        sm: 1 / 1,
+                        md: 16 / 9,
+                        lg: 16 / 9,
+                        xl: 16 / 9,
+                      ),
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(8),
                         child: GoogleMap(
