@@ -421,6 +421,104 @@ class MenuDetailViewModel extends ViewModel {
     ).show();
   }
 
+  void memberNotFound() {
+    SweetDialog(
+      context: context,
+      dialogType: SweetDialogType.error,
+      title: 'Oops!',
+      content: 'Tidak menemukan data anggota',
+      barrierDismissible: false,
+      confirmText: 'Kembali',
+      onConfirm: () => Get.toNamed('/rsvp'),
+    ).show();
+  }
+
+  void menuNotFound() {
+    SweetDialog(
+      context: context,
+      dialogType: SweetDialogType.error,
+      title: 'Oops!',
+      content: 'Tidak menemukan data menu',
+      barrierDismissible: false,
+      confirmText: 'Kembali',
+      onConfirm: () => Get.toNamed('/menus'),
+    ).show();
+  }
+
+  void prepareData() {
+    try {
+      if (box.hasData('reservasionID') && box.hasData('sessionID')) {
+        reservasionID = box.read('reservasionID');
+        sessionID = box.read('sessionID');
+
+        if (box.hasData('menu')) {
+          if (box.hasData('members')) {
+            menu = MenuModel.fromJson(box.read('menu'));
+            members = box.read('members');
+            if (members.isEmpty) {
+              memberNotFound();
+            } else {
+              reloadMemberSelected();
+              Future.delayed(const Duration(seconds: 1), () {
+                prepareBanner();
+              });
+            }
+
+            log('Menu: ${menu.toJson()}');
+            log('Members: ${members.length}');
+            log('ReservasionID: $reservasionID');
+            log('SessionID: $sessionID');
+          } else {
+            memberNotFound();
+          }
+        } else {
+          menuNotFound();
+        }
+      } else {
+        reservationNotFound();
+      }
+    } catch (e) {
+      SweetDialog(
+        context: context,
+        dialogType: SweetDialogType.error,
+        title: 'Oops...',
+        content: 'Terjadi kesalahan',
+        barrierDismissible: false,
+        confirmText: 'Kembali',
+        onConfirm: () => Get.toNamed('/rsvp'),
+      ).show();
+    }
+
+    // final args = Get.arguments;
+    // if (args != null) {
+    //   try {
+    //     reservasionID = args['reservasionID'];
+    //     sessionID = args['sessionID'];
+    //     menu = MenuModel.fromJson(args['menu']);
+    //     members = args['members'];
+
+    //     box.write('reservasionID', reservasionID);
+    //     box.write('sessionID', sessionID);
+    //     box.write('menu', menu.toJson());
+    //     box.write('members', members.toList());
+
+    //     log('Menu: ${menu.toJson()}');
+    //     log('Members: ${members.length}');
+    //     log('ReservasionID: $reservasionID');
+    //     log('SessionID: $sessionID');
+
+    //     reloadMemberSelected();
+    //     Future.delayed(const Duration(seconds: 1), () {
+    //       prepareBanner();
+    //     });
+    //   } catch (e) {
+    //     reservationNotFound();
+    //   }
+    // } else {
+    //   reservationNotFound();
+    // }
+  }
+
   @override
   void init() {
     apiProvider = getApiProvider;
@@ -430,71 +528,9 @@ class MenuDetailViewModel extends ViewModel {
       barrierDismissible: false,
     );
 
-    final args = Get.arguments;
-    if (args != null) {
-      try {
-        reservasionID = args['reservasionID'];
-        sessionID = args['sessionID'];
-        menu = MenuModel.fromJson(args['menu']);
-        members = args['members'];
-
-        box.write('reservasionID', reservasionID);
-        box.write('sessionID', sessionID);
-        box.write('menu', menu.toJson());
-        box.write('members', members.toList());
-
-        log('Menu: ${menu.toJson()}');
-        log('Members: ${members.length}');
-        log('ReservasionID: $reservasionID');
-        log('SessionID: $sessionID');
-
-        Future.delayed(Duration.zero, () {
-          reloadMemberSelected();
-        });
-
-        Future.delayed(Duration.zero, () {
-          prepareBanner();
-        });
-      } catch (e) {
-        Future.delayed(Duration.zero, () {
-          reservationNotFound();
-        });
-      }
-    } else {
-      if (box.read('reservasionID') != null && box.read('sessionID') != null) {
-        reservasionID = box.read('reservasionID');
-        sessionID = box.read('sessionID');
-        menu = MenuModel.fromJson(box.read('menu'));
-        members = box.read<List<MemberModel>>('members') ?? [];
-
-        log('Menu: ${menu.toJson()}');
-        log('Members: ${members.length}');
-        log('ReservasionID: $reservasionID');
-        log('SessionID: $sessionID');
-
-        Future.delayed(Duration.zero, () {
-          reloadMemberSelected();
-        });
-
-        Future.delayed(Duration.zero, () {
-          prepareBanner();
-        });
-      } else {
-        Future.delayed(Duration.zero, () {
-          reservationNotFound();
-        });
-      }
-    }
-
-    // Get.toNamed(
-    //   '/menus/detail',
-    //   arguments: {
-    //     'reservasionID': reservasionID,
-    //     'sessionID': sessionID,
-    //     'menu': menu,
-    //     'members': members,
-    //   },
-    // );
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      prepareData();
+    });
   }
 
   @override

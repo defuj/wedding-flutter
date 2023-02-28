@@ -28,176 +28,138 @@ class _View extends StatelessView<RegisterViewModel> {
               mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                Container(
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                  padding: const EdgeInsets.all(12),
+                  margin: const EdgeInsets.only(bottom: 16),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Text(
+                        'Perhatian!',
+                        style: Theme.of(context).textTheme.bodyText1!.copyWith(
+                            fontWeight: FontWeight.w600,
+                            color: IColors.pink50,
+                            fontSize: 24),
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
+                        'Silahkan tambahkan data diri anda beserta anggota keluarga/lainnya, yang akan hadir',
+                        textAlign: TextAlign.center,
+                        style: Theme.of(context)
+                            .textTheme
+                            .bodyText1!
+                            .copyWith(color: Colors.black),
+                      ),
+                    ],
+                  ),
+                ),
                 Text(
                   'Nama Kamu:',
                   style: Theme.of(context).textTheme.bodyText1!.copyWith(
-                      fontWeight: FontWeight.w600, color: IColors.gray800),
+                      fontWeight: FontWeight.w600,
+                      color: Colors.black,
+                      fontSize: 20),
                 ),
-                const SizedBox(height: 6),
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    const Icon(
-                      Icons.person_rounded,
-                      color: IColors.pink50,
-                      size: 40,
-                    ),
-                    const SizedBox(width: 16),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
+                const SizedBox(height: 8),
+                Text(
+                  'Panggilan',
+                  textAlign: TextAlign.start,
+                  style: Theme.of(context)
+                      .textTheme
+                      .bodyText2!
+                      .copyWith(color: Colors.black),
+                ),
+                InkWell(
+                  onTap: () => viewModel.changeMyNickName(),
+                  splashColor: Colors.transparent,
+                  highlightColor: Colors.transparent,
+                  splashFactory: NoSplash.splashFactory,
+                  hoverColor: Colors.transparent,
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(8),
+                    child: Container(
+                      color: IColors.gray50,
+                      child: Row(
                         children: [
-                          Text(
-                            viewModel.userName,
-                            style: Theme.of(context)
-                                .textTheme
-                                .headline3!
-                                .copyWith(
-                                    color: IColors.gray800,
-                                    fontWeight: FontWeight.w400,
-                                    fontFamily: 'OpenSans'),
+                          Container(
+                            height: 50,
+                            color: IColors.pink50,
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 12,
+                              vertical: 13,
+                            ),
+                            margin: const EdgeInsets.only(right: 8),
+                            child: const Icon(
+                              Icons.person_outline_rounded,
+                              color: Colors.white,
+                              size: 18,
+                            ),
                           ),
-                          Text(
-                            viewModel.phoneNumber,
-                            style: Theme.of(context)
-                                .textTheme
-                                .bodyText2!
-                                .copyWith(
-                                    color: IColors.gray800,
-                                    fontWeight: FontWeight.w400,
-                                    fontFamily: 'OpenSans'),
-                          )
+                          Expanded(
+                            child: Text(viewModel.userNickname.isEmpty
+                                ? 'Pilih panggilan'
+                                : viewModel.userNickname),
+                          ),
+                          const Icon(
+                            Icons.keyboard_arrow_down_rounded,
+                            color: IColors.gray800,
+                            size: 24,
+                          ),
+                          const SizedBox(width: 12),
                         ],
                       ),
                     ),
-                  ],
-                ),
-                const SizedBox(height: 24),
-                Text(
-                  'Tambah Anggota:',
-                  style: Theme.of(context).textTheme.bodyText1!.copyWith(
-                      fontWeight: FontWeight.w600, color: IColors.gray800),
+                  ),
                 ),
                 Text(
-                  'Anggota yang dimaksud belum termasuk anda, jadi jangan lupa untuk menambahkan diri anda sendiri sebagai anggota.',
-                  style: Theme.of(context).textTheme.bodyText2!.copyWith(
-                      fontWeight: FontWeight.w600, color: IColors.pink50),
+                  'Nama Lengkap',
+                  textAlign: TextAlign.start,
+                  style: Theme.of(context)
+                      .textTheme
+                      .bodyText2!
+                      .copyWith(color: Colors.black),
+                ),
+                const SizedBox(height: 4),
+                InputFormText(
+                  initialValue: viewModel.userName,
+                  height: 50,
+                  padding: const EdgeInsets.only(
+                    left: 0,
+                    right: 0,
+                  ),
+                  keyboardType: TextInputType.text,
+                  textInputAction: TextInputAction.done,
+                  onChanged: (value) {
+                    if (viewModel.dataIsReady) viewModel.userName = value;
+                  },
+                  hintText: 'Masukkan nama lengkap',
+                  prefixIcon: Container(
+                    height: 50,
+                    color: IColors.pink50,
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 12,
+                      vertical: 13,
+                    ),
+                    margin: const EdgeInsets.only(right: 8),
+                    child: const Icon(
+                      Icons.person_outline_rounded,
+                      color: Colors.white,
+                      size: 18,
+                    ),
+                  ),
                 ),
                 const SizedBox(height: 10),
-                // for (var i = 0; i < viewModel.members.length; i++)
-                //   Container(
-                //     key: UniqueKey(),
-                //     margin: const EdgeInsets.only(top: 8),
-                //     width: double.infinity,
-                //     child: Column(
-                //       crossAxisAlignment: CrossAxisAlignment.start,
-                //       children: [
-                //         const SizedBox(height: 16),
-                //         Text(
-                //           'Panggilan',
-                //           textAlign: TextAlign.start,
-                //           style: Theme.of(context)
-                //               .textTheme
-                //               .bodyText2!
-                //               .copyWith(color: Colors.black),
-                //         ),
-                //         InkWell(
-                //           onTap: () => viewModel.showNicknameDialog(i),
-                //           splashColor: Colors.transparent,
-                //           highlightColor: Colors.transparent,
-                //           splashFactory: NoSplash.splashFactory,
-                //           hoverColor: Colors.transparent,
-                //           child: ClipRRect(
-                //             borderRadius: BorderRadius.circular(8),
-                //             child: Container(
-                //               color: IColors.gray50,
-                //               child: Row(
-                //                 children: [
-                //                   Container(
-                //                     height: 50,
-                //                     color: IColors.pink50,
-                //                     padding: const EdgeInsets.symmetric(
-                //                       horizontal: 12,
-                //                       vertical: 13,
-                //                     ),
-                //                     margin: const EdgeInsets.only(right: 8),
-                //                     child: const Icon(
-                //                       Icons.person_outline_rounded,
-                //                       color: Colors.white,
-                //                       size: 18,
-                //                     ),
-                //                   ),
-                //                   Expanded(
-                //                     child: Text(viewModel.members[i].nickname ??
-                //                         'Pilih panggilan'),
-                //                   ),
-                //                   const Icon(
-                //                     Icons.keyboard_arrow_down_rounded,
-                //                     color: IColors.gray800,
-                //                     size: 24,
-                //                   ),
-                //                   const SizedBox(width: 12),
-                //                 ],
-                //               ),
-                //             ),
-                //           ),
-                //         ),
-                //         Text(
-                //           'Nama Lengkap',
-                //           textAlign: TextAlign.start,
-                //           style: Theme.of(context)
-                //               .textTheme
-                //               .bodyText2!
-                //               .copyWith(color: Colors.black),
-                //         ),
-                //         const SizedBox(height: 4),
-                //         InputFormText(
-                //           focusNode: FocusNode(),
-                //           initialValue: viewModel.members[i].memberName,
-                //           suffixAction: () => viewModel.removeMember(i),
-                //           suffixIcon: Container(
-                //             padding: const EdgeInsets.symmetric(
-                //               horizontal: 2,
-                //               vertical: 2,
-                //             ),
-                //             decoration: BoxDecoration(
-                //               color: IColors.black100,
-                //               borderRadius: BorderRadius.circular(16),
-                //             ),
-                //             child: const Icon(
-                //               Icons.close_rounded,
-                //               color: Colors.white,
-                //               size: 14,
-                //             ),
-                //           ),
-                //           height: 50,
-                //           padding: const EdgeInsets.only(
-                //             left: 0,
-                //             right: 0,
-                //           ),
-                //           keyboardType: TextInputType.name,
-                //           textInputAction: TextInputAction.done,
-                //           onChanged: (value) =>
-                //               viewModel.updateMemberName(value, i),
-                //           hintText: 'Masukkan nama lengkap',
-                //           prefixIcon: Container(
-                //             height: 50,
-                //             color: IColors.pink50,
-                //             padding: const EdgeInsets.symmetric(
-                //               horizontal: 12,
-                //               vertical: 13,
-                //             ),
-                //             margin: const EdgeInsets.only(right: 8),
-                //             child: const Icon(
-                //               Icons.person_outline_rounded,
-                //               color: Colors.white,
-                //               size: 18,
-                //             ),
-                //           ),
-                //         ),
-                //       ],
-                //     ),
-                //   ),
+                Text(
+                  'Tambah Anggota?',
+                  style: Theme.of(context).textTheme.bodyText1!.copyWith(
+                      fontWeight: FontWeight.w600,
+                      color: Colors.black,
+                      fontSize: 20),
+                ),
                 ListView.builder(
                   shrinkWrap: true,
                   physics: const ScrollPhysics(),
@@ -206,7 +168,7 @@ class _View extends StatelessView<RegisterViewModel> {
                     final member = viewModel.members[index];
                     return Container(
                       key: UniqueKey(),
-                      margin: const EdgeInsets.only(top: 8),
+                      margin: const EdgeInsets.only(bottom: 8),
                       width: double.infinity,
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -342,7 +304,7 @@ class _View extends StatelessView<RegisterViewModel> {
                     hoverColor: Colors.transparent,
                     onTap: viewModel.addNewMember,
                     child: Container(
-                      width: 180,
+                      width: 120,
                       padding: const EdgeInsets.symmetric(
                         horizontal: 16,
                         vertical: 12,
@@ -361,7 +323,7 @@ class _View extends StatelessView<RegisterViewModel> {
                           ),
                           const SizedBox(width: 8),
                           Text(
-                            'Tambah Anggota',
+                            'Tambah',
                             style: Theme.of(context)
                                 .textTheme
                                 .bodyText2!
@@ -376,7 +338,9 @@ class _View extends StatelessView<RegisterViewModel> {
                 Text(
                   'Waktu Kedatangan:',
                   style: Theme.of(context).textTheme.bodyText1!.copyWith(
-                      fontWeight: FontWeight.w600, color: IColors.gray800),
+                      fontWeight: FontWeight.w600,
+                      color: Colors.black,
+                      fontSize: 20),
                 ),
                 const SizedBox(height: 6),
                 Text(
@@ -420,7 +384,7 @@ class _View extends StatelessView<RegisterViewModel> {
                                 vertical: 12,
                               ),
                               child: Text(
-                                viewModel.selectedSession.isEmpty
+                                viewModel.selectedSession == 0
                                     ? 'Pilih waktu kedatangan'
                                     : viewModel.selectedSessionName,
                                 style: Theme.of(context)

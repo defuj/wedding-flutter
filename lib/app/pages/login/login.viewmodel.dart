@@ -5,6 +5,7 @@ import 'package:wedding/repositories.dart';
 class LoginViewModel extends ViewModel {
   late ApiProvider apiProvider;
   late SweetDialog loading;
+  final box = GetStorage();
 
   List<String> nickname = [
     'Bpk',
@@ -259,17 +260,22 @@ class LoginViewModel extends ViewModel {
         final sessionID = value['sessionID'] as int;
         final invitationID = value['invitationID'] as int;
 
+        box.write('userName', value['userName']);
+        box.write('reservasionID', reservasionID);
+        box.write('sessionID', sessionID);
+        box.write('invitationID', invitationID);
+
         if (reservasionID != 0) {
           Get.offAllNamed('/menus', arguments: {
-            'userName': value['userName'],
+            'userName': userName,
             'reservasionID': reservasionID,
             'sessionID': sessionID,
             'invitationID': invitationID,
           });
         } else {
-          log(modifyPhoneNumber(phoneNumber));
+          box.write('phoneNumber', modifyPhoneNumber(phoneNumber));
           Get.offAllNamed('/reservation', arguments: {
-            'userName': value['userName'],
+            'userName': userName,
             'phoneNumber': modifyPhoneNumber(phoneNumber),
             'invitationID': invitationID,
           });

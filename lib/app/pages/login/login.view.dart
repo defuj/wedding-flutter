@@ -35,7 +35,7 @@ class _View extends StatelessView<LoginViewModel> {
                   children: [
                     Expanded(
                       child: Image.asset(
-                        'assets/images/component-3.png',
+                        'assets/images/component-1.png',
                       ),
                     ),
                     SizedBox(
@@ -71,7 +71,7 @@ class _View extends StatelessView<LoginViewModel> {
                     ),
                     Expanded(
                       child: Image.asset(
-                        'assets/images/component-22.png',
+                        'assets/images/component-2.png',
                       ),
                     ),
                   ],

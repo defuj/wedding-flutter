@@ -1,5 +1,4 @@
 import 'dart:developer';
-
 import 'package:wedding/repositories.dart';
 
 class InvitationViewModel extends ViewModel {

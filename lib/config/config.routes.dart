@@ -39,4 +39,9 @@ var getRoutes = [
     page: () => const Cart(),
     transition: Transition.cupertino,
   ),
+  GetPage(
+    name: '/checkin',
+    page: () => const Checkin(),
+    transition: Transition.cupertino,
+  ),
 ];

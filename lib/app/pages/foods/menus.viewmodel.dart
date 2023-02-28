@@ -50,25 +50,27 @@ class MenusViewModel extends ViewModel {
   }
 
   CategoryModel _categorySelected = CategoryModel(
-    categoryID: '1',
-    categoryName: 'Appetizer',
-    categoryIcon: 'assets/icons/svg/appetizer.svg',
+    categoryID: '2',
+    categoryName: 'Main Course',
+    categoryIcon: 'assets/icons/svg/main.svg',
   );
   CategoryModel get categorySelected => _categorySelected;
   set categorySelected(CategoryModel value) {
     _categorySelected = value;
     notifyListeners();
+
+    box.write('categorySelected', value.toJson());
   }
 
   List<CategoryModel> categories = [
     CategoryModel(
-        categoryID: '1',
-        categoryName: 'Appetizer',
-        categoryIcon: 'assets/icons/svg/appetizer.svg'),
-    CategoryModel(
         categoryID: '2',
         categoryName: 'Main Course',
         categoryIcon: 'assets/icons/svg/main.svg'),
+    CategoryModel(
+        categoryID: '1',
+        categoryName: 'Appetizer',
+        categoryIcon: 'assets/icons/svg/appetizer.svg'),
     CategoryModel(
         categoryID: '3',
         categoryName: 'Dessert',
@@ -104,7 +106,9 @@ class MenusViewModel extends ViewModel {
         //   dialogType: SweetDialogType.error,
         // ).show();
       },
-    );
+    ).whenComplete(() {
+      getMember(reservasionID: reservasionID);
+    });
   }
 
   void getMember({required int reservasionID}) async {
@@ -116,25 +120,19 @@ class MenusViewModel extends ViewModel {
         log('Error: $e', name: 'getMember');
         members = List<MemberModel>.empty(growable: true);
       },
-    );
-  }
-
-  void loadMenuDetail(MenuModel menu) {
-    Get.toNamed(
-      '/menus/detail',
-      arguments: {
-        'reservasionID': reservasionID,
-        'sessionID': sessionID,
-        'menu': menu.toJson(),
-        'members': members,
-      },
-    );
+    ).whenComplete(() {
+      getCart();
+    });
   }
 
   void getCart() async {
     try {
-      List<CartModel> cart = box.read('cart') ?? [];
-      cartCount = cart.length;
+      if (box.hasData('cart')) {
+        List<CartModel> cart = box.read('cart') ?? [];
+        cartCount = cart.length;
+      } else {
+        cartCount = 0;
+      }
     } catch (e) {
       log('Error $e');
       cartCount = 0;
@@ -151,6 +149,115 @@ class MenusViewModel extends ViewModel {
     });
   }
 
+  void loadMenuDetail(MenuModel menu) {
+    box.write('menu', menu.toJson());
+    box.write('members', members);
+
+    Get.toNamed(
+      '/menus/detail',
+      arguments: {
+        'reservasionID': reservasionID,
+        'sessionID': sessionID,
+        'menu': menu.toJson(),
+        'members': members,
+      },
+    );
+  }
+
+  void userNotFound() {
+    SweetDialog(
+      context: context,
+      title: 'Oops!',
+      content: 'Tidak dapat menemukan data tamu',
+      dialogType: SweetDialogType.error,
+      barrierDismissible: false,
+      confirmText: 'Kembali',
+      onConfirm: () => Get.toNamed('/rsvp'),
+    ).show();
+  }
+
+  void reservastionNotFound() {
+    SweetDialog(
+      context: context,
+      dialogType: SweetDialogType.error,
+      title: 'Oops!',
+      content: 'Tidak menemukan data reservasi',
+      barrierDismissible: false,
+      confirmText: 'Kembali',
+      onConfirm: () => Get.toNamed('/rsvp'),
+    ).show();
+  }
+
+  void prepareData() {
+    try {
+      if (box.hasData('userName') &&
+          box.hasData('reservasionID') &&
+          box.hasData('sessionID')) {
+        userName = box.read('userName');
+        reservasionID = box.read('reservasionID');
+        sessionID = box.read('sessionID');
+
+        getMenus();
+      } else {
+        reservastionNotFound();
+      }
+    } catch (e) {
+      reservastionNotFound();
+    }
+
+    // final args = Get.arguments;
+    // if (args != null) {
+    //   try {
+    //     log('success get args');
+    //     log('args not empty');
+
+    //     userName = args['userName'].toString();
+    //     reservasionID = int.parse(args['reservasionID'].toString());
+    //     sessionID = int.parse(args['sessionID'].toString());
+
+    //     box.write('userName', userName);
+    //     box.write('reservasionID', reservasionID);
+    //     box.write('sessionID', sessionID);
+
+    //     Future.delayed(Duration.zero, () {
+    //       getMenus();
+    //     });
+    //   } catch (e) {
+    //     log('error get args');
+    //     log('Error: $e');
+    //     SweetDialog(
+    //       context: context,
+    //       dialogType: SweetDialogType.error,
+    //       title: 'Oops!',
+    //       content: 'Tidak menemukan data reservasi',
+    //       barrierDismissible: false,
+    //       confirmText: 'Kembali',
+    //       onConfirm: () => Get.toNamed('/rsvp'),
+    //     ).show();
+    //   }
+    // } else {
+    //   log('args empty');
+    //   if (box.read('userName') != null &&
+    //       box.read('reservasionID') != null &&
+    //       box.read('sessionID') != null) {
+    //     userName = box.read('userName');
+    //     reservasionID = box.read('reservasionID');
+    //     sessionID = box.read('sessionID');
+
+    //     Future.delayed(Duration.zero, () {
+    //       getMenus();
+    //       getMember(reservasionID: box.read('reservasionID'));
+    //     });
+    //   } else {
+    //     try {
+    //       Get.toNamed('/rsvp');
+    //     } catch (e) {
+    //       log('Error: $e');
+    //     }
+    //   }
+    // }
+  }
+
   @override
   void init() {
     apiProvider = getApiProvider;
@@ -160,54 +267,12 @@ class MenusViewModel extends ViewModel {
       barrierDismissible: false,
     );
 
-    final args = Get.arguments;
-    if (args != null) {
-      try {
-        userName = args['userName'].toString();
-        reservasionID = int.parse(args['reservasionID'].toString());
-        sessionID = int.parse(args['sessionID'].toString());
-
-        box.write('userName', userName);
-        box.write('reservasionID', reservasionID);
-        box.write('sessionID', sessionID);
-
-        Future.delayed(Duration.zero, () {
-          getMenus();
-          getMember(reservasionID: int.parse(args['reservasionID'].toString()));
-          getCart();
-        });
-      } catch (e) {
-        log('Error: $e');
-        SweetDialog(
-          context: context,
-          dialogType: SweetDialogType.error,
-          title: 'Oops!',
-          content: 'Tidak menemukan data reservasi',
-          barrierDismissible: false,
-          confirmText: 'Kembali',
-          onConfirm: () => Get.toNamed('/rsvp'),
-        ).show();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (box.hasData('categorySelected')) {
+        categorySelected = CategoryModel.fromJson(box.read('categorySelected'));
       }
-    } else {
-      if (box.read('userName') != null &&
-          box.read('reservasionID') != null &&
-          box.read('sessionID') != null) {
-        userName = box.read('userName');
-        reservasionID = box.read('reservasionID');
-        sessionID = box.read('sessionID');
-
-        Future.delayed(Duration.zero, () {
-          getMenus();
-          getMember(reservasionID: box.read('reservasionID'));
-        });
-      } else {
-        try {
-          Get.toNamed('/rsvp');
-        } catch (e) {
-          log('Error: $e');
-        }
-      }
-    }
+      prepareData();
+    });
   }
 
   @override

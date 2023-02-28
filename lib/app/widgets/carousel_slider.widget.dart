@@ -28,6 +28,9 @@ Widget carouselSliderHome({required List<String> banner}) {
                             'assets/images/no_image_placeholder.png',
                             fit: BoxFit.cover,
                           ),
+                          httpHeaders: const {
+                            'Allow-Control-Allow-Origin': '*',
+                          },
                         ),
                       ),
                     ),

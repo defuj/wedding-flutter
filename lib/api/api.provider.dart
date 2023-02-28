@@ -203,7 +203,7 @@ class ApiProvider extends GetConnect {
 
   Future<String> addMember({
     required int reservasionID,
-    required String sessionID,
+    required int sessionID,
     required List<MemberModel> members,
   }) async {
     List<Map<String, String>> anggotas =
@@ -295,12 +295,13 @@ class ApiProvider extends GetConnect {
     try {
       final response =
           await get(ApiEndPoints().getMember(reservasionID: reservasionID));
+      log('result: ${response.body}');
       if (response.status.hasError) {
         return Future.error(response.statusText ??
-            'Terjadi kesalahan saat mengambil data menu');
+            'Terjadi kesalahan saat mengambil data anggota');
       } else {
         if (response.body['status'] == false) {
-          return Future.error(response.body['message'] ?? 'Tidak ada member');
+          return Future.error(response.body['message'] ?? 'Tidak ada anggota');
         } else {
           final members = response.body['data'] as List;
           return members.map((e) => MemberModel.fromJson(e)).toList();

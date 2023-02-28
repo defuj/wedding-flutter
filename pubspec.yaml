@@ -3,7 +3,7 @@ description: Enter invited guest data
 
 publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 
-version: 1.0.0+1
+version: 1.1.0+1
 
 environment:
   sdk: '>=2.18.6 <3.0.0'
@@ -33,6 +33,9 @@ dependencies:
   carousel_slider: ^4.2.1
   simple_grid: ^0.1.2
   url_strategy: ^0.2.0
+  qr_code_scanner: ^1.0.1
+  google_maps_flutter_web: ^0.4.0+6
+  google_maps_flutter: ^2.2.4
 
 dev_dependencies:
   flutter_test:

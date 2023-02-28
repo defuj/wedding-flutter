@@ -235,14 +235,18 @@ class _View extends StatelessView<MenusViewModel> {
                                       borderRadius: const BorderRadius.all(
                                         Radius.circular(8),
                                       ),
-                                      child: Image.network(
-                                        viewModel.menus[i].menuCoverPicture!,
+                                      child: CachedNetworkImage(
                                         fit: BoxFit.cover,
-                                        errorBuilder:
-                                            (context, error, stackTrace) =>
-                                                Container(
-                                          color: IColors.black10,
+                                        imageUrl: viewModel
+                                            .menus[i].menuCoverPicture!,
+                                        errorWidget: (context, url, error) =>
+                                            Image.asset(
+                                          'assets/images/no_image_placeholder.png',
+                                          fit: BoxFit.cover,
                                         ),
+                                        httpHeaders: const {
+                                          'Allow-Control-Allow-Origin': '*',
+                                        },
                                       ),
                                     ),
                                   ),

@@ -1,3 +1,5 @@
+import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart' as maps;
 import 'package:wedding/repositories.dart';
 
 class Invitation extends StatelessWidget {
@@ -29,8 +31,8 @@ class _View extends StatelessView<InvitationViewModel> {
                 SpGridItem(
                   xs: 0,
                   sm: 3,
-                  md: 4,
-                  lg: 4,
+                  md: 3,
+                  lg: 3,
                   child: Image.asset('assets/images/component-1.png'),
                 ),
                 SpGridItem(
@@ -40,14 +42,14 @@ class _View extends StatelessView<InvitationViewModel> {
                       xs: 65,
                       sm: 65,
                       md: 30,
-                      lg: 20,
-                      xl: 20,
+                      lg: 160,
+                      xl: 160,
                     ),
                   ),
                   xs: 12,
                   sm: 6,
-                  md: 4,
-                  lg: 4,
+                  md: 6,
+                  lg: 6,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
@@ -120,8 +122,8 @@ class _View extends StatelessView<InvitationViewModel> {
                 SpGridItem(
                   xs: 0,
                   sm: 3,
-                  md: 4,
-                  lg: 4,
+                  md: 3,
+                  lg: 3,
                   child: Image.asset('assets/images/component-2.png'),
                 ),
               ],
@@ -360,7 +362,7 @@ class _View extends StatelessView<InvitationViewModel> {
                         ),
                         const SizedBox(height: 8),
                         Text(
-                          'The daughter of dr. Amnur Rajo Kayo, M.K.M & Haslinda, SE',
+                          'The daughter of dr. Amnur Rajo Kayo, MKM & Haslinda, SE',
                           textAlign: TextAlign.center,
                           style:
                               Theme.of(context).textTheme.headline2!.copyWith(
@@ -424,7 +426,7 @@ class _View extends StatelessView<InvitationViewModel> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            'Marriage Ceremony/Akad Nikah',
+                            'Akad Nikah/ Marriage Ceremony',
                             style:
                                 Theme.of(context).textTheme.headline2!.copyWith(
                                     color: Colors.black,
@@ -448,6 +450,33 @@ class _View extends StatelessView<InvitationViewModel> {
                               const SizedBox(width: 8),
                               Text(
                                 'Thursday, 2 March  2023',
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .headline2!
+                                    .copyWith(
+                                        color: Colors.black,
+                                        fontSize: edgeByWidth(
+                                          context: context,
+                                          xs: 16,
+                                          sm: 16,
+                                          md: 18,
+                                          lg: 22,
+                                          xl: 22,
+                                        ),
+                                        fontWeight: FontWeight.w400),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 24),
+                          Row(
+                            children: [
+                              const Icon(
+                                Icons.access_time_filled_rounded,
+                                color: Colors.black,
+                              ),
+                              const SizedBox(width: 8),
+                              Text(
+                                '08.00 - 10.00',
                                 style: Theme.of(context)
                                     .textTheme
                                     .headline2!
@@ -495,6 +524,30 @@ class _View extends StatelessView<InvitationViewModel> {
                               ),
                             ],
                           ),
+                          const SizedBox(height: 24),
+                          AspectRatio(
+                            aspectRatio: 16 / 9,
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(8),
+                              child: GoogleMap(
+                                mapType: MapType.normal,
+                                initialCameraPosition: const CameraPosition(
+                                    target: LatLng(-0.3287901, 100.3660321),
+                                    zoom: 16),
+                                markers: {
+                                  maps.Marker(
+                                    markerId: maps.MarkerId('$UniqueKey'),
+                                    position: const maps.LatLng(
+                                        -0.3287901, 100.3660321),
+                                    draggable: false,
+                                    onDragEnd: (value) {
+                                      // value is the new position
+                                    },
+                                  )
+                                },
+                              ),
+                            ),
+                          )
                         ],
                       ),
                     ),
@@ -518,7 +571,7 @@ class _View extends StatelessView<InvitationViewModel> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            'Wedding Reception/Resepsi Pernikahan',
+                            'Baralek Kampuang/ Wedding Reception in Bukittinggi',
                             style:
                                 Theme.of(context).textTheme.headline2!.copyWith(
                                     color: Colors.white,
@@ -542,6 +595,148 @@ class _View extends StatelessView<InvitationViewModel> {
                               const SizedBox(width: 8),
                               Text(
                                 'Selasa, 31 Januari 2023',
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .headline2!
+                                    .copyWith(
+                                        color: Colors.white,
+                                        fontSize: edgeByWidth(
+                                          context: context,
+                                          xs: 16,
+                                          sm: 16,
+                                          md: 18,
+                                          lg: 22,
+                                          xl: 22,
+                                        ),
+                                        fontWeight: FontWeight.w400),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 24),
+                          Row(
+                            children: [
+                              const Icon(
+                                Icons.access_time_filled_rounded,
+                                color: Colors.white,
+                              ),
+                              const SizedBox(width: 8),
+                              Text(
+                                '15.00 - 17.00',
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .headline2!
+                                    .copyWith(
+                                        color: Colors.white,
+                                        fontSize: edgeByWidth(
+                                          context: context,
+                                          xs: 16,
+                                          sm: 16,
+                                          md: 18,
+                                          lg: 22,
+                                          xl: 22,
+                                        ),
+                                        fontWeight: FontWeight.w400),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 24),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              const Icon(
+                                Icons.location_on_rounded,
+                                color: Colors.white,
+                              ),
+                              const SizedBox(width: 8),
+                              Expanded(
+                                child: Text(
+                                  'Jl. H.Agus Salim no 1A, Bukittinggi, Sumatera Barat.',
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .headline2!
+                                      .copyWith(
+                                          color: Colors.white,
+                                          fontSize: edgeByWidth(
+                                            context: context,
+                                            xs: 16,
+                                            sm: 16,
+                                            md: 18,
+                                            lg: 22,
+                                            xl: 22,
+                                          ),
+                                          fontWeight: FontWeight.w400),
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 24),
+                          AspectRatio(
+                            aspectRatio: 16 / 9,
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(8),
+                              child: GoogleMap(
+                                mapType: MapType.normal,
+                                initialCameraPosition: const CameraPosition(
+                                    target: LatLng(-0.3070926, 100.3689357),
+                                    zoom: 16),
+                                markers: {
+                                  maps.Marker(
+                                    markerId: maps.MarkerId('$UniqueKey'),
+                                    position: const maps.LatLng(
+                                        -0.3070926, 100.3689357),
+                                    draggable: false,
+                                  )
+                                },
+                              ),
+                            ),
+                          )
+                        ],
+                      ),
+                    ),
+                  ),
+                  SpGridItem(
+                    xs: 12,
+                    sm: 12,
+                    md: 6,
+                    lg: 6,
+                    child: Container(
+                      margin: const EdgeInsets.only(bottom: 16),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 20,
+                        vertical: 16,
+                      ),
+                      decoration: BoxDecoration(
+                        color: IColors.pink50,
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Pesta Resepsi/Wedding Reception in Jakarta',
+                            style:
+                                Theme.of(context).textTheme.headline2!.copyWith(
+                                    color: Colors.white,
+                                    fontSize: edgeByWidth(
+                                      context: context,
+                                      xs: 20,
+                                      sm: 20,
+                                      md: 24,
+                                      lg: 32,
+                                      xl: 32,
+                                    ),
+                                    fontWeight: FontWeight.w400),
+                          ),
+                          const SizedBox(height: 24),
+                          Row(
+                            children: [
+                              const Icon(
+                                Icons.calendar_month_rounded,
+                                color: Colors.white,
+                              ),
+                              const SizedBox(width: 8),
+                              Text(
+                                'Sunday, 12 March 2023',
                                 style: Theme.of(context)
                                     .textTheme
                                     .headline2!
@@ -629,36 +824,33 @@ class _View extends StatelessView<InvitationViewModel> {
                       ),
                     ),
                   ),
-                ],
-              ),
-            ),
-            const SizedBox(height: 48),
-            Center(
-              child: SizedBox(
-                width: 200,
-                height: 50,
-                child: ButtonPrimary(
-                  textStyle: Theme.of(context).textTheme.headline2!.copyWith(
-                      color: Colors.white,
-                      fontSize: edgeByWidth(
-                        context: context,
-                        xs: 16,
-                        sm: 16,
-                        md: 18,
-                        lg: 20,
-                        xl: 20,
+                  SpGridItem(
+                    xs: 12,
+                    sm: 12,
+                    md: 6,
+                    lg: 6,
+                    child: AspectRatio(
+                      aspectRatio: 16 / 9,
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(8),
+                        child: GoogleMap(
+                          mapType: MapType.normal,
+                          initialCameraPosition: const CameraPosition(
+                              target: LatLng(-6.2277417, 106.8338776),
+                              zoom: 16),
+                          markers: {
+                            maps.Marker(
+                              markerId: maps.MarkerId('$UniqueKey'),
+                              position:
+                                  const maps.LatLng(-6.2277417, 106.8338776),
+                              draggable: false,
+                            )
+                          },
+                        ),
                       ),
-                      fontWeight: FontWeight.w400),
-                  text: 'RSVP / Reservasi',
-                  onPressed: () => viewModel.enterReservation(),
-                ),
-              ),
-            ),
-            const SizedBox(height: 24),
-            Center(
-              child: SizedBox(
-                width: 200,
-                child: Image.asset('assets/images/qr.png'),
+                    ),
+                  ),
+                ],
               ),
             ),
             const SizedBox(height: 56),
@@ -699,28 +891,57 @@ class _View extends StatelessView<InvitationViewModel> {
                                   ),
                                   fontWeight: FontWeight.w400),
                         ),
-                        SpGrid(
-                          margin: const EdgeInsets.only(top: 24, bottom: 24),
-                          spacing: 16,
-                          runSpacing: 16,
-                          width: double.infinity,
-                          alignment: WrapAlignment.center,
-                          children: [
-                            SpGridItem(
-                              xs: 12,
-                              sm: 12,
-                              md: 6,
-                              lg: 6,
-                              child: Container(
-                                margin: const EdgeInsets.symmetric(
+                        Container(
+                          margin: const EdgeInsets.symmetric(
+                            horizontal: 16,
+                          ),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 16,
+                            vertical: 24,
+                          ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Text(
+                                'Rekening Bank',
+                                textAlign: TextAlign.center,
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .headline2!
+                                    .copyWith(
+                                        color: Colors.black,
+                                        fontSize: edgeByWidth(
+                                          context: context,
+                                          xs: 16,
+                                          sm: 16,
+                                          md: 18,
+                                          lg: 24,
+                                          xl: 24,
+                                        ),
+                                        fontWeight: FontWeight.w400),
+                              ),
+                              const SizedBox(height: 16),
+                              Padding(
+                                padding: const EdgeInsets.symmetric(
                                   horizontal: 16,
                                 ),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                child: Image.asset(
+                                  'assets/images/bank-bca.png',
+                                  width: 200,
+                                ),
+                              ),
+                              const SizedBox(height: 16),
+                              SelectionArea(
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
+                                    const Icon(
+                                      Icons.person_outline_rounded,
+                                      color: Colors.black,
+                                    ),
+                                    const SizedBox(width: 8),
                                     Text(
-                                      'Rekening Bank',
-                                      textAlign: TextAlign.center,
+                                      'Puti Kayo Gebriecya',
                                       style: Theme.of(context)
                                           .textTheme
                                           .headline2!
@@ -728,177 +949,49 @@ class _View extends StatelessView<InvitationViewModel> {
                                               color: Colors.black,
                                               fontSize: edgeByWidth(
                                                 context: context,
-                                                xs: 16,
-                                                sm: 16,
+                                                xs: 14,
+                                                sm: 14,
                                                 md: 18,
-                                                lg: 24,
-                                                xl: 24,
+                                                lg: 20,
+                                                xl: 20,
                                               ),
-                                              fontWeight: FontWeight.w400),
-                                    ),
-                                    const SizedBox(height: 16),
-                                    Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                        horizontal: 16,
-                                      ),
-                                      child: Image.asset(
-                                        'assets/images/bank-bca.png',
-                                        width: 200,
-                                      ),
-                                    ),
-                                    const SizedBox(height: 16),
-                                    SelectionArea(
-                                      child: Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          const Icon(
-                                            Icons.person_outline_rounded,
-                                            color: Colors.black,
-                                          ),
-                                          const SizedBox(width: 8),
-                                          Expanded(
-                                            child: Text(
-                                              'Muhammad Syauqi Alsunni',
-                                              style: Theme.of(context)
-                                                  .textTheme
-                                                  .headline2!
-                                                  .copyWith(
-                                                      color: Colors.black,
-                                                      fontSize: edgeByWidth(
-                                                        context: context,
-                                                        xs: 14,
-                                                        sm: 14,
-                                                        md: 18,
-                                                        lg: 20,
-                                                        xl: 20,
-                                                      ),
-                                                      fontWeight:
-                                                          FontWeight.w600),
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                    const SizedBox(height: 16),
-                                    SelectionArea(
-                                      child: Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.start,
-                                        children: [
-                                          const Icon(
-                                            Icons.credit_card_rounded,
-                                            color: Colors.black,
-                                          ),
-                                          const SizedBox(width: 8),
-                                          Text(
-                                            '4670328193',
-                                            style: Theme.of(context)
-                                                .textTheme
-                                                .headline2!
-                                                .copyWith(
-                                                    color: Colors.black,
-                                                    fontSize: edgeByWidth(
-                                                      context: context,
-                                                      xs: 14,
-                                                      sm: 14,
-                                                      md: 18,
-                                                      lg: 20,
-                                                      xl: 20,
-                                                    ),
-                                                    fontWeight:
-                                                        FontWeight.w600),
-                                          ),
-                                          //   const SizedBox(width: 16),
-                                          //   InkWell(
-                                          //     splashColor: Colors.transparent,
-                                          //     highlightColor: Colors.transparent,
-                                          //     splashFactory:
-                                          //         InkRipple.splashFactory,
-                                          //     hoverColor: Colors.transparent,
-                                          //     onTap: () {},
-                                          //     child: const Icon(
-                                          //       Icons.copy_rounded,
-                                          //       color: Colors.black,
-                                          //     ),
-                                          //   ),
-                                        ],
-                                      ),
+                                              fontWeight: FontWeight.w600),
                                     ),
                                   ],
                                 ),
                               ),
-                            ),
-                            SpGridItem(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 16,
-                                vertical: 16,
-                              ),
-                              decoration: BoxDecoration(
-                                color: IColors.pink50,
-                                borderRadius: BorderRadius.circular(16),
-                              ),
-                              xs: 12,
-                              sm: 12,
-                              md: 6,
-                              lg: 6,
-                              child: Column(
-                                children: [
-                                  Text(
-                                    'Alamat Kirim Kado',
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .headline2!
-                                        .copyWith(
-                                            color: Colors.white,
-                                            fontSize: edgeByWidth(
-                                              context: context,
-                                              xs: 16,
-                                              sm: 16,
-                                              md: 18,
-                                              lg: 24,
-                                              xl: 24,
-                                            ),
-                                            fontWeight: FontWeight.w400),
-                                  ),
-                                  const SizedBox(height: 24),
-                                  SelectionArea(
-                                    child: Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.start,
-                                      children: [
-                                        const Icon(
-                                          Icons.location_on_rounded,
-                                          color: Colors.white,
-                                        ),
-                                        const SizedBox(width: 8),
-                                        Expanded(
-                                          child: Text(
-                                            'Jl. Masjid Annur, no.07, RT.09/RW.02,Kel. Menteng Dalam, Kec. Tebet, Jakarta Selatan',
-                                            style: Theme.of(context)
-                                                .textTheme
-                                                .headline2!
-                                                .copyWith(
-                                                    color: Colors.white,
-                                                    fontSize: edgeByWidth(
-                                                      context: context,
-                                                      xs: 14,
-                                                      sm: 14,
-                                                      md: 18,
-                                                      lg: 20,
-                                                      xl: 20,
-                                                    ),
-                                                    fontWeight:
-                                                        FontWeight.w400),
-                                          ),
-                                        ),
-                                      ],
+                              const SizedBox(height: 16),
+                              SelectionArea(
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    const Icon(
+                                      Icons.credit_card_rounded,
+                                      color: Colors.black,
                                     ),
-                                  ),
-                                ],
+                                    const SizedBox(width: 8),
+                                    Text(
+                                      '2170025043',
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .headline2!
+                                          .copyWith(
+                                              color: Colors.black,
+                                              fontSize: edgeByWidth(
+                                                context: context,
+                                                xs: 14,
+                                                sm: 14,
+                                                md: 18,
+                                                lg: 20,
+                                                xl: 20,
+                                              ),
+                                              fontWeight: FontWeight.w600),
+                                    ),
+                                  ],
+                                ),
                               ),
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
                       ],
                     ),
