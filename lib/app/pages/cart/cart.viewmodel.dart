@@ -294,6 +294,7 @@ class CartViewModel extends ViewModel {
             barrierDismissible: false,
             onConfirm: () {
               box.remove('cart');
+              box.write('$reservasionID-alreadyChooseFood', reservasionID);
               cart = List<CartModel>.empty(growable: true);
               appetizerNotSelected = '';
               mainCourseNotSelected = '';

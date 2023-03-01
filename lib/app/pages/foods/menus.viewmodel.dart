@@ -108,6 +108,7 @@ class MenusViewModel extends ViewModel {
       },
     ).whenComplete(() {
       getMember(reservasionID: reservasionID);
+      log('getMember using reservasionID: $reservasionID');
     });
   }
 
@@ -196,6 +197,11 @@ class MenusViewModel extends ViewModel {
         userName = box.read('userName');
         reservasionID = box.read('reservasionID');
         sessionID = box.read('sessionID');
+
+        log('success get box');
+        log('userName: $userName');
+        log('reservasionID: $reservasionID');
+        log('sessionID: $sessionID');
 
         getMenus();
       } else {

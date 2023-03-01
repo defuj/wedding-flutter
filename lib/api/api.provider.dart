@@ -171,16 +171,17 @@ class ApiProvider extends GetConnect {
     required String name,
     required String phoneNumber,
     required int id,
+    required String nickname,
   }) async {
     var phone = modifyPhoneNumber(phoneNumber);
     final data = FormData({
       'nama': name,
       'nomor_wa': phone,
       'force': 0,
-      'panggilan': '',
+      'panggilan': nickname,
       'id_undangan': id,
     });
-    log(phone);
+    log('reservasi with : $phone');
 
     try {
       final response = await post(ApiEndPoints.submitReservasion, data);

@@ -58,54 +58,55 @@ class _View extends StatelessView<MenusViewModel> {
                         ),
                       ),
                       InkWell(
-                          splashColor: Colors.transparent,
-                          highlightColor: Colors.transparent,
-                          splashFactory: NoSplash.splashFactory,
-                          hoverColor: Colors.transparent,
-                          onTap: () {
-                            Get.toNamed('/cart');
-                          },
-                          child: SizedBox(
-                            height: 50,
-                            width: 50,
-                            child: Stack(
-                              children: [
-                                const Center(
-                                  child: Icon(
-                                    Icons.shopping_cart_outlined,
-                                    size: 30,
-                                    color: IColors.black100,
-                                  ),
+                        splashColor: Colors.transparent,
+                        highlightColor: Colors.transparent,
+                        splashFactory: NoSplash.splashFactory,
+                        hoverColor: Colors.transparent,
+                        onTap: () {
+                          Get.toNamed('/cart');
+                        },
+                        child: SizedBox(
+                          height: 50,
+                          width: 50,
+                          child: Stack(
+                            children: [
+                              const Center(
+                                child: Icon(
+                                  Icons.shopping_cart_outlined,
+                                  size: 30,
+                                  color: IColors.black100,
                                 ),
-                                Positioned(
-                                  right: 0,
-                                  child: Visibility(
-                                    visible: viewModel.cartCount != 0,
-                                    child: Container(
-                                      decoration: BoxDecoration(
-                                        color: IColors.pink50,
-                                        borderRadius: BorderRadius.circular(30),
-                                      ),
-                                      width: 24,
-                                      height: 24,
-                                      child: Center(
-                                        child: Text(
-                                          viewModel.cartCount.toString(),
-                                          style: Theme.of(context)
-                                              .textTheme
-                                              .overline!
-                                              .copyWith(
-                                                color: Colors.white,
-                                                fontWeight: FontWeight.w600,
-                                              ),
-                                        ),
+                              ),
+                              Positioned(
+                                right: 0,
+                                child: Visibility(
+                                  visible: viewModel.cartCount != 0,
+                                  child: Container(
+                                    decoration: BoxDecoration(
+                                      color: IColors.pink50,
+                                      borderRadius: BorderRadius.circular(30),
+                                    ),
+                                    width: 24,
+                                    height: 24,
+                                    child: Center(
+                                      child: Text(
+                                        viewModel.cartCount.toString(),
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .overline!
+                                            .copyWith(
+                                              color: Colors.white,
+                                              fontWeight: FontWeight.w600,
+                                            ),
                                       ),
                                     ),
                                   ),
                                 ),
-                              ],
-                            ),
-                          )),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
                     ],
                   ),
                 ),
@@ -126,70 +127,73 @@ class _View extends StatelessView<MenusViewModel> {
                 SizedBox(
                   width: double.infinity,
                   height: 40,
-                  child: ListView.builder(
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
-                    shrinkWrap: true,
-                    scrollDirection: Axis.horizontal,
-                    itemCount: viewModel.categories.length,
-                    itemBuilder: (context, index) {
-                      final category = viewModel.categories[index];
-                      return InkWell(
-                        splashColor: Colors.transparent,
-                        highlightColor: Colors.transparent,
-                        splashFactory: NoSplash.splashFactory,
-                        hoverColor: Colors.transparent,
-                        onTap: () {
-                          viewModel.categorySelected = category;
-                          viewModel.getMenus();
-                        },
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 12,
-                            vertical: 7,
-                          ),
-                          decoration: BoxDecoration(
-                            color: category.categoryID ==
-                                    viewModel.categorySelected.categoryID
-                                ? IColors.pink50
-                                : Colors.white,
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          child: Row(
-                            children: [
-                              SvgPicture.asset(
-                                category.categoryIcon!,
-                                width: 24,
-                                height: 24,
-                                color: category.categoryID ==
-                                        viewModel.categorySelected.categoryID
-                                    ? Colors.white
-                                    : IColors.pink50,
-                              ),
-                              const SizedBox(width: 4),
-                              Text(
-                                category.categoryName ?? '-',
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .bodyText1!
-                                    .copyWith(
+                  child: viewModel.categories.isNotEmpty
+                      ? ListView.builder(
+                          padding: const EdgeInsets.symmetric(horizontal: 16),
+                          shrinkWrap: true,
+                          scrollDirection: Axis.horizontal,
+                          itemCount: viewModel.categories.length,
+                          itemBuilder: (context, index) {
+                            final category = viewModel.categories[index];
+                            return InkWell(
+                              splashColor: Colors.transparent,
+                              highlightColor: Colors.transparent,
+                              splashFactory: NoSplash.splashFactory,
+                              hoverColor: Colors.transparent,
+                              onTap: () {
+                                viewModel.categorySelected = category;
+                                viewModel.getMenus();
+                              },
+                              child: Container(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 12,
+                                  vertical: 7,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: category.categoryID ==
+                                          viewModel.categorySelected.categoryID
+                                      ? IColors.pink50
+                                      : Colors.white,
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                                child: Row(
+                                  children: [
+                                    SvgPicture.asset(
+                                      category.categoryIcon!,
+                                      width: 24,
+                                      height: 24,
                                       color: category.categoryID ==
                                               viewModel
                                                   .categorySelected.categoryID
                                           ? Colors.white
                                           : IColors.pink50,
-                                      fontWeight: category.categoryID ==
-                                              viewModel
-                                                  .categorySelected.categoryID
-                                          ? FontWeight.w600
-                                          : FontWeight.w400,
                                     ),
+                                    const SizedBox(width: 4),
+                                    Text(
+                                      category.categoryName ?? '-',
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .bodyText1!
+                                          .copyWith(
+                                            color: category.categoryID ==
+                                                    viewModel.categorySelected
+                                                        .categoryID
+                                                ? Colors.white
+                                                : IColors.pink50,
+                                            fontWeight: category.categoryID ==
+                                                    viewModel.categorySelected
+                                                        .categoryID
+                                                ? FontWeight.w600
+                                                : FontWeight.w400,
+                                          ),
+                                    ),
+                                  ],
+                                ),
                               ),
-                            ],
-                          ),
-                        ),
-                      );
-                    },
-                  ),
+                            );
+                          },
+                        )
+                      : Container(),
                 ),
                 Visibility(
                   visible: !viewModel.isLoading,
@@ -199,93 +203,102 @@ class _View extends StatelessView<MenusViewModel> {
                       vertical: 24,
                     ),
                     width: double.infinity,
-                    child: StaggeredGrid.count(
-                      crossAxisCount: 2,
-                      mainAxisSpacing: 10,
-                      crossAxisSpacing: 10,
-                      children: [
-                        for (var i = 0; i < viewModel.menus.length; i++)
-                          InkWell(
-                            splashColor: Colors.transparent,
-                            highlightColor: Colors.transparent,
-                            splashFactory: NoSplash.splashFactory,
-                            hoverColor: Colors.transparent,
-                            onTap: () =>
-                                viewModel.loadMenuDetail(viewModel.menus[i]),
-                            child: Container(
-                              padding: const EdgeInsets.all(13),
-                              decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.circular(12),
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: Colors.grey.withOpacity(0.1),
-                                    spreadRadius: 3,
-                                    blurRadius: 3,
-                                    offset: const Offset(0, 1),
-                                  ),
-                                ],
-                              ),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  AspectRatio(
-                                    aspectRatio: 1 / 0.9,
-                                    child: ClipRRect(
-                                      borderRadius: const BorderRadius.all(
-                                        Radius.circular(8),
-                                      ),
-                                      child: CachedNetworkImage(
-                                        fit: BoxFit.cover,
-                                        imageUrl: viewModel
-                                            .menus[i].menuCoverPicture!,
-                                        errorWidget: (context, url, error) =>
-                                            Image.asset(
-                                          'assets/images/no_image_placeholder.png',
-                                          fit: BoxFit.cover,
+                    child: viewModel.menus.isNotEmpty
+                        ? StaggeredGrid.count(
+                            crossAxisCount: 2,
+                            mainAxisSpacing: 10,
+                            crossAxisSpacing: 10,
+                            children: [
+                              for (var index = 0;
+                                  index < viewModel.menus.length;
+                                  index++)
+                                InkWell(
+                                  splashColor: Colors.transparent,
+                                  highlightColor: Colors.transparent,
+                                  splashFactory: NoSplash.splashFactory,
+                                  hoverColor: Colors.transparent,
+                                  onTap: () => viewModel
+                                      .loadMenuDetail(viewModel.menus[index]),
+                                  child: Container(
+                                    padding: const EdgeInsets.all(13),
+                                    decoration: BoxDecoration(
+                                      color: Colors.white,
+                                      borderRadius: BorderRadius.circular(12),
+                                      boxShadow: [
+                                        BoxShadow(
+                                          color: Colors.grey.withOpacity(0.1),
+                                          spreadRadius: 3,
+                                          blurRadius: 3,
+                                          offset: const Offset(0, 1),
                                         ),
-                                        httpHeaders: const {
-                                          'Allow-Control-Allow-Origin': '*',
-                                        },
-                                      ),
+                                      ],
+                                    ),
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        AspectRatio(
+                                          aspectRatio: 1 / 0.9,
+                                          child: ClipRRect(
+                                            borderRadius:
+                                                const BorderRadius.all(
+                                              Radius.circular(8),
+                                            ),
+                                            child: CachedNetworkImage(
+                                              fit: BoxFit.cover,
+                                              imageUrl: viewModel.menus[index]
+                                                  .menuCoverPicture!,
+                                              errorWidget:
+                                                  (context, url, error) =>
+                                                      Image.asset(
+                                                'assets/images/no_image_placeholder.png',
+                                                fit: BoxFit.cover,
+                                              ),
+                                              httpHeaders: const {
+                                                'Allow-Control-Allow-Origin':
+                                                    '*',
+                                              },
+                                            ),
+                                          ),
+                                        ),
+                                        const SizedBox(height: 6.2),
+                                        Text(
+                                          viewModel.menus[index].menuName!,
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .bodyText1!
+                                              .copyWith(
+                                                  color: IColors.green800,
+                                                  fontWeight: FontWeight.w600),
+                                        ),
+                                        const SizedBox(height: 8.2),
+                                        Row(
+                                          children: [
+                                            Text(
+                                              'Selengkapnya',
+                                              style: Theme.of(context)
+                                                  .textTheme
+                                                  .bodyText2!
+                                                  .copyWith(
+                                                      color: IColors.pink50,
+                                                      fontWeight:
+                                                          FontWeight.w400),
+                                            ),
+                                            const SizedBox(width: 6),
+                                            const Icon(
+                                              Icons.arrow_forward_rounded,
+                                              color: IColors.pink50,
+                                              size: 14,
+                                            ),
+                                          ],
+                                        )
+                                      ],
                                     ),
                                   ),
-                                  const SizedBox(height: 6.2),
-                                  Text(
-                                    viewModel.menus[i].menuName!,
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .bodyText1!
-                                        .copyWith(
-                                            color: IColors.green800,
-                                            fontWeight: FontWeight.w600),
-                                  ),
-                                  const SizedBox(height: 8.2),
-                                  Row(
-                                    children: [
-                                      Text(
-                                        'Selengkapnya',
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .bodyText2!
-                                            .copyWith(
-                                                color: IColors.pink50,
-                                                fontWeight: FontWeight.w400),
-                                      ),
-                                      const SizedBox(width: 6),
-                                      const Icon(
-                                        Icons.arrow_forward_rounded,
-                                        color: IColors.pink50,
-                                        size: 14,
-                                      ),
-                                    ],
-                                  )
-                                ],
-                              ),
-                            ),
-                          ),
-                      ],
-                    ),
+                                ),
+                            ],
+                          )
+                        : Container(),
                   ),
                 ),
               ],

@@ -254,26 +254,37 @@ class LoginViewModel extends ViewModel {
     await apiProvider.checkPhoneNumber(phoneNumber: phoneNumber).then(
       (value) {
         // log('result: $value');
+        log('check phone number: $phoneNumber');
+        log('check phone number: ${modifyPhoneNumber(phoneNumber)}');
         loading.dismiss();
         userName = value['userName'];
         final reservasionID = value['reservasionID'] as int;
         final sessionID = value['sessionID'] as int;
         final invitationID = value['invitationID'] as int;
 
+        box.write('phoneNumber', modifyPhoneNumber(phoneNumber));
         box.write('userName', value['userName']);
         box.write('reservasionID', reservasionID);
         box.write('sessionID', sessionID);
         box.write('invitationID', invitationID);
 
         if (reservasionID != 0) {
-          Get.offAllNamed('/menus', arguments: {
-            'userName': userName,
-            'reservasionID': reservasionID,
-            'sessionID': sessionID,
-            'invitationID': invitationID,
-          });
+          if (box.hasData('$reservasionID-alreadyChooseFood')) {
+            SweetDialog(
+              context: context,
+              title: 'Terimakasih',
+              content: 'Anda sudah melakukan reservasi',
+              dialogType: SweetDialogType.success,
+            ).show();
+          } else {
+            Get.offAllNamed('/menus', arguments: {
+              'userName': userName,
+              'reservasionID': reservasionID,
+              'sessionID': sessionID,
+              'invitationID': invitationID,
+            });
+          }
         } else {
-          box.write('phoneNumber', modifyPhoneNumber(phoneNumber));
           Get.offAllNamed('/reservation', arguments: {
             'userName': userName,
             'phoneNumber': modifyPhoneNumber(phoneNumber),

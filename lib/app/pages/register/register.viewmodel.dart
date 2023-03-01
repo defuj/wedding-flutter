@@ -581,7 +581,11 @@ class RegisterViewModel extends ViewModel {
     } else {
       await apiProvider
           .createReservasion(
-              name: userName, phoneNumber: phoneNumber, id: invitationID)
+        name: userName,
+        phoneNumber: phoneNumber,
+        id: invitationID,
+        nickname: userNickname,
+      )
           .then(
         (value) {
           isReservasion = true;
@@ -676,8 +680,14 @@ class RegisterViewModel extends ViewModel {
   void prepareData() {
     try {
       if (box.hasData('userName')) {
-        userName = modifyUserName(box.read('userName'));
-        log('userName: $userName');
+        if (box.hasData('phoneNumber')) {
+          isReservasion = false;
+          phoneNumber = box.read('phoneNumber');
+          log('phoneNumber received: $phoneNumber');
+        }
+
+        // userName = modifyUserName(box.read('userName'));
+        // log('userName: $userName');
         dataIsReady = true;
         getDataSession();
 
@@ -710,6 +720,7 @@ class RegisterViewModel extends ViewModel {
           if (box.hasData('phoneNumber')) {
             isReservasion = false;
             phoneNumber = box.read('phoneNumber');
+            log('phoneNumber received: $phoneNumber');
           } else {
             userNotFound();
           }
@@ -751,6 +762,9 @@ class RegisterViewModel extends ViewModel {
       dialogType: SweetDialogType.loading,
       barrierDismissible: false,
     );
+
+    userName = modifyUserName(box.read('userName'));
+    log('userName: $userName');
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       prepareData();
