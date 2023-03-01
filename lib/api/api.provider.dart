@@ -27,14 +27,28 @@ class ApiProvider extends GetConnect {
     required List<CartModel> cart,
   }) async {
     try {
-      Map<String, Map<String, dynamic>> category = {};
-      cart.map((e) {
-        category['${e.menu!.categoryID}'] = {
-          'id_menu': e.menu!.menuID,
-          'catatan': e.note,
-          'id_anggota': e.members!.map((e) => '${e.memberID}').toList(),
-        };
-      });
+      Map<String, Map<String, dynamic>> category = {
+        for (var index = 0; index < cart.length; index++)
+          '${cart[index].menu!.categoryID}': {
+            'id_menu': cart[index].menu!.menuID,
+            'catatan': cart[index].note,
+            'id_anggota':
+                cart[index].members!.map((e) => '${e.memberID}').toList(),
+          }
+      };
+      //   cart.map((e) {
+      //     final member = e.members!.map((e) => '${e.memberID}').toList();
+      //     category['${e.menu!.categoryID}'] = {
+      //       'id_menu': e.menu!.menuID,
+      //       'catatan': e.note,
+      //       'id_anggota': member,
+      //     };
+      //     category.;
+      //     log(jsonEncode(member));
+      //   });
+
+      log('submit menu with id_reservasion: $reservasionID');
+      log(jsonEncode(category));
 
       final data = {
         'id_reservasi': reservasionID,
@@ -211,8 +225,8 @@ class ApiProvider extends GetConnect {
         List<Map<String, String>>.empty(growable: true);
     for (var i = 0; i < members.length; i++) {
       anggotas.add({
-        'nama': members[i].memberName!,
-        'panggilan': members[i].nickname!,
+        'nama': trimEndSpace(members[i].memberName!),
+        'panggilan': trimEndSpace(members[i].nickname!),
       });
     }
 

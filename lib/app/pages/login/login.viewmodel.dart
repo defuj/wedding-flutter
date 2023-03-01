@@ -257,13 +257,13 @@ class LoginViewModel extends ViewModel {
         log('check phone number: $phoneNumber');
         log('check phone number: ${modifyPhoneNumber(phoneNumber)}');
         loading.dismiss();
-        userName = value['userName'];
+        userName = trimEndSpace(value['userName']);
         final reservasionID = value['reservasionID'] as int;
         final sessionID = value['sessionID'] as int;
         final invitationID = value['invitationID'] as int;
 
         box.write('phoneNumber', modifyPhoneNumber(phoneNumber));
-        box.write('userName', value['userName']);
+        box.write('userName', trimEndSpace(value['userName']));
         box.write('reservasionID', reservasionID);
         box.write('sessionID', sessionID);
         box.write('invitationID', invitationID);

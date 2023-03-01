@@ -327,7 +327,15 @@ class CartViewModel extends ViewModel {
     );
     apiProvider = getApiProvider;
     if (box.hasData('cart')) {
-      cart = box.read<List<CartModel>>('cart') ?? [];
+      try {
+        var temp = List<CartModel>.empty(growable: true);
+        for (var item in box.read('cart')) {
+          temp.add(CartModel.fromJson(item));
+        }
+        cart = temp;
+      } catch (e) {
+        cart = List<CartModel>.empty(growable: true);
+      }
     }
   }
 

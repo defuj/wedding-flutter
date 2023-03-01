@@ -115,7 +115,13 @@ class MenusViewModel extends ViewModel {
   void getMember({required int reservasionID}) async {
     await apiProvider.getMember(reservasionID: reservasionID.toString()).then(
       (value) {
-        members = value;
+        var temp = List<MemberModel>.empty(growable: true);
+        for (var element in value) {
+          if (element.memberName != null) {
+            temp.add(element);
+          }
+        }
+        members = temp;
       },
       onError: (e) {
         log('Error: $e', name: 'getMember');
@@ -129,7 +135,11 @@ class MenusViewModel extends ViewModel {
   void getCart() async {
     try {
       if (box.hasData('cart')) {
-        List<CartModel> cart = box.read('cart') ?? [];
+        var temp = List<CartModel>.empty(growable: true);
+        for (var element in box.read('cart')) {
+          temp.add(CartModel.fromJson(element));
+        }
+        List<CartModel> cart = temp;
         cartCount = cart.length;
       } else {
         cartCount = 0;

@@ -25,7 +25,7 @@ class _View extends StatelessView<CartViewModel> {
           centerTitle: false,
           backgroundColor: IColors.pink50,
           title: Text(
-            'Keranjang',
+            'Daftar Pesanan',
             style: Theme.of(context)
                 .textTheme
                 .bodyText1!
@@ -933,7 +933,7 @@ class _View extends StatelessView<CartViewModel> {
                         height: 150,
                       ),
                       Text(
-                        'Keranjangnya masih kosong, Silahkan tambahkan menu terlebih dahulu!',
+                        'Daftar pesanan masih kosong, Silahkan tambahkan menu terlebih dahulu!',
                         textAlign: TextAlign.center,
                         style: Theme.of(context).textTheme.bodyText1!.copyWith(
                             color: IColors.black100,

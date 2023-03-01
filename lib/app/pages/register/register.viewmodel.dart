@@ -533,12 +533,12 @@ class RegisterViewModel extends ViewModel {
       confirmText: 'Lanjutkan',
       onConfirm: () {
         box.write('sessionName', selectedSessionName);
-        box.write('userName', userName);
+        box.write('userName', trimEndSpace(userName));
         box.write('reservasionID', reservasionID);
         box.write('sessionID', selectedSession);
 
         Get.toNamed('/menus', arguments: {
-          'userName': userName,
+          'userName': trimEndSpace(userName),
           'reservasionID': reservasionID,
           'sessionID': selectedSession,
         });
@@ -548,8 +548,8 @@ class RegisterViewModel extends ViewModel {
 
   void addMember(List<MemberModel> members, int reservasionID) async {
     members.add(MemberModel(
-      memberName: userName,
-      nickname: userNickname,
+      memberName: trimEndSpace(userName),
+      nickname: trimEndSpace(userNickname),
     ));
 
     await apiProvider
@@ -581,10 +581,10 @@ class RegisterViewModel extends ViewModel {
     } else {
       await apiProvider
           .createReservasion(
-        name: userName,
-        phoneNumber: phoneNumber,
+        name: trimEndSpace(userName),
+        phoneNumber: trimEndSpace(phoneNumber),
         id: invitationID,
-        nickname: userNickname,
+        nickname: trimEndSpace(userNickname),
       )
           .then(
         (value) {
@@ -763,7 +763,7 @@ class RegisterViewModel extends ViewModel {
       barrierDismissible: false,
     );
 
-    userName = modifyUserName(box.read('userName'));
+    userName = trimEndSpace(modifyUserName(box.read('userName')));
     log('userName: $userName');
 
     WidgetsBinding.instance.addPostFrameCallback((_) {

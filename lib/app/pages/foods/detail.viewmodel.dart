@@ -398,8 +398,13 @@ class MenuDetailViewModel extends ViewModel {
   void reloadMemberSelected() {
     if (box.hasData('cart')) {
       log('cart exist');
-      log(box.read<List<CartModel>>('cart')!.toString());
-      cartExist = box.read<List<CartModel>>('cart')!;
+      log(box.read('cart')!.toString());
+      try {
+        cartExist = box.read('cart')!;
+      } catch (e) {
+        log('Error: $e');
+        cartExist = List<CartModel>.empty(growable: true);
+      }
     }
     final currentMenuOnCart = cartExist
         .where((element) => element.menu!.menuID == menu.menuID)
@@ -459,9 +464,7 @@ class MenuDetailViewModel extends ViewModel {
               memberNotFound();
             } else {
               reloadMemberSelected();
-              Future.delayed(const Duration(seconds: 1), () {
-                prepareBanner();
-              });
+              prepareBanner();
             }
 
             log('Menu: ${menu.toJson()}');
@@ -478,6 +481,7 @@ class MenuDetailViewModel extends ViewModel {
         reservationNotFound();
       }
     } catch (e) {
+      log(e.toString());
       SweetDialog(
         context: context,
         dialogType: SweetDialogType.error,
@@ -485,7 +489,7 @@ class MenuDetailViewModel extends ViewModel {
         content: 'Terjadi kesalahan',
         barrierDismissible: false,
         confirmText: 'Kembali',
-        onConfirm: () => Get.toNamed('/rsvp'),
+        onConfirm: () => Get.toNamed('/menus'),
       ).show();
     }
 

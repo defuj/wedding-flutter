@@ -69,3 +69,12 @@ String modifyPhoneNumber(String number) {
     return "62$number";
   }
 }
+
+String trimEndSpace(String s) {
+  int i = s.length;
+
+  while (i > 0 && s[i - 1] == ' ') {
+    i--;
+  }
+  return s.substring(0, i);
+}
