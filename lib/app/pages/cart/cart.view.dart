@@ -185,7 +185,9 @@ class _View extends StatelessView<CartViewModel> {
                             ),
                             const SizedBox(width: 12),
                             IconButton(
-                              onPressed: () {},
+                              onPressed: () {
+                                viewModel.editMenu(menu.menu!);
+                              },
                               icon: const Icon(
                                 Icons.edit_note_rounded,
                                 size: 24,
@@ -400,7 +402,9 @@ class _View extends StatelessView<CartViewModel> {
                             ),
                             const SizedBox(width: 12),
                             IconButton(
-                              onPressed: () {},
+                              onPressed: () {
+                                viewModel.editMenu(menu.menu!);
+                              },
                               icon: const Icon(
                                 Icons.edit_note_rounded,
                                 size: 24,
@@ -615,7 +619,9 @@ class _View extends StatelessView<CartViewModel> {
                             ),
                             const SizedBox(width: 12),
                             IconButton(
-                              onPressed: () {},
+                              onPressed: () {
+                                viewModel.editMenu(menu.menu!);
+                              },
                               icon: const Icon(
                                 Icons.edit_note_rounded,
                                 size: 24,
@@ -830,7 +836,9 @@ class _View extends StatelessView<CartViewModel> {
                             ),
                             const SizedBox(width: 12),
                             IconButton(
-                              onPressed: () {},
+                              onPressed: () {
+                                viewModel.editMenu(menu.menu!);
+                              },
                               icon: const Icon(
                                 Icons.edit_note_rounded,
                                 size: 24,

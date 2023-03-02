@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "214134473195",
+    "firebase_url": "https://wedding-41856-default-rtdb.firebaseio.com",
+    "project_id": "wedding-41856",
+    "storage_bucket": "wedding-41856.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:214134473195:android:7da8d667289cdd27a419ae",
+        "android_client_info": {
+          "package_name": "id.co.saidgit.wedding"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "214134473195-qiiolhe2nrafk2p7e4si2bgars7cha7p.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB7rcSCIQZF3xoOks8d47WOjxjuwuIZFFI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "214134473195-qiiolhe2nrafk2p7e4si2bgars7cha7p.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "214134473195-49ffdk2v98hm8nvvpkk2n3nj3dpebqhi.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "id.co.saidgit.wedding"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

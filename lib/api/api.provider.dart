@@ -23,7 +23,7 @@ class ApiProvider extends GetConnect {
   }
 
   Future<String> submitMenu({
-    required int reservasionID,
+    required int reservationID,
     required List<CartModel> cart,
   }) async {
     try {
@@ -47,11 +47,11 @@ class ApiProvider extends GetConnect {
       //     log(jsonEncode(member));
       //   });
 
-      log('submit menu with id_reservasion: $reservasionID');
+      log('submit menu with id_reservasion: $reservationID');
       log(jsonEncode(category));
 
       final data = {
-        'id_reservasi': reservasionID,
+        'id_reservasi': reservationID,
         'data': [category],
       };
       final response = await request(
@@ -148,7 +148,7 @@ class ApiProvider extends GetConnect {
         } else {
           var result = {
             'userName': response.body['nama'] ?? '',
-            'reservasionID': response.body['id_reservasi'] ?? 0,
+            'reservationID': response.body['id_reservasi'] ?? 0,
             'sessionID': response.body['id_sesi'] ?? 0,
             'invitationID': response.body['id_undangan'],
           };
@@ -217,7 +217,7 @@ class ApiProvider extends GetConnect {
   }
 
   Future<String> addMember({
-    required int reservasionID,
+    required int reservationID,
     required int sessionID,
     required List<MemberModel> members,
   }) async {
@@ -232,7 +232,7 @@ class ApiProvider extends GetConnect {
 
     // httpClient.defaultContentType = 'application/json';
     final data = {
-      'id_reservasi': reservasionID,
+      'id_reservasi': reservationID,
       'id_sesi': sessionID,
       'anggota': anggotas,
     };
@@ -306,10 +306,10 @@ class ApiProvider extends GetConnect {
     }
   }
 
-  Future<List<MemberModel>> getMember({required String reservasionID}) async {
+  Future<List<MemberModel>> getMember({required String reservationID}) async {
     try {
       final response =
-          await get(ApiEndPoints().getMember(reservasionID: reservasionID));
+          await get(ApiEndPoints().getMember(reservationID: reservationID));
       log('result: ${response.body}');
       if (response.status.hasError) {
         return Future.error(response.statusText ??

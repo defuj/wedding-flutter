@@ -6,6 +6,8 @@ class LoginViewModel extends ViewModel {
   late ApiProvider apiProvider;
   late SweetDialog loading;
   final box = GetStorage();
+  FirebaseDatabase database = FirebaseDatabase.instance;
+  DatabaseReference ref = FirebaseDatabase.instance.ref();
 
   List<String> nickname = [
     'Bpk',
@@ -29,6 +31,27 @@ class LoginViewModel extends ViewModel {
     notifyListeners();
   }
 
+  int _reservationID = 0;
+  int get reservationID => _reservationID;
+  set reservationID(int value) {
+    _reservationID = value;
+    notifyListeners();
+  }
+
+  int _sessionID = 0;
+  int get sessionID => _sessionID;
+  set sessionID(int value) {
+    _sessionID = value;
+    notifyListeners();
+  }
+
+  int _invitationID = 0;
+  int get invitationID => _invitationID;
+  set invitationID(int value) {
+    _invitationID = value;
+    notifyListeners();
+  }
+
   String _phoneNumber = '';
   String get phoneNumber => _phoneNumber;
   set phoneNumber(String value) {
@@ -36,16 +59,18 @@ class LoginViewModel extends ViewModel {
     notifyListeners();
   }
 
-  void saveUser() async {
+  void saveUser() {
     if (userName.isNotEmpty) {
+      box.write('phoneNumber', modifyPhoneNumber(phoneNumber));
+      box.write('userName', userName);
       loading.show();
-      Future.delayed(const Duration(seconds: 2), () {
-        loading.dismiss();
-        Get.offAllNamed('/reservation', arguments: {
-          'userName': userName,
-          'phoneNumber': phoneNumber,
-        });
-      });
+      createNewReservation(
+        userName: userName,
+        phoneNumber: modifyPhoneNumber(phoneNumber),
+        reservationID: reservationID,
+        sessionID: sessionID,
+        invitationID: invitationID,
+      );
     } else {
       SweetDialog(
         context: context,
@@ -246,50 +271,166 @@ class LoginViewModel extends ViewModel {
     );
   }
 
-  void checkUser() async {
-    // check the first character of the phone number
-    // if the first character is 0, replace with 62
-    // because the phone number format is 62xxxxxxxxxx
+  void createNewReservation({
+    required String userName,
+    required String phoneNumber,
+    required int reservationID,
+    required int sessionID,
+    required int invitationID,
+  }) async {
+    await ref.child('reservation').child(modifyPhoneNumber(phoneNumber)).set({
+      'phoneNumber': modifyPhoneNumber(phoneNumber),
+      'userName': userName,
+      'reservationID': reservationID,
+      'sessionID': sessionID,
+      'invitationID': invitationID,
+    }).then((_) {
+      // Data updated successfully!
+      // go to reservation page and create new member
+      loading.dismiss();
+      Get.toNamed('/reservation');
+    }).catchError((error) {
+      // Error saving data
+      loading.dismiss();
+      SweetDialog(
+        context: context,
+        title: 'Gagal',
+        content: 'Gagal menyimpan data',
+        dialogType: SweetDialogType.error,
+      ).show();
+    });
+  }
 
+  void updateInvitationID({required int invitationID}) async {
+    await ref
+        .child('reservation')
+        .child(modifyPhoneNumber(phoneNumber))
+        .update({
+      'invitationID': invitationID,
+    }).then((_) {
+      // Data updated successfully!
+      // go to reservation page and create new member
+      loading.dismiss();
+      Get.toNamed('/reservation');
+    }).catchError((error) {
+      // Error saving data
+      loading.dismiss();
+      SweetDialog(
+        context: context,
+        title: 'Gagal',
+        content: 'Gagal menyimpan data',
+        dialogType: SweetDialogType.error,
+      ).show();
+    });
+  }
+
+  void checkUser() async {
+    DatabaseReference ref = FirebaseDatabase.instance.ref("reservation");
     await apiProvider.checkPhoneNumber(phoneNumber: phoneNumber).then(
-      (value) {
-        // log('result: $value');
-        log('check phone number: $phoneNumber');
-        log('check phone number: ${modifyPhoneNumber(phoneNumber)}');
-        loading.dismiss();
+      (value) async {
         userName = trimEndSpace(value['userName']);
-        final reservasionID = value['reservasionID'] as int;
-        final sessionID = value['sessionID'] as int;
-        final invitationID = value['invitationID'] as int;
+        reservationID = value['reservationID'] as int;
+        sessionID = value['sessionID'] as int;
+        invitationID = value['invitationID'] as int;
 
         box.write('phoneNumber', modifyPhoneNumber(phoneNumber));
         box.write('userName', trimEndSpace(value['userName']));
-        box.write('reservasionID', reservasionID);
-        box.write('sessionID', sessionID);
-        box.write('invitationID', invitationID);
 
-        if (reservasionID != 0) {
-          if (box.hasData('$reservasionID-alreadyChooseFood')) {
-            SweetDialog(
-              context: context,
-              title: 'Terimakasih',
-              content: 'Anda sudah melakukan reservasi',
-              dialogType: SweetDialogType.success,
-            ).show();
+        // check current reservation by phoneNumber
+        var data = await ref.child(modifyPhoneNumber(phoneNumber)).once();
+        if (data.snapshot.exists) {
+          if (reservationID != 0) {
+            // check if reservationID is equal with user
+            if (data.snapshot.child('reservationID').value == reservationID) {
+              // check if user already have sessionID and invitationID
+              if (data.snapshot.child('sessionID').exists &&
+                  data.snapshot.child('invitationID').exists) {
+                // check sessionID and invitationID is equal with user
+                if (data.snapshot.child('sessionID').value == sessionID) {
+                  if (data.snapshot.child('invitationID').value !=
+                      invitationID) {
+                    await ref.child(modifyPhoneNumber(phoneNumber)).update({
+                      'invitationID': invitationID,
+                    });
+                  }
+
+                  // check if user already have member
+                  if (data.snapshot.child('members').exists) {
+                    // check member already have menus and finish reservation
+                    if (data.snapshot.child('isFinished').exists) {
+                      // user already finish reservation
+                      loading.dismiss();
+                      SweetDialog(
+                        context: context,
+                        title: 'Terimakasih',
+                        content: 'Anda sudah melakukan reservasi',
+                        dialogType: SweetDialogType.success,
+                      ).show();
+                    } else {
+                      // user not yet choose food
+                      loading.dismiss();
+                      Get.offAllNamed('/menus');
+                    }
+                  } else {
+                    // user don't have member
+                    loading.dismiss();
+                    Get.offAllNamed('/reservation');
+                  }
+                } else {
+                  // user sessionID and invitationID is different
+                  // create new sessionID and invitationID
+                  // and reset all data (member, foods)
+                  createNewReservation(
+                    userName: userName,
+                    phoneNumber: modifyPhoneNumber(phoneNumber),
+                    reservationID: reservationID,
+                    sessionID: sessionID,
+                    invitationID: invitationID,
+                  );
+                }
+              } else {
+                // user don't have sessionID and invitationID
+                // create new sessionID and invitationID
+                // and reset all data (member, foods)
+                createNewReservation(
+                  userName: userName,
+                  phoneNumber: modifyPhoneNumber(phoneNumber),
+                  reservationID: reservationID,
+                  sessionID: sessionID,
+                  invitationID: invitationID,
+                );
+              }
+            } else {
+              // reservationID not equal with user
+              // create new reservation
+              createNewReservation(
+                userName: userName,
+                phoneNumber: modifyPhoneNumber(phoneNumber),
+                reservationID: reservationID,
+                sessionID: sessionID,
+                invitationID: invitationID,
+              );
+            }
           } else {
-            Get.offAllNamed('/menus', arguments: {
-              'userName': userName,
-              'reservasionID': reservasionID,
-              'sessionID': sessionID,
-              'invitationID': invitationID,
-            });
+            // create new reservation
+            createNewReservation(
+              userName: userName,
+              phoneNumber: modifyPhoneNumber(phoneNumber),
+              reservationID: reservationID,
+              sessionID: sessionID,
+              invitationID: invitationID,
+            );
           }
         } else {
-          Get.offAllNamed('/reservation', arguments: {
-            'userName': userName,
-            'phoneNumber': modifyPhoneNumber(phoneNumber),
-            'invitationID': invitationID,
-          });
+          // user don't have reservation
+          // create new reservation
+          createNewReservation(
+            userName: userName,
+            phoneNumber: modifyPhoneNumber(phoneNumber),
+            reservationID: reservationID,
+            sessionID: sessionID,
+            invitationID: invitationID,
+          );
         }
       },
       onError: (message) {

@@ -1,5 +1,4 @@
 import 'dart:io';
-import 'package:url_strategy/url_strategy.dart';
 import 'package:wedding/repositories.dart';
 
 class MyHttpOverrides extends HttpOverrides {
@@ -18,6 +17,9 @@ Future<void> main() async {
     useMaterial3: true,
     colorScheme: lightColorScheme,
     textTheme: textTheme,
+  );
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
   );
   await GetStorage.init();
   setPathUrlStrategy();

@@ -132,6 +132,7 @@ class _View extends StatelessView<MenusViewModel> {
                           padding: const EdgeInsets.symmetric(horizontal: 16),
                           shrinkWrap: true,
                           scrollDirection: Axis.horizontal,
+                          semanticChildCount: 0,
                           itemCount: viewModel.categories.length,
                           itemBuilder: (context, index) {
                             final category = viewModel.categories[index];

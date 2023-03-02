@@ -31,7 +31,7 @@ class CartModel {
   Map<String, dynamic> toJson() {
     return {
       'menu': menu,
-      'members': members,
+      'members': members!.toList(),
       'note': note,
     };
   }

@@ -7,7 +7,7 @@ class MemberModel {
   @JsonKey(name: 'nama')
   String? memberName;
   @JsonKey(name: 'id_reservasi')
-  final int? reservasionID;
+  final int? reservationID;
   @JsonKey(name: 'isConfirm')
   final int? isConfirm;
   @JsonKey(name: 'panggilan')
@@ -16,7 +16,7 @@ class MemberModel {
   MemberModel({
     this.memberID,
     this.memberName,
-    this.reservasionID,
+    this.reservationID,
     this.isConfirm,
     this.nickname,
   });
@@ -25,7 +25,7 @@ class MemberModel {
     return MemberModel(
       memberID: json['id'] as String?,
       memberName: json['nama'] as String?,
-      reservasionID: int.parse(json['id_reservasi'] ?? '0'),
+      reservationID: int.parse(json['id_reservasi'] ?? '0'),
       isConfirm: int.parse(json['isConfirm'] ?? '0'),
       nickname: json['panggilan'] as String?,
     );
@@ -35,7 +35,7 @@ class MemberModel {
     return {
       'id': memberID,
       'nama': memberName,
-      'id_reservasi': reservasionID.toString(),
+      'id_reservasi': reservationID.toString(),
       'isConfirm': isConfirm.toString(),
       'panggilan': nickname,
     };

@@ -22,7 +22,7 @@ dependencies:
   pmvvm: ^4.0.1
   # State Management, Route Management, Dependency Management
   get: ^4.6.5
-  get_storage: ^2.0.3
+  get_storage: ^2.1.1
   # For Image Caching
   cached_network_image: ^3.2.3
   # Staggered Grid View
@@ -36,6 +36,9 @@ dependencies:
   qr_code_scanner: ^1.0.1
   google_maps_flutter_web: ^0.4.0+6
   google_maps_flutter: ^2.2.4
+  universal_html: ^2.0.9
+  firebase_core: ^2.7.0
+  firebase_database: ^10.0.14
 
 dev_dependencies:
   flutter_test:

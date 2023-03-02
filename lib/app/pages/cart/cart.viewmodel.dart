@@ -6,13 +6,15 @@ class CartViewModel extends ViewModel {
   final box = GetStorage();
   late SweetDialog loading;
   late ApiProvider apiProvider;
+  FirebaseDatabase database = FirebaseDatabase.instance;
+  DatabaseReference ref = FirebaseDatabase.instance.ref('reservation');
 
-  int _reservasionID = 0;
-  int get reservasionID => _reservasionID;
-  set reservasionID(int value) {
-    _reservasionID = value;
+  int _reservationID = 0;
+  int get reservationID => _reservationID;
+  set reservationID(int value) {
+    _reservationID = value;
     notifyListeners();
-    getMember(reservasionID: value);
+    getMember(reservationID: value);
   }
 
   List<CartModel> _cart = List<CartModel>.empty(growable: true);
@@ -21,7 +23,7 @@ class CartViewModel extends ViewModel {
     _cart = value;
     notifyListeners();
 
-    reservasionID = box.read<int>('reservasionID') ?? 0;
+    reservationID = box.read<int>('reservationID') ?? 0;
   }
 
   List<MemberModel> _members = List<MemberModel>.empty(growable: true);
@@ -253,8 +255,8 @@ class CartViewModel extends ViewModel {
     // }
   }
 
-  void getMember({required int reservasionID}) async {
-    await apiProvider.getMember(reservasionID: reservasionID.toString()).then(
+  void getMember({required int reservationID}) async {
+    await apiProvider.getMember(reservationID: reservationID.toString()).then(
       (value) {
         members = value;
         log('Success: ${value.length}', name: 'getMember');
@@ -282,7 +284,7 @@ class CartViewModel extends ViewModel {
   void submitMenu() async {
     loading.show();
     Future.delayed(const Duration(seconds: 2), () {
-      apiProvider.submitMenu(reservasionID: reservasionID, cart: cart).then(
+      apiProvider.submitMenu(reservationID: reservationID, cart: cart).then(
         (value) {
           loading.dismiss();
           log('Success: $value', name: 'submitMenu');
@@ -293,8 +295,8 @@ class CartViewModel extends ViewModel {
             content: 'Pesanan berhasil dikirim',
             barrierDismissible: false,
             onConfirm: () {
-              box.remove('cart');
-              box.write('$reservasionID-alreadyChooseFood', reservasionID);
+              box.remove('cart-$reservationID');
+              box.write('$reservationID-alreadyChooseFood', reservationID);
               cart = List<CartModel>.empty(growable: true);
               appetizerNotSelected = '';
               mainCourseNotSelected = '';
@@ -318,6 +320,88 @@ class CartViewModel extends ViewModel {
     });
   }
 
+  void editMenu(MenuModel menu) {
+    log('editMenu: ${menu.toJson()}');
+    box.write('menu', menu.toJson());
+
+    Get.toNamed('/menus/detail');
+  }
+
+  void reservastionNotFound() {
+    SweetDialog(
+      context: context,
+      dialogType: SweetDialogType.error,
+      title: 'Oops!',
+      content: 'Tidak menemukan data reservasi',
+      barrierDismissible: false,
+      confirmText: 'Kembali',
+      onConfirm: () => Get.toNamed('/rsvp'),
+    ).show();
+  }
+
+  void userNotFound() {
+    SweetDialog(
+      context: context,
+      title: 'Oops!',
+      content: 'Tidak dapat menemukan data tamu',
+      dialogType: SweetDialogType.error,
+      barrierDismissible: false,
+      confirmText: 'Kembali',
+      onConfirm: () => Get.toNamed('/rsvp'),
+    ).show();
+  }
+
+  void prepareData() async {
+    DatabaseReference ref = FirebaseDatabase.instance.ref("reservation");
+    try {
+      loading.show();
+      if (box.hasData('phoneNumber')) {
+        var data =
+            await ref.child(modifyPhoneNumber(box.read('phoneNumber'))).once();
+        if (data.snapshot.exists) {
+          if (data.snapshot.child('reservationID').exists) {
+            reservationID = data.snapshot.child('reservationID').value as int;
+            if (reservationID != 0) {
+              if (data.snapshot.hasChild('menus')) {
+                final result =
+                    data.snapshot.child('menus').value as Map<dynamic, dynamic>;
+                var temp = List<CartModel>.empty(growable: true);
+                result.forEach((key, value) {
+                  final map = value as Map<dynamic, dynamic>;
+                  temp.add(CartModel(
+                    menu: MenuModel.fromJson(map['menu']),
+                    members: (map['members'] as List)
+                        .map((e) => MemberModel.fromJson(e))
+                        .toList(),
+                    note: map['note'],
+                  ));
+                });
+                cart = temp;
+              }
+
+              loading.dismiss();
+            } else {
+              loading.dismiss();
+              reservastionNotFound();
+            }
+          } else {
+            loading.dismiss();
+            reservastionNotFound();
+          }
+        } else {
+          loading.dismiss();
+          reservastionNotFound();
+        }
+      } else {
+        loading.dismiss();
+        userNotFound();
+      }
+    } catch (e) {
+      loading.dismiss();
+      reservastionNotFound();
+    }
+  }
+
   @override
   void init() {
     loading = SweetDialog(
@@ -326,16 +410,15 @@ class CartViewModel extends ViewModel {
       barrierDismissible: false,
     );
     apiProvider = getApiProvider;
-    if (box.hasData('cart')) {
-      try {
-        var temp = List<CartModel>.empty(growable: true);
-        for (var item in box.read('cart')) {
-          temp.add(CartModel.fromJson(item));
-        }
-        cart = temp;
-      } catch (e) {
-        cart = List<CartModel>.empty(growable: true);
-      }
+
+    if (box.hasData('phoneNumber')) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        prepareData();
+      });
+    } else {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        reservastionNotFound();
+      });
     }
   }
 

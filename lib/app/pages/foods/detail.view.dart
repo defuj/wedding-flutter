@@ -57,7 +57,10 @@ class _View extends StatelessView<MenuDetailViewModel> {
               Icons.arrow_back_ios_rounded,
               color: Colors.black,
             ),
-            onPressed: () => Get.toNamed('/menus'),
+            onPressed: () {
+              Get.offNamed('/menus');
+              //   Get.back();
+            },
           ),
         ),
         body: ListView(
@@ -228,6 +231,7 @@ class _View extends StatelessView<MenuDetailViewModel> {
                 keyboardType: TextInputType.multiline,
                 textInputAction: TextInputAction.done,
                 hintText: 'Masukan Catatan',
+                initialValue: viewModel.note,
                 onChanged: (value) => viewModel.note = value,
               ),
             ),
@@ -253,7 +257,9 @@ class _View extends StatelessView<MenuDetailViewModel> {
                     .textTheme
                     .bodyText1!
                     .copyWith(color: Colors.white, fontWeight: FontWeight.w400),
-                text: 'Masukan Ke Keranjang',
+                text: viewModel.isMenuInCart
+                    ? 'Simpan Perubahan Pesanan'
+                    : 'Masukan Ke Daftar Pesanan',
                 onPressed: () => viewModel.checkStock(),
               ),
             ),

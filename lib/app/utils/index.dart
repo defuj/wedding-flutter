@@ -1,3 +1,6 @@
+import 'dart:convert';
+import 'dart:developer';
+
 import 'package:wedding/repositories.dart';
 
 bool validatePhoneNumber(String phoneNumber) {
@@ -10,9 +13,13 @@ ApiProvider getApiProvider = Get.isRegistered<ApiProvider>()
     : Get.put(ApiProvider());
 
 // capitalize every first letter of a word
-String capitalize(String s) => s.split(' ').map((str) {
-      return str[0].toUpperCase() + str.substring(1);
-    }).join(' ');
+String capitalize(String s) {
+  if (s.length > 1) {
+    return s[0].toUpperCase() + s.substring(1);
+  } else {
+    return s.toUpperCase();
+  }
+}
 
 double edgeByWidth({
   required BuildContext context,
@@ -77,4 +84,41 @@ String trimEndSpace(String s) {
     i--;
   }
   return s.substring(0, i);
+}
+
+List<CartModel> getCartListFromBox(List<dynamic> cart) {
+  List<CartModel> temp = List<CartModel>.empty(growable: true);
+  for (var element in cart) {
+    log('element cart');
+    log(jsonEncode(element));
+    log('element menu');
+    log(jsonEncode(element['menu']));
+    log('element note');
+    log(jsonEncode(element['note']));
+
+    var member = List<MemberModel>.empty(growable: true);
+    for (var elementMember in element['members']) {
+      log('element member');
+      log(jsonEncode(elementMember));
+      member.add(MemberModel.fromJson(elementMember));
+    }
+
+    var menu = MenuModel(
+      menuID: element['menu']['id'],
+      categoryID: element['menu']['id_kategori'],
+      menuName: element['menu']['nama_menu'],
+      menuDesc: element['menu']['deskripsi'],
+      menuCoverPicture: element['menu']['img_cover'],
+      menuPicture1: element['menu']['img_second'],
+      menuPicture2: element['menu']['img_third'],
+      menuStock: int.parse(element['menu']['stok'] ?? '100'),
+    );
+
+    temp.add(CartModel(
+      menu: menu,
+      note: jsonEncode(element['note']),
+      members: member,
+    ));
+  }
+  return temp;
 }

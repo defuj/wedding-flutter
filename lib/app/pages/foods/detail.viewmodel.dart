@@ -1,16 +1,18 @@
+import 'dart:convert';
 import 'dart:developer';
-
 import 'package:wedding/repositories.dart';
 
 class MenuDetailViewModel extends ViewModel {
   late SweetDialog loading;
   late ApiProvider apiProvider;
   final box = GetStorage();
+  FirebaseDatabase database = FirebaseDatabase.instance;
+  DatabaseReference ref = FirebaseDatabase.instance.ref('reservation');
 
-  List<CartModel> _cartExist = List<CartModel>.empty(growable: true);
-  List<CartModel> get cartExist => _cartExist;
-  set cartExist(List<CartModel> value) {
-    _cartExist = value;
+  bool _isMenuInCart = false;
+  bool get isMenuInCart => _isMenuInCart;
+  set isMenuInCart(bool value) {
+    _isMenuInCart = value;
     notifyListeners();
   }
 
@@ -42,10 +44,10 @@ class MenuDetailViewModel extends ViewModel {
     notifyListeners();
   }
 
-  int _reservasionID = 0;
-  int get reservasionID => _reservasionID;
-  set reservasionID(int value) {
-    _reservasionID = value;
+  int _reservationID = 0;
+  int get reservationID => _reservationID;
+  set reservationID(int value) {
+    _reservationID = value;
     notifyListeners();
   }
 
@@ -80,37 +82,67 @@ class MenuDetailViewModel extends ViewModel {
     this.banners = banners;
   }
 
-  void addMemberToMenu(int index) {
+  void addMemberToMenu(int index) async {
+    var cart = List<CartModel>.empty(growable: true);
     if (memberSelected
         .where((element) => element.memberID == members[index].memberID)
         .isEmpty) {
-      // check if member is already selected by other menu with same menu categoryID
-      if (cartExist
-          .where((element) =>
-              element.menu!.categoryID == menu.categoryID &&
-              element.members!
-                  .where(
-                      (element) => element.memberID == members[index].memberID)
-                  .isNotEmpty)
-          .isNotEmpty) {
-        Navigator.pop(context);
-        log('Tidak bisa dipilih');
-        SweetDialog(
-          context: context,
-          dialogType: SweetDialogType.error,
-          title: 'Tidak bisa dipilih',
-          content:
-              '${members[index].memberName} sudah memilih menu lain pada kategori ini',
-        ).show();
+      var data = await ref
+          .child(modifyPhoneNumber(box.read('phoneNumber')))
+          .child('menus')
+          .once();
+      if (data.snapshot.exists) {
+        final result = data.snapshot.value as Map<dynamic, dynamic>;
+        result.forEach((key, value) {
+          final map = value as Map<dynamic, dynamic>;
+          cart.add(CartModel(
+            menu: MenuModel.fromJson(map['menu']),
+            members: (map['members'] as List)
+                .map((e) => MemberModel.fromJson(e))
+                .toList(),
+            note: map['note'],
+          ));
+        });
+
+        // check if member is already selected by other menu with same menu categoryID
+        // check in cart where menu categoryID is not same with menu categoryID
+
+        if (cart
+            .where((element) =>
+                element.menu!.categoryID == menu.categoryID &&
+                element.menu!.menuID != menu.menuID &&
+                element.members!
+                    .where((element) =>
+                        element.memberID == members[index].memberID)
+                    .isNotEmpty)
+            .isNotEmpty) {
+          Get.back();
+          SweetDialog(
+            context: context,
+            dialogType: SweetDialogType.error,
+            title: 'Tidak bisa dipilih',
+            content:
+                '${members[index].memberName} sudah memilih menu lain pada kategori ini',
+          ).show();
+        } else {
+          var temp = memberSelected;
+          temp.add(members[index]);
+          memberSelected = temp;
+
+          Get.back();
+        }
       } else {
-        memberSelected.add(members[index]);
-        notifyListeners();
-        Navigator.pop(context);
+        var temp = memberSelected;
+        temp.add(members[index]);
+        memberSelected = temp;
+
+        Get.back();
       }
     } else {
-      memberSelected.removeWhere(
+      var temp = memberSelected;
+      temp.removeWhere(
           (element) => element.memberID == members[index].memberID);
-      notifyListeners();
+      memberSelected = temp;
       Navigator.pop(context);
     }
   }
@@ -232,8 +264,8 @@ class MenuDetailViewModel extends ViewModel {
   }
 
   void addToCart() async {
-    // List<CartModel> cartAvailable = box.read('cart') ?? [];
-    log('cart available: ${box.read('cart')}');
+    loading.show();
+
     final cart = CartModel(
       menu: menu,
       members: memberSelected,
@@ -241,54 +273,161 @@ class MenuDetailViewModel extends ViewModel {
     );
 
     try {
-      // check if menu already exist in cart
-      var result = cartExist
-          .where((element) => element.menu!.menuID == cart.menu!.menuID)
-          .toList();
-      // if menu not exist in cart
-      if (result.isEmpty) {
-        // add new cart
-        var modCart = cartExist;
-        modCart.add(cart);
-        cartExist = modCart;
-        await box.write('cart', cartExist.toList());
-
-        SweetDialog(
-          context: context,
-          dialogType: SweetDialogType.success,
-          title: 'Berhasil',
-          content: 'Menu berhasil ditambahkan ke keranjang',
-        ).show();
+      var data = await ref
+          .child(modifyPhoneNumber(box.read('phoneNumber')))
+          .child('menus')
+          .once();
+      if (data.snapshot.exists) {
+        // check if menu already exist in cart
+        if (data.snapshot.hasChild('${menu.menuID}')) {
+          log('Menu already exist');
+          // add new cart
+          final newRef = ref
+              .child(modifyPhoneNumber(box.read('phoneNumber')))
+              .child('menus');
+          // final key = newRef.push().key;
+          log(jsonEncode(cart));
+          await newRef.child('${menu.menuID}').update({
+            'menu': cart.menu!.toJson(),
+            'members': cart.members!.map((e) => e.toJson()).toList(),
+            'note': cart.note,
+          }).then((value) {
+            loading.dismiss();
+            isMenuInCart = true;
+            SweetDialog(
+              context: context,
+              dialogType: SweetDialogType.success,
+              title: 'Berhasil',
+              content: 'Daftar pesanan berhasil diubah',
+            ).show();
+          }).onError((error, stackTrace) {
+            log('error: $error');
+            loading.dismiss();
+            SweetDialog(
+              context: context,
+              dialogType: SweetDialogType.error,
+              title: 'Gagal',
+              content: 'Menu gagal merubah daftar pesanan',
+            ).show();
+          });
+        } else {
+          log('Menu not exist');
+          // add new cart
+          final newRef = ref
+              .child(modifyPhoneNumber(box.read('phoneNumber')))
+              .child('menus');
+          // final key = newRef.push().key;
+          log(jsonEncode(cart));
+          await newRef.child('${menu.menuID}').set({
+            'menu': cart.menu!.toJson(),
+            'members': cart.members!.map((e) => e.toJson()).toList(),
+            'note': cart.note,
+          }).then((value) {
+            isMenuInCart = true;
+            loading.dismiss();
+            SweetDialog(
+              context: context,
+              dialogType: SweetDialogType.success,
+              title: 'Berhasil',
+              content: 'Menu berhasil ditambahkan ke daftar pesanan',
+            ).show();
+          }).onError((error, stackTrace) {
+            log('error: $error');
+            loading.dismiss();
+            SweetDialog(
+              context: context,
+              dialogType: SweetDialogType.error,
+              title: 'Gagal',
+              content: 'Menu gagal ditambahkan ke daftar pesanan',
+            ).show();
+          });
+        }
       } else {
-        // modify cart
-        List<CartModel> cartNew = List<CartModel>.empty(growable: true);
-        cartExist.map((e) {
-          if (e.menu!.menuID == cart.menu!.menuID) {
-            cartNew.add(cart);
-          } else {
-            cartNew.add(e);
-          }
+        // add new cart
+        final newRef = ref
+            .child(modifyPhoneNumber(box.read('phoneNumber')))
+            .child('menus');
+        // final key = newRef.push().key;
+        log(jsonEncode(cart));
+        await newRef.child('${menu.menuID}').set({
+          'menu': cart.menu!.toJson(),
+          'members': cart.members!.map((e) => e.toJson()).toList(),
+          'note': cart.note,
+        }).then((value) {
+          isMenuInCart = true;
+          loading.dismiss();
+          SweetDialog(
+            context: context,
+            dialogType: SweetDialogType.success,
+            title: 'Berhasil',
+            content: 'Menu berhasil ditambahkan ke daftar pesanan',
+          ).show();
+        }).onError((error, stackTrace) {
+          log('error: $error');
+          loading.dismiss();
+          SweetDialog(
+            context: context,
+            dialogType: SweetDialogType.error,
+            title: 'Gagal',
+            content: 'Menu gagal ditambahkan ke daftar pesanan',
+          ).show();
         });
-        cartExist = cartNew;
-        await box.write('cart', cartExist.toList());
-
-        SweetDialog(
-          context: context,
-          dialogType: SweetDialogType.success,
-          title: 'Berhasil',
-          content: 'Menu berhasil diperbarui',
-        ).show();
       }
+
+      //   // check if menu already exist in cart
+      //   var result = cartExist
+      //       .where((element) => element.menu!.menuID == cart.menu!.menuID)
+      //       .toList();
+      //   // if menu not exist in cart
+      //   if (result.isEmpty) {
+      //     // add new cart
+      //     var modCart = cartExist;
+      //     modCart.add(cart);
+      //     cartExist = modCart;
+      //     log('cart added');
+      //     log(jsonEncode(cartExist));
+      //     await box
+      //         .write('cart-$reservationID', cartExist.toList())
+      //         .then((value) {
+      //       SweetDialog(
+      //         context: context,
+      //         dialogType: SweetDialogType.success,
+      //         title: 'Berhasil',
+      //         content: 'Menu berhasil ditambahkan ke daftar pesanan',
+      //       ).show();
+      //     });
+      //   } else {
+      //     // modify cart
+      //     List<CartModel> cartNew = List<CartModel>.empty(growable: true);
+      //     for (var element in cartExist) {
+      //       if (element.menu!.menuID == cart.menu!.menuID) {
+      //         cartNew.add(cart);
+      //       } else {
+      //         cartNew.add(element);
+      //       }
+      //     }
+      //     cartExist = cartNew;
+      //     log('cart edited');
+      //     log(jsonEncode(cartExist));
+      //     await box
+      //         .write('cart-$reservationID', cartExist.toList())
+      //         .then((value) {
+      //       SweetDialog(
+      //         context: context,
+      //         dialogType: SweetDialogType.success,
+      //         title: 'Berhasil',
+      //         content: 'Menu berhasil diperbarui',
+      //       ).show();
+      //     });
+      //   }
     } catch (e) {
       log('Error: $e');
       SweetDialog(
         context: context,
         dialogType: SweetDialogType.error,
         title: 'Gagal',
-        content: 'Menu gagal ditambahkan ke keranjang, Error: $e',
+        content: 'Menu gagal ditambahkan ke daftar pesanan',
       ).show();
-      await box.remove('cart');
-      //   addToCart();
     }
   }
 
@@ -337,7 +476,7 @@ class MenuDetailViewModel extends ViewModel {
           context: context,
           dialogType: SweetDialogType.error,
           title: 'Oops...',
-          content: 'Tidak dapat menambahkan menu ke keranjang',
+          content: 'Tidak dapat menambahkan menu ke daftar pesanan',
         ).show();
       });
     } catch (e) {
@@ -346,22 +485,49 @@ class MenuDetailViewModel extends ViewModel {
         context: context,
         dialogType: SweetDialogType.error,
         title: 'Oops...',
-        content: 'Tidak dapat menambahkan menu ke keranjang',
+        content: 'Tidak dapat menambahkan menu ke daftar pesanan',
       ).show();
     }
   }
 
-  void checkStock() {
+  void checkStock() async {
     try {
       if (menu.menuStock! > 0) {
         var totalMember = memberSelected.length;
         if (totalMember == 0) {
-          SweetDialog(
-            context: context,
-            dialogType: SweetDialogType.error,
-            title: 'Oops...',
-            content: 'Tidak ada member yang terdaftar',
-          ).show();
+          if (isMenuInCart) {
+            await ref
+                .child(modifyPhoneNumber(box.read('phoneNumber')))
+                .child('menus')
+                .child('${menu.menuID}')
+                .remove()
+                .then(
+              (value) {
+                isMenuInCart = false;
+                SweetDialog(
+                  context: context,
+                  dialogType: SweetDialogType.success,
+                  title: 'Berhasil',
+                  content: 'Menu telah dihapus dari daftar pesanan',
+                ).show();
+              },
+              onError: (error) {
+                SweetDialog(
+                  context: context,
+                  dialogType: SweetDialogType.error,
+                  title: 'Oops...',
+                  content: 'Gagal menyimpan perubahan daftar pesanan',
+                ).show();
+              },
+            );
+          } else {
+            SweetDialog(
+              context: context,
+              dialogType: SweetDialogType.error,
+              title: 'Oops...',
+              content: 'Tidak ada member yang terdaftar',
+            ).show();
+          }
         } else {
           var totalMember = memberSelected.length + 1;
           if (totalMember > menu.menuStock!) {
@@ -372,7 +538,6 @@ class MenuDetailViewModel extends ViewModel {
               content: 'Jumlah member melebihi stok menu',
             ).show();
           } else {
-            //   checkProduct();
             addToCart();
           }
         }
@@ -395,22 +560,41 @@ class MenuDetailViewModel extends ViewModel {
     }
   }
 
-  void reloadMemberSelected() {
-    if (box.hasData('cart')) {
-      log('cart exist');
-      log(box.read('cart')!.toString());
+  void reloadMemberSelected() async {
+    var data = await ref
+        .child(modifyPhoneNumber(box.read('phoneNumber')))
+        .child('menus')
+        .child(menu.menuID!)
+        .child('members')
+        .once();
+    if (data.snapshot.exists) {
+      var temp = List<MemberModel>.empty(growable: true);
       try {
-        cartExist = box.read('cart')!;
+        // read list member from firebase data.snapshot.value
+        var result = data.snapshot.value as List<dynamic>;
+        for (var element in result) {
+          final map = element as Map<dynamic, dynamic>;
+          temp.add(MemberModel(
+            memberID: map['id'] as String,
+            memberName: map['nama'] as String,
+            reservationID: int.parse(map['id_reservasi'] as String),
+            isConfirm: 0,
+            nickname: map['panggilan'] as String,
+          ));
+        }
+        memberSelected = temp;
       } catch (e) {
         log('Error: $e');
-        cartExist = List<CartModel>.empty(growable: true);
       }
     }
-    final currentMenuOnCart = cartExist
-        .where((element) => element.menu!.menuID == menu.menuID)
-        .toList();
-    if (currentMenuOnCart.isNotEmpty) {
-      memberSelected = currentMenuOnCart[0].members!;
+
+    var notes = await ref
+        .child(modifyPhoneNumber(box.read('phoneNumber')))
+        .child('menus')
+        .child('${menu.menuID}')
+        .once();
+    if (notes.snapshot.hasChild('note')) {
+      note = notes.snapshot.child('note').value as String;
     }
   }
 
@@ -450,32 +634,76 @@ class MenuDetailViewModel extends ViewModel {
     ).show();
   }
 
-  void prepareData() {
+  void prepareData() async {
     try {
-      if (box.hasData('reservasionID') && box.hasData('sessionID')) {
-        reservasionID = box.read('reservasionID');
-        sessionID = box.read('sessionID');
+      if (box.hasData('phoneNumber')) {
+        loading.show();
+        var data =
+            await ref.child(modifyPhoneNumber(box.read('phoneNumber'))).once();
+        if (data.snapshot.exists) {
+          if (data.snapshot.child('reservationID').exists) {
+            reservationID = data.snapshot.child('reservationID').value as int;
+            if (reservationID != 0) {
+              if (data.snapshot.child('sessionID').exists) {
+                sessionID = data.snapshot.child('sessionID').value as int;
+                if (sessionID != 0) {
+                  if (box.hasData('menu')) {
+                    if (box.hasData('members-$reservationID')) {
+                      menu = MenuModel.fromJson(box.read('menu'));
+                      try {
+                        var temp = List<MemberModel>.empty(growable: true);
+                        var tempMember =
+                            await box.read('members-$reservationID');
+                        log(jsonEncode(tempMember));
+                        for (var element in tempMember) {
+                          log(jsonEncode(element));
+                          temp.add(MemberModel.fromJson(element));
+                        }
+                        members = temp;
+                      } catch (e) {
+                        members = await box.read('members-$reservationID');
+                      }
 
-        if (box.hasData('menu')) {
-          if (box.hasData('members')) {
-            menu = MenuModel.fromJson(box.read('menu'));
-            members = box.read('members');
-            if (members.isEmpty) {
-              memberNotFound();
+                      if (data.snapshot
+                          .child('menus')
+                          .hasChild('${menu.menuID}')) {
+                        isMenuInCart = true;
+                      }
+
+                      loading.dismiss();
+                      if (members.isEmpty) {
+                        memberNotFound();
+                      } else {
+                        reloadMemberSelected();
+                        prepareBanner();
+                      }
+                    } else {
+                      loading.dismiss();
+                      memberNotFound();
+                    }
+                  } else {
+                    loading.dismiss();
+                    menuNotFound();
+                  }
+                } else {
+                  loading.dismiss();
+                  reservationNotFound();
+                }
+              } else {
+                loading.dismiss();
+                reservationNotFound();
+              }
             } else {
-              reloadMemberSelected();
-              prepareBanner();
+              loading.dismiss();
+              reservationNotFound();
             }
-
-            log('Menu: ${menu.toJson()}');
-            log('Members: ${members.length}');
-            log('ReservasionID: $reservasionID');
-            log('SessionID: $sessionID');
           } else {
-            memberNotFound();
+            loading.dismiss();
+            reservationNotFound();
           }
         } else {
-          menuNotFound();
+          loading.dismiss();
+          reservationNotFound();
         }
       } else {
         reservationNotFound();
@@ -489,38 +717,9 @@ class MenuDetailViewModel extends ViewModel {
         content: 'Terjadi kesalahan',
         barrierDismissible: false,
         confirmText: 'Kembali',
-        onConfirm: () => Get.toNamed('/menus'),
+        onConfirm: () => Get.back(result: true),
       ).show();
     }
-
-    // final args = Get.arguments;
-    // if (args != null) {
-    //   try {
-    //     reservasionID = args['reservasionID'];
-    //     sessionID = args['sessionID'];
-    //     menu = MenuModel.fromJson(args['menu']);
-    //     members = args['members'];
-
-    //     box.write('reservasionID', reservasionID);
-    //     box.write('sessionID', sessionID);
-    //     box.write('menu', menu.toJson());
-    //     box.write('members', members.toList());
-
-    //     log('Menu: ${menu.toJson()}');
-    //     log('Members: ${members.length}');
-    //     log('ReservasionID: $reservasionID');
-    //     log('SessionID: $sessionID');
-
-    //     reloadMemberSelected();
-    //     Future.delayed(const Duration(seconds: 1), () {
-    //       prepareBanner();
-    //     });
-    //   } catch (e) {
-    //     reservationNotFound();
-    //   }
-    // } else {
-    //   reservationNotFound();
-    // }
   }
 
   @override

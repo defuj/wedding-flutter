@@ -6,6 +6,7 @@ class RegisterViewModel extends ViewModel {
   late SweetDialog loading;
   late ApiProvider apiProvider;
   final box = GetStorage();
+  FirebaseDatabase database = FirebaseDatabase.instance;
 
   bool _dataIsReady = false;
   bool get dataIsReady => _dataIsReady;
@@ -42,10 +43,10 @@ class RegisterViewModel extends ViewModel {
     notifyListeners();
   }
 
-  int _reservasionID = 0;
-  int get reservasionID => _reservasionID;
-  set reservasionID(int value) {
-    _reservasionID = value;
+  int _reservationID = 0;
+  int get reservationID => _reservationID;
+  set reservationID(int value) {
+    _reservationID = value;
     notifyListeners();
   }
 
@@ -344,7 +345,8 @@ class RegisterViewModel extends ViewModel {
                     splashFactory: NoSplash.splashFactory,
                     hoverColor: Colors.transparent,
                     onTap: () {
-                      members[indexMember].nickname = nickname[index];
+                      members[indexMember].nickname =
+                          nickname[index].replaceAll('(0-6tahun)', '');
                       members = members;
                       Navigator.pop(context);
                     },
@@ -518,8 +520,6 @@ class RegisterViewModel extends ViewModel {
     list.removeAt(index);
 
     members = list;
-    // members.removeAt(index);
-    // members = members;
   }
 
   void successCreateReservasion() {
@@ -534,19 +534,15 @@ class RegisterViewModel extends ViewModel {
       onConfirm: () {
         box.write('sessionName', selectedSessionName);
         box.write('userName', trimEndSpace(userName));
-        box.write('reservasionID', reservasionID);
+        box.write('reservationID', reservationID);
         box.write('sessionID', selectedSession);
 
-        Get.toNamed('/menus', arguments: {
-          'userName': trimEndSpace(userName),
-          'reservasionID': reservasionID,
-          'sessionID': selectedSession,
-        });
+        Get.offAllNamed('/menus');
       },
     ).show();
   }
 
-  void addMember(List<MemberModel> members, int reservasionID) async {
+  void addMember(List<MemberModel> members, int reservationID) async {
     members.add(MemberModel(
       memberName: trimEndSpace(userName),
       nickname: trimEndSpace(userNickname),
@@ -554,13 +550,20 @@ class RegisterViewModel extends ViewModel {
 
     await apiProvider
         .addMember(
-            reservasionID: reservasionID,
+            reservationID: reservationID,
             sessionID: selectedSession,
             members: members)
         .then(
       (value) {
-        loading.dismiss();
-        successCreateReservasion();
+        sessionID = selectedSession;
+        updateReservation(
+          userName: userName,
+          phoneNumber: phoneNumber,
+          reservationID: reservationID,
+          sessionID: sessionID,
+          invitationID: invitationID,
+          members: members,
+        );
       },
       onError: (e) {
         loading.dismiss();
@@ -574,10 +577,47 @@ class RegisterViewModel extends ViewModel {
     );
   }
 
+  void updateReservation({
+    required String userName,
+    required String phoneNumber,
+    required int reservationID,
+    required int sessionID,
+    required int invitationID,
+    required List<MemberModel> members,
+  }) async {
+    var dataMember = [];
+    for (var element in members) {
+      dataMember.add(element.toJson());
+    }
+    DatabaseReference ref = FirebaseDatabase.instance.ref("reservation");
+    await ref.child(modifyPhoneNumber(phoneNumber)).set({
+      'phoneNumber': modifyPhoneNumber(phoneNumber),
+      'userName': userName,
+      'reservationID': reservationID,
+      'sessionID': sessionID,
+      'invitationID': invitationID,
+      'members': dataMember.toList(),
+    }).then((_) {
+      // Data updated successfully!
+      // go to reservation page and create new member
+      loading.dismiss();
+      successCreateReservasion();
+    }).catchError((error) {
+      // Error saving data
+      loading.dismiss();
+      SweetDialog(
+        context: context,
+        title: 'Gagal',
+        content: 'Gagal menyimpan data',
+        dialogType: SweetDialogType.error,
+      ).show();
+    });
+  }
+
   void createReservasion() async {
     loading.show();
     if (isReservasion) {
-      addMember(members, reservasionID);
+      addMember(members, reservationID);
     } else {
       await apiProvider
           .createReservasion(
@@ -589,13 +629,7 @@ class RegisterViewModel extends ViewModel {
           .then(
         (value) {
           isReservasion = true;
-          reservasionID = value;
-          //   if (members.isNotEmpty) {
-          //     addMember(members, value);
-          //   } else {
-          //     loading.dismiss();
-          //     successCreateReservasion();
-          //   }
+          reservationID = value;
           addMember(members, value);
         },
         onError: (e) {
@@ -636,12 +670,12 @@ class RegisterViewModel extends ViewModel {
   }
 
   void getDataSession() async {
-    loading.show();
+    // loading.show();
     await apiProvider.getSessions().then((value) {
       sessions = value;
-      loading.dismiss();
+      //   loading.dismiss();
     }, onError: (e) {
-      loading.dismiss();
+      //   loading.dismiss();
       SweetDialog(
         context: context,
         title: 'Terjadi kesalahan',
@@ -677,81 +711,93 @@ class RegisterViewModel extends ViewModel {
     return originalString;
   }
 
-  void prepareData() {
+  void prepareData() async {
+    DatabaseReference ref = FirebaseDatabase.instance.ref("reservation");
     try {
-      if (box.hasData('userName')) {
-        if (box.hasData('phoneNumber')) {
-          isReservasion = false;
-          phoneNumber = box.read('phoneNumber');
-          log('phoneNumber received: $phoneNumber');
-        }
+      if (box.hasData('phoneNumber')) {
+        phoneNumber = box.read('phoneNumber');
+        log('phoneNumber received: $phoneNumber');
 
-        // userName = modifyUserName(box.read('userName'));
-        // log('userName: $userName');
         dataIsReady = true;
         getDataSession();
 
-        // check if suser has reservasion
-        if (box.hasData('reservasionID') && box.hasData('sessionID')) {
-          invitationID = box.read('invitationID') ?? 0;
-          sessionID = box.read('sessionID') ?? 0;
-          reservasionID = box.read('reservasionID');
-          if (reservasionID != 0 && sessionID != 0) {
-            isReservasion = true;
+        loading.show();
+        var data =
+            await ref.child(modifyPhoneNumber(box.read('phoneNumber'))).once();
 
-            SweetDialog(
-              context: context,
-              title: 'Sudah melakukan reservasi',
-              content:
-                  'Anda sudah melakukan reservasi sebelumnya, silahkan lanjutkan untuk memesan makanan',
-              dialogType: SweetDialogType.success,
-              barrierDismissible: false,
-              confirmText: 'Lanjutkan',
-              onConfirm: () {
-                Get.toNamed('/menus', arguments: {
-                  'userName': userName,
-                  'reservasionID': reservasionID,
-                  'sessionID': sessionID,
-                });
-              },
-            ).show();
+        if (data.snapshot.exists) {
+          loading.dismiss();
+          // check reservationID
+          if (data.snapshot.child('reservationID').exists) {
+            log('reservationID is exists');
+            log('reservationID received: ${data.snapshot.child('reservationID').value}');
+            log('sessionID received: ${data.snapshot.child('sessionID').value}');
+            log('invitationID received: ${data.snapshot.child('invitationID').value}');
+
+            reservationID = data.snapshot.child('reservationID').value as int;
+            sessionID = data.snapshot.child('sessionID').value as int;
+            invitationID = data.snapshot.child('invitationID').value as int;
+
+            if (reservationID != 0 && sessionID != 0) {
+              isReservasion = true;
+              log('isReservasion: $isReservasion');
+
+              // check if user has member
+              if (data.snapshot.child('members').exists) {
+                // check if user already have menus
+                if (data.snapshot.child('isFinished').exists) {
+                  // user already have menus
+                  SweetDialog(
+                    context: context,
+                    title: 'Sudah melakukan reservasi',
+                    content:
+                        'Terimakasih, Anda sudah melakukan reservasi sebelumnya',
+                    dialogType: SweetDialogType.success,
+                    barrierDismissible: false,
+                    confirmText: 'Oke',
+                    onConfirm: () {
+                      Get.offAllNamed('/rsvp');
+                    },
+                  ).show();
+                } else {
+                  // user not have menus
+                  SweetDialog(
+                    context: context,
+                    title: 'Sudah melakukan reservasi',
+                    content:
+                        'Anda sudah melakukan reservasi sebelumnya, silahkan lanjutkan untuk memesan makanan',
+                    dialogType: SweetDialogType.success,
+                    barrierDismissible: false,
+                    confirmText: 'Lanjutkan',
+                    onConfirm: () {
+                      Get.offAllNamed('/menus');
+                    },
+                  ).show();
+                }
+              } else {
+                // add member
+                // continue to add member
+              }
+            } else {
+              log('isReservasion: $isReservasion');
+              // user not reservasion
+              // just continue to create reservasion
+            }
+          } else {
+            // user not reservasion
+            // just continue to create reservasion
           }
         } else {
-          if (box.hasData('phoneNumber')) {
-            isReservasion = false;
-            phoneNumber = box.read('phoneNumber');
-            log('phoneNumber received: $phoneNumber');
-          } else {
-            userNotFound();
-          }
+          loading.dismiss();
+          userNotFound();
         }
       } else {
         userNotFound();
       }
     } catch (e) {
+      log('error: $e');
       userNotFound();
     }
-
-    // try {
-    //   final args = Get.arguments;
-    //   if (args != null) {
-    //     userName = modifyUserName(args['userName']);
-    //     phoneNumber = args['phoneNumber'];
-    //     invitationID = args['invitationID'] ?? 0;
-    //     Future.delayed(Duration.zero, () {
-    //       getDataSession();
-    //     });
-    //   } else {
-    //     Future.delayed(Duration.zero, () {
-    //       userNotFound();
-    //     });
-    //   }
-    // } catch (e) {
-    //   log(e.toString());
-    //   Future.delayed(Duration.zero, () {
-    //     userNotFound();
-    //   });
-    // }
   }
 
   @override
@@ -763,8 +809,12 @@ class RegisterViewModel extends ViewModel {
       barrierDismissible: false,
     );
 
-    userName = trimEndSpace(modifyUserName(box.read('userName')));
-    log('userName: $userName');
+    try {
+      userName = trimEndSpace(modifyUserName(box.read('userName')));
+      log('userName: $userName');
+    } catch (e) {
+      log('error: $e');
+    }
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       prepareData();
