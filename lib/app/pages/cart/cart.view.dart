@@ -93,6 +93,7 @@ class _View extends StatelessView<CartViewModel> {
                     .where((element) => element.menu!.categoryID == '2')
                     .toList()
                     .length,
+                physics: const NeverScrollableScrollPhysics(),
                 shrinkWrap: true,
                 itemBuilder: (context, index) {
                   final menu = viewModel.cart
@@ -196,23 +197,33 @@ class _View extends StatelessView<CartViewModel> {
                             ),
                           ],
                         ),
-                        const SizedBox(height: 8),
-                        Text(
-                          'Catatan: ',
-                          style: Theme.of(context)
-                              .textTheme
-                              .bodyText2!
-                              .copyWith(
-                                  color: Colors.black,
-                                  fontWeight: FontWeight.w600),
+                        Visibility(
+                            visible: menu.note != null && menu.note!.isNotEmpty,
+                            child: const SizedBox(height: 8)),
+                        Visibility(
+                          visible: menu.note != null && menu.note!.isNotEmpty,
+                          child: Text(
+                            'Catatan: ',
+                            style: Theme.of(context)
+                                .textTheme
+                                .bodyText2!
+                                .copyWith(
+                                    color: Colors.black,
+                                    fontWeight: FontWeight.w600),
+                          ),
                         ),
-                        const SizedBox(height: 4),
-                        Text(
-                          menu.note ?? '-',
-                          style: Theme.of(context)
-                              .textTheme
-                              .bodyText2!
-                              .copyWith(color: Colors.black),
+                        Visibility(
+                            visible: menu.note != null && menu.note!.isNotEmpty,
+                            child: const SizedBox(height: 4)),
+                        Visibility(
+                          visible: menu.note != null && menu.note!.isNotEmpty,
+                          child: Text(
+                            menu.note ?? '-',
+                            style: Theme.of(context)
+                                .textTheme
+                                .bodyText2!
+                                .copyWith(color: Colors.black),
+                          ),
                         ),
                       ],
                     ),
@@ -310,6 +321,7 @@ class _View extends StatelessView<CartViewModel> {
                     .where((element) => element.menu!.categoryID == '1')
                     .toList()
                     .length,
+                physics: const NeverScrollableScrollPhysics(),
                 shrinkWrap: true,
                 itemBuilder: (context, index) {
                   final menu = viewModel.cart
@@ -413,23 +425,33 @@ class _View extends StatelessView<CartViewModel> {
                             ),
                           ],
                         ),
-                        const SizedBox(height: 8),
-                        Text(
-                          'Catatan: ',
-                          style: Theme.of(context)
-                              .textTheme
-                              .bodyText2!
-                              .copyWith(
-                                  color: Colors.black,
-                                  fontWeight: FontWeight.w600),
+                        Visibility(
+                            visible: menu.note != null && menu.note!.isNotEmpty,
+                            child: const SizedBox(height: 8)),
+                        Visibility(
+                          visible: menu.note != null && menu.note!.isNotEmpty,
+                          child: Text(
+                            'Catatan: ',
+                            style: Theme.of(context)
+                                .textTheme
+                                .bodyText2!
+                                .copyWith(
+                                    color: Colors.black,
+                                    fontWeight: FontWeight.w600),
+                          ),
                         ),
-                        const SizedBox(height: 4),
-                        Text(
-                          menu.note ?? '-',
-                          style: Theme.of(context)
-                              .textTheme
-                              .bodyText2!
-                              .copyWith(color: Colors.black),
+                        Visibility(
+                            visible: menu.note != null && menu.note!.isNotEmpty,
+                            child: const SizedBox(height: 4)),
+                        Visibility(
+                          visible: menu.note != null && menu.note!.isNotEmpty,
+                          child: Text(
+                            menu.note ?? '-',
+                            style: Theme.of(context)
+                                .textTheme
+                                .bodyText2!
+                                .copyWith(color: Colors.black),
+                          ),
                         ),
                       ],
                     ),
@@ -527,6 +549,7 @@ class _View extends StatelessView<CartViewModel> {
                     .where((element) => element.menu!.categoryID == '3')
                     .toList()
                     .length,
+                physics: const NeverScrollableScrollPhysics(),
                 shrinkWrap: true,
                 itemBuilder: (context, index) {
                   final menu = viewModel.cart
@@ -630,23 +653,33 @@ class _View extends StatelessView<CartViewModel> {
                             ),
                           ],
                         ),
-                        const SizedBox(height: 8),
-                        Text(
-                          'Catatan: ',
-                          style: Theme.of(context)
-                              .textTheme
-                              .bodyText2!
-                              .copyWith(
-                                  color: Colors.black,
-                                  fontWeight: FontWeight.w600),
+                        Visibility(
+                            visible: menu.note != null && menu.note!.isNotEmpty,
+                            child: const SizedBox(height: 8)),
+                        Visibility(
+                          visible: menu.note != null && menu.note!.isNotEmpty,
+                          child: Text(
+                            'Catatan: ',
+                            style: Theme.of(context)
+                                .textTheme
+                                .bodyText2!
+                                .copyWith(
+                                    color: Colors.black,
+                                    fontWeight: FontWeight.w600),
+                          ),
                         ),
-                        const SizedBox(height: 4),
-                        Text(
-                          menu.note ?? '-',
-                          style: Theme.of(context)
-                              .textTheme
-                              .bodyText2!
-                              .copyWith(color: Colors.black),
+                        Visibility(
+                            visible: menu.note != null && menu.note!.isNotEmpty,
+                            child: const SizedBox(height: 4)),
+                        Visibility(
+                          visible: menu.note != null && menu.note!.isNotEmpty,
+                          child: Text(
+                            menu.note ?? '-',
+                            style: Theme.of(context)
+                                .textTheme
+                                .bodyText2!
+                                .copyWith(color: Colors.black),
+                          ),
                         ),
                       ],
                     ),
@@ -744,6 +777,7 @@ class _View extends StatelessView<CartViewModel> {
                     .where((element) => element.menu!.categoryID == '4')
                     .toList()
                     .length,
+                physics: const NeverScrollableScrollPhysics(),
                 shrinkWrap: true,
                 itemBuilder: (context, index) {
                   final menu = viewModel.cart
@@ -847,23 +881,33 @@ class _View extends StatelessView<CartViewModel> {
                             ),
                           ],
                         ),
-                        const SizedBox(height: 8),
-                        Text(
-                          'Catatan: ',
-                          style: Theme.of(context)
-                              .textTheme
-                              .bodyText2!
-                              .copyWith(
-                                  color: Colors.black,
-                                  fontWeight: FontWeight.w600),
+                        Visibility(
+                            visible: menu.note != null && menu.note!.isNotEmpty,
+                            child: const SizedBox(height: 8)),
+                        Visibility(
+                          visible: menu.note != null && menu.note!.isNotEmpty,
+                          child: Text(
+                            'Catatan: ',
+                            style: Theme.of(context)
+                                .textTheme
+                                .bodyText2!
+                                .copyWith(
+                                    color: Colors.black,
+                                    fontWeight: FontWeight.w600),
+                          ),
                         ),
-                        const SizedBox(height: 4),
-                        Text(
-                          menu.note ?? '-',
-                          style: Theme.of(context)
-                              .textTheme
-                              .bodyText2!
-                              .copyWith(color: Colors.black),
+                        Visibility(
+                            visible: menu.note != null && menu.note!.isNotEmpty,
+                            child: const SizedBox(height: 4)),
+                        Visibility(
+                          visible: menu.note != null && menu.note!.isNotEmpty,
+                          child: Text(
+                            menu.note ?? '-',
+                            style: Theme.of(context)
+                                .textTheme
+                                .bodyText2!
+                                .copyWith(color: Colors.black),
+                          ),
                         ),
                       ],
                     ),

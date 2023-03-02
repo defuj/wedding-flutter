@@ -299,6 +299,10 @@ class MenuDetailViewModel extends ViewModel {
               dialogType: SweetDialogType.success,
               title: 'Berhasil',
               content: 'Daftar pesanan berhasil diubah',
+              onConfirm: () {
+                FocusManager.instance.primaryFocus?.unfocus();
+              },
+              barrierDismissible: false,
             ).show();
           }).onError((error, stackTrace) {
             log('error: $error');
@@ -308,6 +312,10 @@ class MenuDetailViewModel extends ViewModel {
               dialogType: SweetDialogType.error,
               title: 'Gagal',
               content: 'Menu gagal merubah daftar pesanan',
+              onConfirm: () {
+                FocusManager.instance.primaryFocus?.unfocus();
+              },
+              barrierDismissible: false,
             ).show();
           });
         } else {
@@ -330,6 +338,10 @@ class MenuDetailViewModel extends ViewModel {
               dialogType: SweetDialogType.success,
               title: 'Berhasil',
               content: 'Menu berhasil ditambahkan ke daftar pesanan',
+              onConfirm: () {
+                FocusManager.instance.primaryFocus?.unfocus();
+              },
+              barrierDismissible: false,
             ).show();
           }).onError((error, stackTrace) {
             log('error: $error');
@@ -339,6 +351,10 @@ class MenuDetailViewModel extends ViewModel {
               dialogType: SweetDialogType.error,
               title: 'Gagal',
               content: 'Menu gagal ditambahkan ke daftar pesanan',
+              onConfirm: () {
+                FocusManager.instance.primaryFocus?.unfocus();
+              },
+              barrierDismissible: false,
             ).show();
           });
         }
@@ -361,6 +377,10 @@ class MenuDetailViewModel extends ViewModel {
             dialogType: SweetDialogType.success,
             title: 'Berhasil',
             content: 'Menu berhasil ditambahkan ke daftar pesanan',
+            onConfirm: () {
+              FocusManager.instance.primaryFocus?.unfocus();
+            },
+            barrierDismissible: false,
           ).show();
         }).onError((error, stackTrace) {
           log('error: $error');
@@ -370,56 +390,13 @@ class MenuDetailViewModel extends ViewModel {
             dialogType: SweetDialogType.error,
             title: 'Gagal',
             content: 'Menu gagal ditambahkan ke daftar pesanan',
+            onConfirm: () {
+              FocusManager.instance.primaryFocus?.unfocus();
+            },
+            barrierDismissible: false,
           ).show();
         });
       }
-
-      //   // check if menu already exist in cart
-      //   var result = cartExist
-      //       .where((element) => element.menu!.menuID == cart.menu!.menuID)
-      //       .toList();
-      //   // if menu not exist in cart
-      //   if (result.isEmpty) {
-      //     // add new cart
-      //     var modCart = cartExist;
-      //     modCart.add(cart);
-      //     cartExist = modCart;
-      //     log('cart added');
-      //     log(jsonEncode(cartExist));
-      //     await box
-      //         .write('cart-$reservationID', cartExist.toList())
-      //         .then((value) {
-      //       SweetDialog(
-      //         context: context,
-      //         dialogType: SweetDialogType.success,
-      //         title: 'Berhasil',
-      //         content: 'Menu berhasil ditambahkan ke daftar pesanan',
-      //       ).show();
-      //     });
-      //   } else {
-      //     // modify cart
-      //     List<CartModel> cartNew = List<CartModel>.empty(growable: true);
-      //     for (var element in cartExist) {
-      //       if (element.menu!.menuID == cart.menu!.menuID) {
-      //         cartNew.add(cart);
-      //       } else {
-      //         cartNew.add(element);
-      //       }
-      //     }
-      //     cartExist = cartNew;
-      //     log('cart edited');
-      //     log(jsonEncode(cartExist));
-      //     await box
-      //         .write('cart-$reservationID', cartExist.toList())
-      //         .then((value) {
-      //       SweetDialog(
-      //         context: context,
-      //         dialogType: SweetDialogType.success,
-      //         title: 'Berhasil',
-      //         content: 'Menu berhasil diperbarui',
-      //       ).show();
-      //     });
-      //   }
     } catch (e) {
       log('Error: $e');
       SweetDialog(
@@ -427,6 +404,10 @@ class MenuDetailViewModel extends ViewModel {
         dialogType: SweetDialogType.error,
         title: 'Gagal',
         content: 'Menu gagal ditambahkan ke daftar pesanan',
+        onConfirm: () {
+          FocusManager.instance.primaryFocus?.unfocus();
+        },
+        barrierDismissible: false,
       ).show();
     }
   }
