@@ -16,7 +16,6 @@ export 'package:cached_network_image/cached_network_image.dart';
 export 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 export 'package:simple_grid/simple_grid.dart';
 export 'package:flutter_web_frame/flutter_web_frame.dart';
-export 'package:qr_code_scanner/qr_code_scanner.dart';
 export 'package:google_maps_flutter_web/google_maps_flutter_web.dart';
 export 'package:firebase_core/firebase_core.dart';
 export 'package:url_strategy/url_strategy.dart';

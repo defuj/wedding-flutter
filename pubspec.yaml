@@ -1,5 +1,5 @@
 name: wedding
-description: Enter invited guest data 
+description: Muhammad Syauqi Alsunni, S.Sos. & Puti Kayo Gebriecya, B.Sc. 
 
 publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 
@@ -33,12 +33,12 @@ dependencies:
   carousel_slider: ^4.2.1
   simple_grid: ^0.1.2
   url_strategy: ^0.2.0
-  qr_code_scanner: ^1.0.1
   google_maps_flutter_web: ^0.4.0+6
   google_maps_flutter: ^2.2.4
   universal_html: ^2.0.9
   firebase_core: ^2.7.0
   firebase_database: ^10.0.14
+  maps_launcher: ^2.2.0
 
 dev_dependencies:
   flutter_test:

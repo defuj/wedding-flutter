@@ -1,4 +1,5 @@
 import 'dart:developer';
+import 'package:maps_launcher/maps_launcher.dart';
 import 'package:wedding/repositories.dart';
 
 class InvitationViewModel extends ViewModel {
@@ -57,6 +58,14 @@ class InvitationViewModel extends ViewModel {
   set showedComments(List<CommentModel> value) {
     _showedComments = value;
     notifyListeners();
+  }
+
+  void openMap({
+    required double lat,
+    required double long,
+    required String label,
+  }) async {
+    await MapsLauncher.launchCoordinates(lat, long, label);
   }
 
   void enterReservation() {

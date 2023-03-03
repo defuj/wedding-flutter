@@ -504,22 +504,35 @@ class _View extends StatelessView<InvitationViewModel> {
                               ),
                               const SizedBox(width: 8),
                               Expanded(
-                                child: Text(
-                                  'Mesjid Rambuti, Guguak Tinggi, Agam, Sumatera Barat',
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .headline2!
-                                      .copyWith(
-                                          color: Colors.black,
-                                          fontSize: edgeByWidth(
-                                            context: context,
-                                            xs: 16,
-                                            sm: 16,
-                                            md: 18,
-                                            lg: 22,
-                                            xl: 22,
-                                          ),
-                                          fontWeight: FontWeight.w400),
+                                child: InkWell(
+                                  onTap: () {
+                                    viewModel.openMap(
+                                        lat: -0.3287901,
+                                        long: 100.3660321,
+                                        label:
+                                            'Mesjid Rambuti, Guguak Tinggi, Agam, Sumatera Barat');
+                                  },
+                                  splashColor: Colors.transparent,
+                                  highlightColor: Colors.transparent,
+                                  hoverColor: Colors.transparent,
+                                  splashFactory: NoSplash.splashFactory,
+                                  child: Text(
+                                    'Mesjid Rambuti, Guguak Tinggi, Agam, Sumatera Barat',
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .headline2!
+                                        .copyWith(
+                                            color: Colors.black,
+                                            fontSize: edgeByWidth(
+                                              context: context,
+                                              xs: 16,
+                                              sm: 16,
+                                              md: 18,
+                                              lg: 22,
+                                              xl: 22,
+                                            ),
+                                            fontWeight: FontWeight.w400),
+                                  ),
                                 ),
                               ),
                             ],
@@ -656,22 +669,35 @@ class _View extends StatelessView<InvitationViewModel> {
                               ),
                               const SizedBox(width: 8),
                               Expanded(
-                                child: Text(
-                                  'Jl. H.Agus Salim no 1A, Bukittinggi, Sumatera Barat.',
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .headline2!
-                                      .copyWith(
-                                          color: Colors.white,
-                                          fontSize: edgeByWidth(
-                                            context: context,
-                                            xs: 16,
-                                            sm: 16,
-                                            md: 18,
-                                            lg: 22,
-                                            xl: 22,
-                                          ),
-                                          fontWeight: FontWeight.w400),
+                                child: InkWell(
+                                  onTap: () {
+                                    viewModel.openMap(
+                                        lat: -0.3070926,
+                                        long: 100.3689357,
+                                        label:
+                                            'Jl. H.Agus Salim no 1A, Bukittinggi, Sumatera Barat.');
+                                  },
+                                  splashColor: Colors.transparent,
+                                  highlightColor: Colors.transparent,
+                                  hoverColor: Colors.transparent,
+                                  splashFactory: NoSplash.splashFactory,
+                                  child: Text(
+                                    'Jl. H.Agus Salim no 1A, Bukittinggi, Sumatera Barat.',
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .headline2!
+                                        .copyWith(
+                                            color: Colors.white,
+                                            fontSize: edgeByWidth(
+                                              context: context,
+                                              xs: 16,
+                                              sm: 16,
+                                              md: 18,
+                                              lg: 22,
+                                              xl: 22,
+                                            ),
+                                            fontWeight: FontWeight.w400),
+                                  ),
                                 ),
                               ),
                             ],
@@ -814,22 +840,35 @@ class _View extends StatelessView<InvitationViewModel> {
                               ),
                               const SizedBox(width: 8),
                               Expanded(
-                                child: Text(
-                                  'Palma One Grand Ballroom, Jl.HR Rasuna Said Kav. X-2 No. 4 Kuningan Jakarta Selatan, 12940',
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .headline2!
-                                      .copyWith(
-                                          color: Colors.white,
-                                          fontSize: edgeByWidth(
-                                            context: context,
-                                            xs: 16,
-                                            sm: 16,
-                                            md: 18,
-                                            lg: 22,
-                                            xl: 22,
-                                          ),
-                                          fontWeight: FontWeight.w400),
+                                child: InkWell(
+                                  onTap: () {
+                                    viewModel.openMap(
+                                        lat: -6.2277417,
+                                        long: 106.8338776,
+                                        label:
+                                            'Jl. H.Agus Salim no 1A, Bukittinggi, Sumatera Barat.');
+                                  },
+                                  splashColor: Colors.transparent,
+                                  highlightColor: Colors.transparent,
+                                  hoverColor: Colors.transparent,
+                                  splashFactory: NoSplash.splashFactory,
+                                  child: Text(
+                                    'Palma One Grand Ballroom, Jl.HR Rasuna Said Kav. X-2 No. 4 Kuningan Jakarta Selatan, 12940',
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .headline2!
+                                        .copyWith(
+                                            color: Colors.white,
+                                            fontSize: edgeByWidth(
+                                              context: context,
+                                              xs: 16,
+                                              sm: 16,
+                                              md: 18,
+                                              lg: 22,
+                                              xl: 22,
+                                            ),
+                                            fontWeight: FontWeight.w400),
+                                  ),
                                 ),
                               ),
                             ],
@@ -1339,28 +1378,6 @@ class _View extends StatelessView<InvitationViewModel> {
                                   color: Colors.black,
                                   fontSize: 56,
                                   fontWeight: FontWeight.w400),
-                        ),
-                        const SizedBox(height: 48),
-                        Text(
-                          'For Further Information',
-                          style: Theme.of(context)
-                              .textTheme
-                              .headline2!
-                              .copyWith(
-                                  color: Colors.black,
-                                  fontSize: 20,
-                                  fontWeight: FontWeight.w400),
-                        ),
-                        const SizedBox(height: 8),
-                        Center(
-                          child: SizedBox(
-                            width: 100,
-                            height: 46,
-                            child: ButtonPrimary(
-                              text: 'Click Here',
-                              onPressed: () {},
-                            ),
-                          ),
                         ),
                       ],
                     ),

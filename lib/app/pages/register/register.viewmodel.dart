@@ -505,6 +505,7 @@ class RegisterViewModel extends ViewModel {
           members = list;
         }
       }
+      FocusManager.instance.primaryFocus?.unfocus();
     } else {
       SweetDialog(
         context: context,
@@ -512,6 +513,7 @@ class RegisterViewModel extends ViewModel {
         content: 'Silahkan isi nama dan panggilan terlebih dahulu',
         dialogType: SweetDialogType.error,
       ).show();
+      FocusManager.instance.primaryFocus?.unfocus();
     }
   }
 
