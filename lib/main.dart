@@ -24,16 +24,6 @@ Future<void> main() async {
   await GetStorage.init();
   setPathUrlStrategy();
   runApp(
-    // FlutterWebFrame(
-    //   builder: (context) => GetMaterialApp(
-    //     title: 'Enter invited guest data',
-    //     theme: lightTheme,
-    //     initialRoute: '/',
-    //     getPages: getRoutes,
-    //     initialBinding: MainBinding(),
-    //   ),
-    //   maximumSize: const Size(475, 1080),
-    // ),
     GetMaterialApp(
       title: 'Wedding Invitation',
       theme: lightTheme,
