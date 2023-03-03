@@ -439,10 +439,20 @@ class RegisterViewModel extends ViewModel {
                     splashFactory: NoSplash.splashFactory,
                     hoverColor: Colors.transparent,
                     onTap: () {
-                      selectedSession = int.parse(sessions[index].sessionID!);
-                      selectedSessionName =
-                          'Sesi ${sessions[index].sessionName} (${sessions[index].sessionStart} sd ${sessions[index].sessionEnd})';
-                      Navigator.pop(context);
+                      if (int.parse(sessions[index].sessionQuota!) > 0) {
+                        selectedSession = int.parse(sessions[index].sessionID!);
+                        selectedSessionName =
+                            'Sesi ${sessions[index].sessionName} (${sessions[index].sessionStart} sd ${sessions[index].sessionEnd})';
+                        Navigator.pop(context);
+                      } else {
+                        Navigator.pop(context);
+                        SweetDialog(
+                          context: context,
+                          title: 'Kuota penuh',
+                          content: 'Kuota untuk sesi ini sudah penuh',
+                          dialogType: SweetDialogType.error,
+                        ).show();
+                      }
                     },
                     child: Container(
                       margin: const EdgeInsets.only(bottom: 6),
@@ -617,33 +627,56 @@ class RegisterViewModel extends ViewModel {
   }
 
   void createReservasion() async {
-    loading.show();
-    if (isReservasion) {
-      addMember(members, reservationID);
+    var result = sessions
+        .where((element) => int.parse(element.sessionID!) == selectedSession);
+    if (result.isNotEmpty) {
+      if (int.parse(result.first.sessionQuota!) >= members.length + 1) {
+        loading.show();
+        if (isReservasion) {
+          addMember(members, reservationID);
+        } else {
+          await apiProvider
+              .createReservasion(
+            name: trimEndSpace(userName),
+            phoneNumber: trimEndSpace(phoneNumber),
+            id: invitationID,
+            nickname: trimEndSpace(userNickname),
+          )
+              .then(
+            (value) {
+              isReservasion = true;
+              reservationID = value;
+              addMember(members, value);
+            },
+            onError: (e) {
+              loading.dismiss();
+              SweetDialog(
+                context: context,
+                title: 'Gagal membuat reservasi',
+                content: e.toString(),
+                dialogType: SweetDialogType.error,
+              ).show();
+              getDataSession();
+              selectedSession = 0;
+              selectedSessionName = '';
+            },
+          );
+        }
+      } else {
+        SweetDialog(
+          context: context,
+          title: 'Kuota penuh',
+          content: 'Kuota untuk sesi ini sudah penuh',
+          dialogType: SweetDialogType.error,
+        ).show();
+      }
     } else {
-      await apiProvider
-          .createReservasion(
-        name: trimEndSpace(userName),
-        phoneNumber: trimEndSpace(phoneNumber),
-        id: invitationID,
-        nickname: trimEndSpace(userNickname),
-      )
-          .then(
-        (value) {
-          isReservasion = true;
-          reservationID = value;
-          addMember(members, value);
-        },
-        onError: (e) {
-          loading.dismiss();
-          SweetDialog(
-            context: context,
-            title: 'Gagal membuat reservasi',
-            content: e.toString(),
-            dialogType: SweetDialogType.error,
-          ).show();
-        },
-      );
+      SweetDialog(
+        context: context,
+        title: 'Sesi tidak tersedia',
+        content: 'Sesi yang kamu pilih tidak tersedia',
+        dialogType: SweetDialogType.error,
+      ).show();
     }
   }
 
