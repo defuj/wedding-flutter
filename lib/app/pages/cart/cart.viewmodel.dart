@@ -16,6 +16,13 @@ class CartViewModel extends ViewModel {
     notifyListeners();
   }
 
+  String _phoneNumber = '';
+  String get phoneNumber => _phoneNumber;
+  set phoneNumber(String value) {
+    _phoneNumber = value;
+    notifyListeners();
+  }
+
   List<CartModel> _cart = List<CartModel>.empty(growable: true);
   List<CartModel> get cart => _cart;
   set cart(List<CartModel> value) {
@@ -159,6 +166,8 @@ class CartViewModel extends ViewModel {
       log('categoryCartLength: ${cartWithCategory.length}');
 
       if (cartWithCategory.isEmpty) {
+        // if cart with this category is empty
+        // add all member
         memberNotSelectedMenus(
           memberNotSelected: members,
           categoryID: category.categoryID!,
@@ -170,15 +179,15 @@ class CartViewModel extends ViewModel {
           List<MemberModel> temp = List<MemberModel>.empty(growable: true);
           for (var member in members) {
             // check this member already selected this menu category
-            var notInCart = false;
+            var count = 0;
             for (var menu in cartWithCategory) {
               if (menu.members!
                   .where((el) => el.memberID == member.memberID)
-                  .isEmpty) {
-                notInCart = true;
+                  .isNotEmpty) {
+                count++;
               }
             }
-            if (notInCart) {
+            if (count == 0) {
               temp.add(member);
             }
           }
@@ -229,7 +238,7 @@ class CartViewModel extends ViewModel {
         (value) async {
           loading.dismiss();
           log('Success: $value', name: 'submitMenu');
-          await ref.child(modifyPhoneNumber(box.read('phoneNumber'))).update({
+          await ref.child(modifyPhoneNumber(phoneNumber)).update({
             'isFinished': true,
           });
           SweetDialog(
@@ -264,11 +273,12 @@ class CartViewModel extends ViewModel {
     });
   }
 
-  void editMenu(MenuModel menu) {
+  void editMenu(MenuModel menu) async {
     log('editMenu: ${menu.toJson()}');
-    box.write('menu', menu.toJson());
+    await box.write('members-$reservationID', members);
+    await box.write('menu', menu.toJson());
 
-    Get.toNamed('/menus/detail');
+    await Get.toNamed('/menus/detail');
   }
 
   void reservastionNotFound() {
@@ -299,36 +309,138 @@ class CartViewModel extends ViewModel {
     DatabaseReference ref = FirebaseDatabase.instance.ref("reservation");
     try {
       loading.show();
-      if (box.hasData('phoneNumber')) {
-        var data =
-            await ref.child(modifyPhoneNumber(box.read('phoneNumber'))).once();
-        if (data.snapshot.exists) {
-          if (data.snapshot.child('reservationID').exists) {
-            reservationID = data.snapshot.child('reservationID').value as int;
-            if (reservationID != 0) {
-              if (data.snapshot.hasChild('menus')) {
-                final result =
-                    data.snapshot.child('menus').value as Map<dynamic, dynamic>;
-                var temp = List<CartModel>.empty(growable: true);
-                result.forEach((key, value) {
-                  final map = value as Map<dynamic, dynamic>;
-                  temp.add(CartModel(
-                    menu: MenuModel.fromJson(map['menu']),
-                    members: (map['members'] as List)
-                        .map((e) => MemberModel.fromJson(e))
-                        .toList(),
-                    note: map['note'],
-                  ));
-                });
-                cart = temp;
-                getMember(reservationID: reservationID);
-              }
+      //   if (phoneNumber.isNotEmpty) {
 
-              loading.dismiss();
-            } else {
-              loading.dismiss();
-              reservastionNotFound();
+      //   } else {
+      //     loading.dismiss();
+      //     userNotFound();
+      //   }
+      log('phoneNumber: ${modifyPhoneNumber(phoneNumber)}');
+      var data = await ref.child(modifyPhoneNumber(phoneNumber)).once();
+      if (data.snapshot.exists) {
+        if (data.snapshot.child('reservationID').exists) {
+          reservationID = data.snapshot.child('reservationID').value as int;
+          if (reservationID != 0) {
+            if (data.snapshot.hasChild('menus')) {
+              try {
+                if (data.snapshot.child('menus').value is List) {
+                  final result =
+                      data.snapshot.child('menus').value as List<dynamic>;
+                  var temp = List<CartModel>.empty(growable: true);
+
+                  for (var element in result) {
+                    try {
+                      final map = element as Map<dynamic, dynamic>;
+
+                      var tempMember = List<MemberModel>.empty(growable: true);
+                      if (map['members'] is List) {
+                        final members = map['members'] as List<dynamic>;
+                        for (var element in members) {
+                          try {
+                            final map = element as Map<dynamic, dynamic>;
+                            tempMember.add(MemberModel(
+                              memberID: map['id'],
+                              memberName: map['nama'],
+                              reservationID: reservationID,
+                              isConfirm: 0,
+                              nickname: map['panggilan'],
+                            ));
+                          } catch (e) {
+                            log('Error: $e');
+                          }
+                        }
+                      } else {
+                        final members = map['members'] as Map<dynamic, dynamic>;
+                        members.forEach((key, value) {
+                          try {
+                            final map = value as Map<dynamic, dynamic>;
+                            tempMember.add(MemberModel(
+                              memberID: map['id'],
+                              memberName: map['nama'],
+                              reservationID: reservationID,
+                              isConfirm: 0,
+                              nickname: map['panggilan'],
+                            ));
+                          } catch (e) {
+                            log('Error: $e');
+                          }
+                        });
+                      }
+
+                      temp.add(CartModel(
+                        menu: MenuModel.fromJson(map['menu']),
+                        members: tempMember,
+                        note: map['note'],
+                      ));
+                    } catch (e) {
+                      log('Error: $e');
+                    }
+                  }
+                  cart = temp;
+                  getMember(reservationID: reservationID);
+                } else {
+                  final result = data.snapshot.child('menus').value
+                      as Map<dynamic, dynamic>;
+                  var temp = List<CartModel>.empty(growable: true);
+
+                  result.forEach((key, value) {
+                    try {
+                      final map = value as Map<dynamic, dynamic>;
+
+                      var tempMember = List<MemberModel>.empty(growable: true);
+                      if (map['members'] is List) {
+                        final members = map['members'] as List<dynamic>;
+                        for (var element in members) {
+                          try {
+                            final map = element as Map<dynamic, dynamic>;
+                            tempMember.add(MemberModel(
+                              memberID: map['id'],
+                              memberName: map['nama'],
+                              reservationID: reservationID,
+                              isConfirm: 0,
+                              nickname: map['panggilan'],
+                            ));
+                          } catch (e) {
+                            log('Error: $e');
+                          }
+                        }
+                      } else {
+                        final members = map['members'] as Map<dynamic, dynamic>;
+                        members.forEach((key, value) {
+                          try {
+                            final map = value as Map<dynamic, dynamic>;
+                            tempMember.add(MemberModel(
+                              memberID: map['id'],
+                              memberName: map['nama'],
+                              reservationID: reservationID,
+                              isConfirm: 0,
+                              nickname: map['panggilan'],
+                            ));
+                          } catch (e) {
+                            log('Error: $e');
+                          }
+                        });
+                      }
+
+                      temp.add(CartModel(
+                        menu: MenuModel.fromJson(map['menu']),
+                        members: tempMember,
+                        note: map['note'],
+                      ));
+                    } catch (e) {
+                      log('Error: $e');
+                    }
+                  });
+
+                  cart = temp;
+                  getMember(reservationID: reservationID);
+                }
+              } catch (e) {
+                log('Error: $e');
+              }
             }
+
+            loading.dismiss();
           } else {
             loading.dismiss();
             reservastionNotFound();
@@ -339,9 +451,10 @@ class CartViewModel extends ViewModel {
         }
       } else {
         loading.dismiss();
-        userNotFound();
+        reservastionNotFound();
       }
     } catch (e) {
+      log('Error: $e');
       loading.dismiss();
       reservastionNotFound();
     }
@@ -357,6 +470,7 @@ class CartViewModel extends ViewModel {
     apiProvider = getApiProvider;
 
     if (box.hasData('phoneNumber')) {
+      phoneNumber = modifyPhoneNumber(box.read('phoneNumber'));
       WidgetsBinding.instance.addPostFrameCallback((_) {
         prepareData();
       });

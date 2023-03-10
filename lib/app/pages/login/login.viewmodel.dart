@@ -214,7 +214,7 @@ class LoginViewModel extends ViewModel {
                 ),
               ),
               Text(
-                'Kamu belum terdaftar, silahkan masukan identitas',
+                'Silahkan masukan identitas',
                 style: Theme.of(context).textTheme.headline4!.copyWith(
                       color: IColors.gray800,
                       fontWeight: FontWeight.w400,
@@ -369,12 +369,13 @@ class LoginViewModel extends ViewModel {
                     } else {
                       // user not yet choose food
                       loading.dismiss();
-                      Get.offAllNamed('/menus');
+                      box.write('phoneNumber', modifyPhoneNumber(phoneNumber));
+                      Get.offNamed('/menus');
                     }
                   } else {
                     // user don't have member
                     loading.dismiss();
-                    Get.offAllNamed('/reservation');
+                    Get.offNamed('/reservation');
                   }
                 } else {
                   // user sessionID and invitationID is different

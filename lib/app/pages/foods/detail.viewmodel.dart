@@ -83,47 +83,158 @@ class MenuDetailViewModel extends ViewModel {
   }
 
   void addMemberToMenu(int index) async {
-    var cart = List<CartModel>.empty(growable: true);
-    if (memberSelected
-        .where((element) => element.memberID == members[index].memberID)
-        .isEmpty) {
-      var data = await ref
-          .child(modifyPhoneNumber(box.read('phoneNumber')))
-          .child('menus')
-          .once();
-      if (data.snapshot.exists) {
-        final result = data.snapshot.value as Map<dynamic, dynamic>;
-        result.forEach((key, value) {
-          final map = value as Map<dynamic, dynamic>;
-          cart.add(CartModel(
-            menu: MenuModel.fromJson(map['menu']),
-            members: (map['members'] as List)
-                .map((e) => MemberModel.fromJson(e))
-                .toList(),
-            note: map['note'],
-          ));
-        });
+    try {
+      var cart = List<CartModel>.empty(growable: true);
+      if (memberSelected
+          .where((element) => element.memberID == members[index].memberID)
+          .isEmpty) {
+        var data = await ref
+            .child(modifyPhoneNumber(box.read('phoneNumber')))
+            .child('menus')
+            .once();
+        if (data.snapshot.exists) {
+          if (data.snapshot.value is List) {
+            final result = data.snapshot.value as List<dynamic>;
 
-        // check if member is already selected by other menu with same menu categoryID
-        // check in cart where menu categoryID is not same with menu categoryID
+            for (var element in result) {
+              try {
+                final map = element as Map<dynamic, dynamic>;
+                var tempMember = List<MemberModel>.empty(growable: true);
+                if (map['members'] is List) {
+                  final members = map['members'] as List<dynamic>;
+                  for (var element in members) {
+                    try {
+                      final map = element as Map<dynamic, dynamic>;
+                      tempMember.add(MemberModel(
+                        memberID: map['id'],
+                        memberName: map['nama'],
+                        reservationID: reservationID,
+                        isConfirm: 0,
+                        nickname: map['panggilan'],
+                      ));
+                    } catch (e) {
+                      log('Error: $e');
+                    }
+                  }
+                } else {
+                  // if Map
+                  final members = map['members'] as Map<dynamic, dynamic>;
+                  members.forEach((key, value) {
+                    try {
+                      final map = value as Map<dynamic, dynamic>;
+                      tempMember.add(MemberModel(
+                        memberID: map['id'],
+                        memberName: map['nama'],
+                        reservationID: reservationID,
+                        isConfirm: 0,
+                        nickname: map['panggilan'],
+                      ));
+                    } catch (e) {
+                      log('Error: $e');
+                    }
+                  });
+                }
 
-        if (cart
-            .where((element) =>
-                element.menu!.categoryID == menu.categoryID &&
-                element.menu!.menuID != menu.menuID &&
-                element.members!
-                    .where((element) =>
-                        element.memberID == members[index].memberID)
-                    .isNotEmpty)
-            .isNotEmpty) {
-          Get.back();
-          SweetDialog(
-            context: context,
-            dialogType: SweetDialogType.error,
-            title: 'Tidak bisa dipilih',
-            content:
-                '${members[index].memberName} sudah memilih menu lain pada kategori ini',
-          ).show();
+                cart.add(CartModel(
+                  menu: MenuModel.fromJson(map['menu']),
+                  members: tempMember,
+                  note: map['note'],
+                ));
+              } catch (e) {
+                log('Error: $e');
+              }
+            }
+          } else {
+            // is Map
+            final result = data.snapshot.value as Map<dynamic, dynamic>;
+            result.forEach((key, value) {
+              try {
+                final map = value as Map<dynamic, dynamic>;
+                var tempMember = List<MemberModel>.empty(growable: true);
+                if (map['members'] is List) {
+                  final members = map['members'] as List<dynamic>;
+                  for (var element in members) {
+                    try {
+                      final map = element as Map<dynamic, dynamic>;
+                      tempMember.add(MemberModel(
+                        memberID: map['id'],
+                        memberName: map['nama'],
+                        reservationID: reservationID,
+                        isConfirm: 0,
+                        nickname: map['panggilan'],
+                      ));
+                    } catch (e) {
+                      log('Error: $e');
+                    }
+                  }
+                } else {
+                  // if Map
+                  final members = map['members'] as Map<dynamic, dynamic>;
+                  members.forEach((key, value) {
+                    try {
+                      final map = value as Map<dynamic, dynamic>;
+                      tempMember.add(MemberModel(
+                        memberID: map['id'],
+                        memberName: map['nama'],
+                        reservationID: reservationID,
+                        isConfirm: 0,
+                        nickname: map['panggilan'],
+                      ));
+                    } catch (e) {
+                      log('Error: $e');
+                    }
+                  });
+                }
+
+                cart.add(CartModel(
+                  menu: MenuModel.fromJson(map['menu']),
+                  members: tempMember,
+                  note: map['note'],
+                ));
+              } catch (e) {
+                log('Error: $e');
+              }
+            });
+          }
+
+          //   result.forEach((key, value) {
+          //     final map = value as Map<dynamic, dynamic>;
+          //     cart.add(CartModel(
+          //       menu: MenuModel.fromJson(map['menu']),
+          //       members: (map['members'] as List)
+          //           .map((e) => MemberModel.fromJson(e))
+          //           .toList(),
+          //       note: map['note'],
+          //     ));
+          //   });
+
+          // check if member is already selected by other menu with same menu categoryID
+          // check in cart where menu categoryID is not same with menu categoryID
+
+          if (cart
+              .where((element) =>
+                  element.menu!.categoryID == menu.categoryID &&
+                  element.menu!.menuID != menu.menuID &&
+                  element.members!
+                      .where((element) =>
+                          element.memberID == members[index].memberID)
+                      .isNotEmpty)
+              .isNotEmpty) {
+            Get.back();
+            SweetDialog(
+              context: context,
+              dialogType: SweetDialogType.error,
+              title: 'Tidak bisa dipilih',
+              content:
+                  '${members[index].memberName} sudah memilih menu lain pada kategori ini',
+            ).show();
+          } else {
+            var temp = memberSelected;
+            temp.add(members[index]);
+            memberSelected = temp;
+
+            Get.back();
+          }
         } else {
           var temp = memberSelected;
           temp.add(members[index]);
@@ -133,17 +244,13 @@ class MenuDetailViewModel extends ViewModel {
         }
       } else {
         var temp = memberSelected;
-        temp.add(members[index]);
+        temp.removeWhere(
+            (element) => element.memberID == members[index].memberID);
         memberSelected = temp;
-
         Get.back();
       }
-    } else {
-      var temp = memberSelected;
-      temp.removeWhere(
-          (element) => element.memberID == members[index].memberID);
-      memberSelected = temp;
-      Navigator.pop(context);
+    } catch (e) {
+      log('Error: $e');
     }
   }
 
@@ -199,7 +306,7 @@ class MenuDetailViewModel extends ViewModel {
                 const SizedBox(height: 16),
                 ListView.builder(
                   shrinkWrap: true,
-                  physics: const NeverScrollableScrollPhysics(),
+                  //   physics: const NeverScrollableScrollPhysics(),
                   itemCount: members.length,
                   itemBuilder: (context, index) {
                     return InkWell(

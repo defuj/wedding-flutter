@@ -17,6 +17,13 @@ class InvitationViewModel extends ViewModel {
     notifyListeners();
   }
 
+  String _inviter = '';
+  String get inviter => _inviter;
+  set inviter(String value) {
+    _inviter = value;
+    notifyListeners();
+  }
+
   String _userAddress = '';
   String get userAddress => _userAddress;
   set userAddress(String value) {
@@ -177,6 +184,12 @@ class InvitationViewModel extends ViewModel {
 
       try {
         userAddress = Get.parameters['alamat'] ?? '';
+      } catch (e) {
+        log(e.toString());
+      }
+
+      try {
+        inviter = Get.parameters['pengundang'] ?? '';
       } catch (e) {
         log(e.toString());
       }

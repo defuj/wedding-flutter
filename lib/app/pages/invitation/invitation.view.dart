@@ -614,7 +614,7 @@ class _View extends StatelessView<InvitationViewModel> {
                               ),
                               const SizedBox(width: 8),
                               Text(
-                                'Selasa, 31 Januari 2023',
+                                'Thursday, 2 March 2023',
                                 style: Theme.of(context)
                                     .textTheme
                                     .headline2!
@@ -1369,15 +1369,24 @@ class _View extends StatelessView<InvitationViewModel> {
                                   fontWeight: FontWeight.w400),
                         ),
                         const SizedBox(height: 16),
-                        Text(
-                          'Puti Kayo',
-                          style: Theme.of(context)
-                              .textTheme
-                              .headline3!
-                              .copyWith(
-                                  color: Colors.black,
-                                  fontSize: 56,
-                                  fontWeight: FontWeight.w400),
+                        Visibility(
+                          visible: viewModel.inviter.isNotEmpty,
+                          child: Text(
+                            capitalize(viewModel.inviter),
+                            textAlign: TextAlign.center,
+                            style:
+                                Theme.of(context).textTheme.headline3!.copyWith(
+                                    color: Colors.black,
+                                    fontSize: edgeByWidth(
+                                      context: context,
+                                      xs: 30,
+                                      sm: 30,
+                                      md: 36,
+                                      lg: 40,
+                                      xl: 40,
+                                    ),
+                                    fontWeight: FontWeight.w400),
+                          ),
                         ),
                       ],
                     ),

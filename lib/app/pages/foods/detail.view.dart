@@ -68,24 +68,24 @@ class _View extends StatelessView<MenuDetailViewModel> {
           children: [
             carouselSliderHome(banner: viewModel.banners),
             const SizedBox(height: 16),
-            Wrap(
-              children: [
-                Container(
-                  margin: const EdgeInsets.symmetric(horizontal: 16),
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                  decoration: BoxDecoration(
-                    color: IColors.pink50_,
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: Text(
-                    'Sisa : ${viewModel.menu.menuStock}',
-                    style: Theme.of(context).textTheme.bodyText2!.copyWith(
-                        color: IColors.black100, fontWeight: FontWeight.w600),
-                  ),
-                ),
-              ],
-            ),
+            // Wrap(
+            //   children: [
+            //     Container(
+            //       margin: const EdgeInsets.symmetric(horizontal: 16),
+            //       padding:
+            //           const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+            //       decoration: BoxDecoration(
+            //         color: IColors.pink50_,
+            //         borderRadius: BorderRadius.circular(8),
+            //       ),
+            //       child: Text(
+            //         'Sisa : ${viewModel.menu.menuStock}',
+            //         style: Theme.of(context).textTheme.bodyText2!.copyWith(
+            //             color: IColors.black100, fontWeight: FontWeight.w600),
+            //       ),
+            //     ),
+            //   ],
+            // ),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16),
               child: Text(

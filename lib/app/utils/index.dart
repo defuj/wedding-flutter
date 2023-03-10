@@ -68,12 +68,14 @@ String modifyPhoneNumber(String number) {
   if (number.startsWith("0")) {
     // Replace 0 with 62
     return "62${number.substring(1)}";
+  } else if (number.startsWith("+")) {
+    // Return unaltered
+    return modifyPhoneNumber(number.substring(1));
   } else if (number.startsWith("62")) {
     // Return unaltered
     return number;
   } else {
-    // Add 62 at the start
-    return "62$number";
+    return number;
   }
 }
 

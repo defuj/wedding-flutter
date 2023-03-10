@@ -627,56 +627,71 @@ class RegisterViewModel extends ViewModel {
   }
 
   void createReservasion() async {
-    var result = sessions
-        .where((element) => int.parse(element.sessionID!) == selectedSession);
-    if (result.isNotEmpty) {
-      if (int.parse(result.first.sessionQuota!) >= members.length + 1) {
-        loading.show();
-        if (isReservasion) {
-          addMember(members, reservationID);
+    // check from members if there is empty member name or nickname
+    final nullName =
+        members.where((element) => element.memberName == null).toList();
+    final nullNickname =
+        members.where((element) => element.nickname == null).toList();
+
+    if (nullName.isNotEmpty || nullNickname.isNotEmpty) {
+      SweetDialog(
+        context: context,
+        title: 'Nama dan panggilan harus diisi',
+        content: 'Silahkan isi nama dan panggilan terlebih dahulu',
+        dialogType: SweetDialogType.error,
+      ).show();
+    } else {
+      var result = sessions
+          .where((element) => int.parse(element.sessionID!) == selectedSession);
+      if (result.isNotEmpty) {
+        if (int.parse(result.first.sessionQuota!) >= members.length + 1) {
+          loading.show();
+          if (isReservasion) {
+            addMember(members, reservationID);
+          } else {
+            await apiProvider
+                .createReservasion(
+              name: trimEndSpace(userName),
+              phoneNumber: trimEndSpace(phoneNumber),
+              id: invitationID,
+              nickname: trimEndSpace(userNickname),
+            )
+                .then(
+              (value) {
+                isReservasion = true;
+                reservationID = value;
+                addMember(members, value);
+              },
+              onError: (e) {
+                loading.dismiss();
+                SweetDialog(
+                  context: context,
+                  title: 'Gagal membuat reservasi',
+                  content: e.toString(),
+                  dialogType: SweetDialogType.error,
+                ).show();
+                getDataSession();
+                selectedSession = 0;
+                selectedSessionName = '';
+              },
+            );
+          }
         } else {
-          await apiProvider
-              .createReservasion(
-            name: trimEndSpace(userName),
-            phoneNumber: trimEndSpace(phoneNumber),
-            id: invitationID,
-            nickname: trimEndSpace(userNickname),
-          )
-              .then(
-            (value) {
-              isReservasion = true;
-              reservationID = value;
-              addMember(members, value);
-            },
-            onError: (e) {
-              loading.dismiss();
-              SweetDialog(
-                context: context,
-                title: 'Gagal membuat reservasi',
-                content: e.toString(),
-                dialogType: SweetDialogType.error,
-              ).show();
-              getDataSession();
-              selectedSession = 0;
-              selectedSessionName = '';
-            },
-          );
+          SweetDialog(
+            context: context,
+            title: 'Kuota penuh',
+            content: 'Kuota untuk sesi ini sudah penuh',
+            dialogType: SweetDialogType.error,
+          ).show();
         }
       } else {
         SweetDialog(
           context: context,
-          title: 'Kuota penuh',
-          content: 'Kuota untuk sesi ini sudah penuh',
+          title: 'Sesi tidak tersedia',
+          content: 'Sesi yang kamu pilih tidak tersedia',
           dialogType: SweetDialogType.error,
         ).show();
       }
-    } else {
-      SweetDialog(
-        context: context,
-        title: 'Sesi tidak tersedia',
-        content: 'Sesi yang kamu pilih tidak tersedia',
-        dialogType: SweetDialogType.error,
-      ).show();
     }
   }
 
